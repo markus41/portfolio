@@ -1,0 +1,16 @@
+# Tools/translation_tools/translation_tool.py
+
+from google.cloud import translate_v2 as translate
+from ..Engines.logger import get_logger
+from ..Engines.constants import GOOGLE_TRANSLATE_API_KEY
+
+logger = get_logger(__name__)
+
+class TranslationTool:
+    def __init__(self):
+        self.client = translate.Client(api_key=GOOGLE_TRANSLATE_API_KEY)
+
+    def translate(self, text: str, target: str = "en") -> str:
+        logger.info(f"Translating text to {target}")
+        result = self.client.translate(text, target_language=target)
+        return result["translatedText"]

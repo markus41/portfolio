@@ -1,0 +1,35 @@
+# Tools/storage_tools/s3_tool.py
+
+import boto3
+from botocore.exceptions import ClientError
+from ..Engines.logger import get_logger
+from ..Engines.constants import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET
+
+logger = get_logger(__name__)
+
+class S3Tool:
+    def __init__(self):
+        self.client = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+        )
+        self.bucket = AWS_S3_BUCKET
+
+    def upload_file(self, file_path: str, key: str) -> str:
+        logger.info(f"Uploading {file_path} to s3://{self.bucket}/{key}")
+        try:
+            self.client.upload_file(file_path, self.bucket, key)
+            return f"s3://{self.bucket}/{key}"
+        except ClientError as e:
+            logger.error(f"S3 upload error: {e}")
+            raise
+
+    def download_file(self, key: str, dest_path: str):
+        logger.info(f"Downloading s3://{self.bucket}/{key} to {dest_path}")
+        try:
+            self.client.download_file(self.bucket, key, dest_path)
+            return dest_path
+        except ClientError as e:
+            logger.error(f"S3 download error: {e}")
+            raise

@@ -1,0 +1,10 @@
+# pipeline_monitor.py
+import time, requests
+from azure.messaging.webpubsub import WebPubSubServiceClient
+
+while True:
+    deals = requests.get(CRM_URL + "/deals").json()
+    for d in deals:
+        if d['days_in_stage'] > d['sla_days']:
+            # send Teams card
+    time.sleep(3600)

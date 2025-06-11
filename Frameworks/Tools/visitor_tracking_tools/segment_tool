@@ -1,0 +1,21 @@
+# Tools/visitor_tracking_tools/segment_tool.py
+
+import analytics
+from ..Engines.constants import SEGMENT_WRITE_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+analytics.write_key = SEGMENT_WRITE_KEY
+
+class SegmentTool:
+    """
+    Track events & identify users in Segment.
+    """
+
+    def identify(self, user_id: str, traits: dict):
+        logger.info(f"Segment identify: {user_id}")
+        analytics.identify(user_id=user_id, traits=traits)
+
+    def track(self, user_id: str, event: str, properties: dict = None):
+        logger.info(f"Segment track: {event} for {user_id}")
+        analytics.track(user_id=user_id, event=event, properties=properties or {})

@@ -1,0 +1,14 @@
+# src/tools/chat_tool.py
+
+import openai
+from ..constants import OPENAI_API_KEY
+from ..utils.logger import get_logger
+
+logger = get_logger(__name__)
+openai.api_key = OPENAI_API_KEY
+
+class ChatTool:
+    def chat(self, messages: list, model: str = "gpt-4") -> str:
+        logger.info("Invoking OpenAI ChatCompletion")
+        resp = openai.ChatCompletion.create(model=model, messages=messages)
+        return resp.choices[0].message.content

@@ -1,0 +1,19 @@
+# Tools/cache_tools/redis_cache.py
+
+import redis
+from ..Engines.logger import get_logger
+from ..Engines.constants import REDIS_URL
+
+logger = get_logger(__name__)
+
+class RedisCache:
+    def __init__(self):
+        self.client = redis.from_url(REDIS_URL)
+
+    def set(self, key: str, value: str, ttl: int = None):
+        logger.info(f"Redis SET {key} (ttl={ttl})")
+        return self.client.set(name=key, value=value, ex=ttl)
+
+    def get(self, key: str):
+        logger.info(f"Redis GET {key}")
+        return self.client.get(name=key)

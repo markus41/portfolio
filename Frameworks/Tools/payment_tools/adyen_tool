@@ -1,0 +1,39 @@
+# Tools/payment_tools/adyen_tool.py
+
+from Adyen import Adyen
+from ..Engines.constants import ADYEN_API_KEY, ADYEN_MERCHANT_ACCOUNT, ADYEN_ENVIRONMENT
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+adyen_client = Adyen()
+adyen_client.client.xapikey = ADYEN_API_KEY
+adyen_client.client.merchant_account = ADYEN_MERCHANT_ACCOUNT
+adyen_client.client.environment = ADYEN_ENVIRONMENT  # "TEST" or "LIVE"
+
+class AdyenTool:
+    """
+    Create payments and refunds via Adyen API.
+    """
+
+    def create_payment(self, amount: dict, reference: str, payment_method: dict, **kwargs) -> dict:
+        request = {
+            "amount": amount,
+            "reference": reference,
+            "paymentMethod": payment_method,
+            "merchantAccount": ADYEN_MERCHANT_ACCOUNT,
+            **kwargs
+        }
+        logger.info(f"Adyen payment request: {request}")
+        resp = adyen_client.checkout.payments(request)
+        return resp.message
+
+    def refund(self, psp_reference: str, amount: dict) -> dict:
+        request = {
+            "pspReference": psp_reference,
+            "modificationAmount": amount,
+            "merchantAccount": ADYEN_MERCHANT_ACCOUNT
+        }
+        logger.info(f"Adyen refund request: {request}")
+        resp = adyen_client.payment.modifications.refund(request)
+        return resp.message

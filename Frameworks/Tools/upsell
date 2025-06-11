@@ -1,0 +1,8 @@
+# upsell.py
+import requests
+
+def check_and_upsell(client_id):
+    csat = requests.get(f"/csat/{client_id}").json()
+    if csat >= 80:
+        # call Email Outreach Agent
+        requests.post("/outreach", json={...})

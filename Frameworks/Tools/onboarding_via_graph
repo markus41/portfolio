@@ -1,0 +1,3 @@
+Connect-MgGraph -Scopes "Group.ReadWrite.All"
+$plan = New-MgPlannerPlan -OwnerGroupId $groupId -Title "Onboarding"
+New-MgPlannerTask -PlanId $plan.Id -Title "Kickoff Call" -AssignedTo "$userId"

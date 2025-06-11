@@ -1,0 +1,26 @@
+from fastapi import FastAPI, Header, HTTPException
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+import os, json
+
+app = FastAPI()
+sb_client = ServiceBusClient.from_connection_string(os.getenv("SB_CONNECTION"))
+queue_name = "incoming-events"
+
+@app.post("/events")
+async def ingest_event(
+    event: dict,
+    x_tenant: str = Header(...),
+    trace_id: str = Header(None)
+):
+    # 1) Basic auth / HMAC / JWT check omitted for brevity
+    if "event_type" not in event:
+        raise HTTPException(400, "Missing event_type")
+    event["tenant_id"] = x_tenant
+    event["meta"] = {"trace_id": trace_id}
+    msg = ServiceBusMessage(
+        json.dumps(event),
+        session_id=event["tenant_id"]
+    )
+    with sb_client.get_queue_sender(queue_name) as sender:
+        sender.send_messages(msg)
+    return {"status": "queued", "trace_id": trace_id}

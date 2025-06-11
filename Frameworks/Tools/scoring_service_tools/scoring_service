@@ -1,0 +1,15 @@
+# scoring_service.py
+from flask import Flask, request
+import xgboost as xgb
+
+app = Flask(__name__)
+model = xgb.Booster()
+model.load_model("lead_score.model")
+
+@app.post("/score")
+def score():
+    features = request.json["features"]
+    dmatrix = xgb.DMatrix([features])
+    score = model.predict(dmatrix)[0] * 100
+    tier = "hot" if score >= 75 else "warm" if score >= 45 else "cold"
+    return {"score": score, "tier": tier}

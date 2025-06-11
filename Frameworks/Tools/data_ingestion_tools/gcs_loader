@@ -1,0 +1,27 @@
+# Tools/data_ingestion_tools/gcs_loader.py
+
+from google.cloud import storage
+import pandas as pd
+import io
+from ..Engines.logger import get_logger
+from ..Engines.constants import GCS_BUCKET_NAME, GOOGLE_APPLICATION_CREDENTIALS
+
+# Ensure GOOGLE_APPLICATION_CREDENTIALS is set in env
+logger = get_logger(__name__)
+
+class GCSLoader:
+    def __init__(self):
+        logger.info(f"Connecting to GCS bucket '{GCS_BUCKET_NAME}'")
+        self.client = storage.Client()
+        self.bucket = self.client.bucket(GCS_BUCKET_NAME)
+
+    def download_csv(self, blob_name: str) -> pd.DataFrame:
+        """
+        Download a CSV blob from GCS and load into a DataFrame.
+        """
+        logger.info(f"Downloading GCS blob '{blob_name}' as CSV")
+        blob = self.bucket.blob(blob_name)
+        data = blob.download_as_bytes()
+        df = pd.read_csv(io.BytesIO(data))
+        logger.info(f"Loaded {len(df)} rows from GCS")
+        return df

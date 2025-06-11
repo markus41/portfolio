@@ -1,0 +1,38 @@
+# Tools/payment_tools/braintree_tool.py
+
+import braintree
+from ..Engines.constants import (
+    BRAINTREE_MERCHANT_ID,
+    BRAINTREE_PUBLIC_KEY,
+    BRAINTREE_PRIVATE_KEY
+)
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+gateway = braintree.BraintreeGateway(
+    braintree.Configuration(
+        braintree.Environment.Sandbox,
+        merchant_id=BRAINTREE_MERCHANT_ID,
+        public_key=BRAINTREE_PUBLIC_KEY,
+        private_key=BRAINTREE_PRIVATE_KEY
+    )
+)
+
+class BraintreeTool:
+    """
+    Create transactions and subscriptions via Braintree.
+    """
+
+    def sale(self, **kwargs) -> dict:
+        logger.info(f"Braintree sale with: {kwargs}")
+        result = gateway.transaction.sale(kwargs)
+        return result.transaction.__dict__ if result.is_success else {"error": result.message}
+
+    def refund(self, transaction_id: str, amount: str = None) -> dict:
+        logger.info(f"Braintree refund: {transaction_id}, amount={amount}")
+        if amount:
+            result = gateway.transaction.refund(transaction_id, amount)
+        else:
+            result = gateway.transaction.refund(transaction_id)
+        return result.transaction.__dict__ if result.is_success else {"error": result.message}

@@ -1,0 +1,20 @@
+# src/tests/test_orchestrator.py
+
+import pytest
+from fastapi.testclient import TestClient
+from src.orchestrator import app
+
+client = TestClient(app)
+
+def test_track_visitor(monkeypatch):
+    monkeypatch.setattr("src.orchestrator.memory.store", lambda *args, **kwargs: True)
+    payload = {"visitor_id": "v1", "page": "/home", "timestamp": "2025-06-10T12:00:00Z"}
+    resp = client.post("/track-visitor", json=payload)
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "logged"
+
+def test_enrich_lead_not_found(monkeypatch):
+    def fake_run(_): return {"status": "not_found"}
+    monkeypatch.setattr("src.orchestrator.enrich_agent.run", fake_run)
+    resp = client.post("/enrich-lead", json={"email": "x@y.com", "name": "X"})
+    assert resp.status_code == 404

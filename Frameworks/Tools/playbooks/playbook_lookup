@@ -1,0 +1,2 @@
+GET /playbooks/{tenant_id}/{event_type}/{version}
+ → 200 : YAML

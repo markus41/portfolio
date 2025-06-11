@@ -1,0 +1,33 @@
+# Tools/orchestration_tools/lock_manager.py
+
+import redis
+import uuid
+from contextlib import contextmanager
+from ..Engines.constants import REDIS_URL
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class LockManager:
+    """
+    Distributed lock using Redis SETNX + expiry.
+    """
+
+    def __init__(self, ttl: int = 30):
+        self.client = redis.from_url(REDIS_URL)
+        self.ttl = ttl
+
+    @contextmanager
+    def acquire(self, lock_name: str):
+        token = str(uuid.uuid4())
+        acquired = self.client.set(lock_name, token, nx=True, ex=self.ttl)
+        if not acquired:
+            raise RuntimeError(f"Could not acquire lock {lock_name}")
+        logger.info(f"LockManager → acquired lock {lock_name}")
+        try:
+            yield
+        finally:
+            # ensure we only delete if still ours
+            if self.client.get(lock_name) == token.encode():
+                self.client.delete(lock_name)
+                logger.info(f"LockManager → released lock {lock_name}")

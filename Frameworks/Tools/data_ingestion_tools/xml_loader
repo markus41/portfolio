@@ -1,0 +1,16 @@
+# Tools/data_ingestion_tools/xml_loader.py
+
+import xml.etree.ElementTree as ET
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class XMLLoader:
+    def load(self, file_path: str):
+        """
+        Parse an XML file into an ElementTree.
+        """
+        logger.info(f"Parsing XML from {file_path}")
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        return root

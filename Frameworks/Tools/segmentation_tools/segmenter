@@ -1,0 +1,13 @@
+type Visitor = { visitor_id: string; features: Record<string, any> };
+class Segmenter {
+  async match(visitor: Visitor): Promise<string[]> {
+    const rules = await this.loadRules(visitor.tenant_id);
+    // Evaluate rule DSL…
+    return rules.filter(r => r.evaluate(visitor.features)).map(r => r.id);
+  }
+
+  async activate(segmentId: string, visitorId: string) {
+    // Push to ad-platform queue
+    await this.adQueue.send({segmentId, visitorId});
+  }
+}

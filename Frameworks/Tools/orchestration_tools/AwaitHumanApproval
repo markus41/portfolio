@@ -1,0 +1,29 @@
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+
+public class AwaitHumanApproval
+{
+    [FunctionName("AwaitHumanApproval")]
+    public async Task RunOrchestrator(
+        [OrchestrationTrigger] IDurableOrchestrationContext ctx)
+    {
+        // Input: StepInfo { StepId, ... }
+        var stepInfo = ctx.GetInput<StepInfo>();
+
+        // Wait for external approval event or timeout
+        var approvalEvent = ctx.WaitForExternalEvent<bool>("HumanApproval");
+        var timeoutAt = ctx.CurrentUtcDateTime.AddDays(2);
+        var timeoutTask = ctx.CreateTimer(timeoutAt, CancellationToken.None);
+
+        var completed = await Task.WhenAny(approvalEvent, timeoutTask);
+        bool approved = completed == approvalEvent && approvalEvent.Result;
+
+        // Signal main DAG to continue
+        await ctx.CallActivityAsync("ContinueMainDag", new {
+            stepId = stepInfo.StepId,
+            outcome = approved ? "approved" : "timed_out"
+        });
+    }
+}

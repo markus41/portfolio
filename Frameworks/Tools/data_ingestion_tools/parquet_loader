@@ -1,0 +1,16 @@
+# Tools/data_ingestion_tools/parquet_loader.py
+
+import pandas as pd
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class ParquetLoader:
+    def load(self, file_path: str):
+        """
+        Load a Parquet file into a DataFrame.
+        """
+        logger.info(f"Loading Parquet from {file_path}")
+        df = pd.read_parquet(file_path)
+        logger.info(f"Loaded {len(df)} rows")
+        return df

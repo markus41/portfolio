@@ -1,0 +1,32 @@
+import { ServiceBusClient } from "@azure/service-bus";
+import { CosmosClient } from "@azure/cosmos";
+import { loadPlaybook, materializeRun } from "./playbookManager";
+
+const sbClient = new ServiceBusClient(process.env.SB_CONN);
+const cosmos = new CosmosClient(process.env.COSMOS_CONN);
+
+async function main() {
+  const receiver = sbClient.createSessionReceiver("incoming-events");
+  for await (const msg of receiver.getMessageIterator()) {
+    const event = JSON.parse(msg.body as string);
+    // 1. Load and validate playbook YAML
+    const playbook = await loadPlaybook(event.tenant_id, event.event_type);
+    // 2. Create a new DAG run record in Cosmos
+    const runRecord = await materializeRun(cosmos, playbook, event);
+    // 3. Enqueue first runnable steps
+    const firstSteps = runRecord.getReadySteps();
+    for (const step of firstSteps) {
+      const stepMsg = {
+        runId: runRecord.id,
+        stepId: step.id,
+        attempt: 0
+      };
+      await sbClient
+        .createSender("orchestrator")
+        .sendMessages({ body: stepMsg, sessionId: runRecord.tenant_id });
+    }
+    await msg.complete();
+  }
+}
+
+main().catch(err => console.error(err));

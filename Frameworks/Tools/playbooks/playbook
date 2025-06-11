@@ -1,0 +1,120 @@
+version: 1
+dag:
+  # 1. Identify & profile visitors
+  - id: visitor_profile
+    agent: Visitor Tracking Agent
+    needs: []
+
+  # 2. Segment into audiences & trigger ads/popups
+  - id: segmentation
+    agent: Segmentation & Ad-Targeting Agent
+    needs: [visitor_profile]
+  - id: ad_activation
+    agent: Segmentation & Ad-Targeting Agent
+    needs: [segmentation]
+
+  # 3. Engage via chatbot (qualification) in parallel
+  - id: chat_qualification
+    agent: Chatbot Agent
+    needs: [visitor_profile]
+
+  # 4. Capture any inbound lead (form, email, phone, chat)
+  - id: lead_capture
+    agent: Lead Capture Agent
+    needs: [ad_activation, chat_qualification]
+    async: true
+    timeout: 5d
+
+  # 5. Enrich, score, and enter into CRM
+  - id: enrich_lead
+    agent: Lead Enrichment Agent
+    needs: [lead_capture]
+  - id: score_lead
+    agent: Lead Scoring Agent
+    needs: [enrich_lead]
+  - id: crm_entry
+    agent: CRM Entry / Dedup Agent
+    needs: [score_lead]
+
+  # 6. Outbound nurture via email
+  - id: email_outreach
+    agent: Email Outreach Agent
+    needs: [crm_entry]
+  - id: wait_for_email_reply
+    agent: Email Outreach Agent
+    needs: [email_outreach]
+    async: true
+    timeout: 7d
+
+  # 7. Branch on email reply
+  - id: handle_positive_reply
+    agent: Scheduling Agent
+    needs: [wait_for_email_reply]
+    when: "{{wait_for_email_reply.outcome == 'positive_reply'}}"
+  - id: handle_no_reply
+    agent: Notification Agent
+    needs: [wait_for_email_reply]
+    when: "{{wait_for_email_reply.outcome == 'no_response'}}"
+
+  # 8. Book the meeting
+  - id: schedule_meeting
+    agent: Scheduling Agent
+    needs: [handle_positive_reply]
+
+  # 9. Monitor deal progression
+  - id: pipeline_monitor
+    agent: CRM Pipeline Agent
+    needs: [crm_entry, schedule_meeting]
+
+  # 10. Generate & approve proposal
+  - id: proposal_generation
+    agent: Proposal Generator Agent
+    needs: [pipeline_monitor]
+    when: "{{pipeline_monitor.stage == 'Proposal Requested'}}"
+  - id: proposal_approval
+    agent: Human Approval Agent
+    needs: [proposal_generation]
+    async: true
+    timeout: 2d
+
+  # 11. Negotiate and send contract
+  - id: negotiation
+    agent: Negotiation Agent
+    needs: [proposal_approval]
+  - id: send_contract
+    agent: Contract Agent
+    needs: [negotiation]
+  - id: wait_for_contract_sign
+    agent: Contract Agent
+    needs: [send_contract]
+    async: true
+    timeout: 7d
+
+  # 12. Kick off onboarding
+  - id: onboarding
+    agent: Onboarding Agent
+    needs: [wait_for_contract_sign]
+
+  # 13. Post-sale CSAT checks at milestones
+  - id: csat_25
+    agent: CSAT Checker Agent
+    needs: [onboarding]
+    timeout: 14d
+  - id: csat_50
+    agent: CSAT Checker Agent
+    needs: [csat_25]
+    timeout: 30d
+  - id: csat_100
+    agent: CSAT Checker Agent
+    needs: [csat_50]
+    timeout: 60d
+
+  # 14. Upsell & Referral triggers based on CSAT
+  - id: upsell
+    agent: Upsell Agent
+    needs: [csat_100]
+    when: "{{csat_100.score >= 80}}"
+  - id: referral
+    agent: Referral Agent
+    needs: [csat_100]
+    when: "{{csat_100.score >= 90}}"

@@ -1,0 +1,20 @@
+# Tools/orchestration_tools/metrics_manager.py
+
+from ..metrics_tools.prometheus_tool import PrometheusPusher
+from ..Engines.constants import PROMETHEUS_PUSHGATEWAY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class MetricsManager:
+    """
+    High-level wrapper around PrometheusPusher for orchestrator metrics.
+    """
+
+    def __init__(self, job: str = "workflow"):
+        self.pusher = PrometheusPusher(job)
+
+    def record_duration(self, step: str, duration: float, success: bool = True):
+        labels = {"step": step, "status": "success" if success else "failure"}
+        logger.info(f"MetricsManager → {step} took {duration}s, success={success}")
+        self.pusher.push_metric("step_duration_seconds", duration, labels)

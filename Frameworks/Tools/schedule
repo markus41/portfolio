@@ -1,0 +1,7 @@
+// schedule.js
+const { Client } = require('@microsoft/microsoft-graph-client');
+
+async function createEvent(accessToken, userId, start, end) {
+  const client = Client.init({ authProvider: done => done(null, accessToken) });
+  await client.api(`/users/${userId}/events`).post({ start:{...}, end:{...}, subject:"Meeting" });
+}

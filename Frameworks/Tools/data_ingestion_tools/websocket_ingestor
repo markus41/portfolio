@@ -1,0 +1,32 @@
+# Tools/data_ingestion_tools/websocket_ingestor.py
+
+import websocket
+import json
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class WebsocketIngestor:
+    def __init__(self, ws_url: str):
+        logger.info(f"Connecting to WebSocket {ws_url}")
+        self.ws = websocket.WebSocketApp(ws_url, on_message=self._on_message)
+        self.callbacks = []
+
+    def _on_message(self, ws, message):
+        data = json.loads(message)
+        logger.info(f"Received WS message: {data}")
+        for cb in self.callbacks:
+            cb(data)
+
+    def subscribe(self, callback):
+        """
+        Register a callback to handle each incoming message.
+        """
+        self.callbacks.append(callback)
+
+    def start(self):
+        """
+        Start the WebSocket event loop.
+        """
+        logger.info("Starting WebSocket listener")
+        self.ws.run_forever()

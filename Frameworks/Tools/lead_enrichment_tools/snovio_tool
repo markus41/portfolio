@@ -1,0 +1,38 @@
+# Tools/enrichment_tools/snovio_tool.py
+
+import requests
+from ..Engines.constants import SNOVIO_API_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class SnovioTool:
+    """
+    Find and verify emails via Snov.io API.
+    """
+    BASE_URL = "https://api.snov.io/v2"
+    
+    def authenticate(self) -> str:
+        resp = requests.post(f"{self.BASE_URL}/oauth/access_token", data={
+            "grant_type": "client_credentials",
+            "client_id": SNOVIO_API_KEY
+        })
+        resp.raise_for_status()
+        token = resp.json().get("access_token")
+        return token
+
+    def find_domain_emails(self, domain: str) -> dict:
+        token = self.authenticate()
+        headers = {"Authorization": f"Bearer {token}"}
+        logger.info(f"Snovio find by domain {domain}")
+        resp = requests.get(f"{self.BASE_URL}/domain-emails-with-info", params={"domain": domain}, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+
+    def verify_email(self, email: str) -> dict:
+        token = self.authenticate()
+        headers = {"Authorization": f"Bearer {token}"}
+        logger.info(f"Snovio verify {email}")
+        resp = requests.post(f"{self.BASE_URL}/email-verification", json={"email": email}, headers=headers)
+        resp.raise_for_status()
+        return resp.json()

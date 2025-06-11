@@ -1,0 +1,23 @@
+# Tools/enrichment_tools/zoominfo_tool.py
+
+import requests
+from ..Engines.constants import ZOOMINFO_API_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class ZoomInfoTool:
+    """
+    Fetch company & contact data via ZoomInfo Enrich API.
+    """
+    BASE_URL = "https://api.zoominfo.com/lookup"
+
+    def enrich(self, email: str = None, domain: str = None) -> dict:
+        headers = {"api_key": ZOOMINFO_API_KEY}
+        payload = {}
+        if email:  payload["emailAddress"] = email
+        if domain: payload["companyDomain"] = domain
+        logger.info(f"ZoomInfo enrich for {email or domain}")
+        resp = requests.post(self.BASE_URL, json=payload, headers=headers)
+        resp.raise_for_status()
+        return resp.json()

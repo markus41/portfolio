@@ -1,0 +1,35 @@
+# Tools/visitor_tracking_tools/session_tracker.py
+
+import uuid
+import time
+from ..visitor_tracking_tools.redis_cache import RedisCache  # reuse your RedisCache
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class SessionTracker:
+    """
+    Create and manage user sessions in Redis.
+    """
+
+    TTL = 60 * 60 * 24  # 24h session timeout
+
+    def __init__(self):
+        self.cache = RedisCache()
+
+    def start_session(self, user_id: str) -> str:
+        session_id = str(uuid.uuid4())
+        key = f"session:{user_id}:{session_id}"
+        self.cache.set(key, time.time(), ttl=self.TTL)
+        logger.info(f"Started session {session_id} for user {user_id}")
+        return session_id
+
+    def refresh_session(self, user_id: str, session_id: str):
+        key = f"session:{user_id}:{session_id}"
+        self.cache.set(key, time.time(), ttl=self.TTL)
+        logger.info(f"Refreshed session {session_id} for user {user_id}")
+
+    def end_session(self, user_id: str, session_id: str):
+        key = f"session:{user_id}:{session_id}"
+        self.cache.client.delete(key)
+        logger.info(f"Ended session {session_id} for user {user_id}")

@@ -1,0 +1,22 @@
+# Tools/enrichment_tools/people_data_labs_tool.py
+
+import requests
+from ..Engines.constants import PEOPLE_DATA_LABS_API_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class PeopleDataLabsTool:
+    """
+    Enrich a person by email or phone via People Data Labs.
+    """
+    BASE_URL = "https://api.peopledatalabs.com/v5/person/enrich"
+
+    def enrich(self, email: str = None, phone: str = None) -> dict:
+        params = {"api_key": PEOPLE_DATA_LABS_API_KEY}
+        if email:  params["email"] = email
+        if phone:  params["phone"] = phone
+        logger.info(f"PDL enrich request for {email or phone}")
+        resp = requests.get(self.BASE_URL, params=params)
+        resp.raise_for_status()
+        return resp.json()

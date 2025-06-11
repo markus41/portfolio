@@ -1,0 +1,28 @@
+# Tools/enrichment_tools/fullcontact_tool.py
+
+import requests
+from ..Engines.constants import FULLCONTACT_API_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class FullContactTool:
+    """
+    Lookup person & company profiles via FullContact API.
+    """
+    PERSON_URL  = "https://api.fullcontact.com/v3/person.enrich"
+    COMPANY_URL = "https://api.fullcontact.com/v3/company.enrich"
+
+    def enrich_person(self, email: str) -> dict:
+        headers = {"Authorization": f"Bearer {FULLCONTACT_API_KEY}"}
+        logger.info(f"FullContact person.enrich for {email}")
+        resp = requests.post(self.PERSON_URL, json={"email": email}, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+
+    def enrich_company(self, domain: str) -> dict:
+        headers = {"Authorization": f"Bearer {FULLCONTACT_API_KEY}"}
+        logger.info(f"FullContact company.enrich for {domain}")
+        resp = requests.post(self.COMPANY_URL, json={"domain": domain}, headers=headers)
+        resp.raise_for_status()
+        return resp.json()

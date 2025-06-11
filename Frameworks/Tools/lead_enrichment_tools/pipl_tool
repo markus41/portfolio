@@ -1,0 +1,23 @@
+# Tools/enrichment_tools/pipl_tool.py
+
+import requests
+from ..Engines.constants import PIPL_API_KEY
+from ..Engines.logger import get_logger
+
+logger = get_logger(__name__)
+
+class PiplTool:
+    """
+    Search Pipl for person data by email, phone, or name.
+    """
+    BASE_URL = "https://api.pipl.com/search/"
+
+    def search(self, email: str = None, phone: str = None, name: str = None) -> dict:
+        params = {"key": PIPL_API_KEY}
+        if email:  params["email"] = email
+        if phone:  params["phone"] = phone
+        if name:   params["name"]  = name
+        logger.info(f"Pipl search for {email or phone or name}")
+        resp = requests.get(self.BASE_URL, params=params)
+        resp.raise_for_status()
+        return resp.json()
