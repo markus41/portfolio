@@ -1,0 +1,3 @@
+# PowerShell
+conda create -n autogenstudio python=3.11 -y
+conda activate autogenstudio

@@ -1,0 +1,590 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "Full autonomous sales & marketing agent hierarchy for Brookside BI.",
+  "label": "Sales AI Agentic System",
+  "config": {
+    "participants": [
+
+      /* ───────────────────────────────────────────
+         TOP-LEVEL ORCHESTRATOR
+         ─────────────────────────────────────────── */
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "label": "Orchestrator Agent",
+        "description": "Routes events, delegates, retries, escalates.",
+        "config": {
+          "name": "orchestrator_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "label": "OpenAIChatCompletionClient",
+            "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "label": "log_event",
+                  "config": {
+                    "name": "log_event",
+                    "description": "Audit-log entry",
+                    "source_code": "def log_event(event_id: str, step: str, payload=None):\n print({'event_id': event_id, 'step': step, 'payload': payload});\n return {'status':'logged'}"
+                  }
+                },
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "label": "invoke_agent",
+                  "config": {
+                    "name": "invoke_agent",
+                    "description": "RPC wrapper",
+                    "source_code": "def invoke_agent(agent_id: str, input):\n print(f'Invoking {agent_id}');\n return {'status':'done','agent':agent_id}"
+                  }
+                },
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "label": "notify_human",
+                  "config": {
+                    "name": "notify_human",
+                    "description": "Escalate to human",
+                    "source_code": "def notify_human(severity:str,message:str):\n print(f'[{severity.upper()}] {message}');\n return {'status':'sent'}"
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "system_message": "You are the Orchestrator Agent … respond TERMINATE when the parent event is complete.",
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}"
+        }
+      },
+
+      /* ───────────────────────────────────────────
+         LEAD INTAKE TEAM
+         ─────────────────────────────────────────── */
+      {
+        "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+        "component_type": "team",
+        "label": "Lead Intake Team",
+        "description": "Captures, enriches, scores & dedups inbound leads.",
+        "config": {
+          "participants": [
+
+            /* Lead Capture */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Lead Capture Agent",
+              "config": {
+                "name": "lead_capture_agent",
+                "model_client": {
+                  "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                  "label": "OpenAIChatCompletionClient",
+                  "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" }
+                },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      {
+                        "provider": "autogen_core.tools.FunctionTool",
+                        "label": "lead_capture",
+                        "config": {
+                          "name": "lead_capture",
+                          "description": "Normalize raw lead",
+                          "source_code": "def lead_capture(raw_input:dict):\n print('Captured',raw_input);\n return {'status':'captured','lead':raw_input}"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx", "config": {} },
+                "system_message": "Capture raw inbound data, output structured lead -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Lead Enrichment */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Lead Enrichment Agent",
+              "config": {
+                "name": "lead_enrichment_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      {
+                        "provider": "autogen_core.tools.FunctionTool",
+                        "label": "lead_enrichment",
+                        "config": {
+                          "name": "lead_enrichment",
+                          "source_code": "def lead_enrichment(lead_id:str):\n print('Enrich',lead_id);\n return {'status':'enriched','lead_id':lead_id}"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Enrich leads with firmographics -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Lead Scoring */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Lead Scoring Agent",
+              "config": {
+                "name": "lead_scoring_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      {
+                        "provider": "autogen_core.tools.FunctionTool",
+                        "label": "lead_scoring",
+                        "config": {
+                          "name": "lead_scoring",
+                          "source_code": "def lead_scoring(lead_id:str):\n print('Score',lead_id);\n return {'status':'scored','lead_id':lead_id,'score':80}"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Score leads and recommend next action -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* CRM Dedup / Entry */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "CRM Entry Dedup Agent",
+              "config": {
+                "name": "crm_entry_dedup_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      {
+                        "provider": "autogen_core.tools.FunctionTool",
+                        "label": "crm_entry_dedup",
+                        "config": {
+                          "name": "crm_entry_dedup",
+                          "source_code": "def crm_entry_dedup(lead_data:dict):\n print('CRM sync',lead_data);\n return {'status':'crm_synced'}"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Create/update CRM records, merge duplicates -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            }
+          ],
+          "termination_condition": {
+            "provider": "autogen_agentchat.base.OrTerminationCondition",
+            "component_type": "termination",
+            "label": "OrTermination",
+            "config": {
+              "conditions": [
+                { "provider": "autogen_agentchat.conditions.TextMentionTermination", "component_type": "termination", "label": "TermOnText", "config": { "text": "TERMINATE" } },
+                { "provider": "autogen_agentchat.conditions.MaxMessageTermination", "component_type": "termination", "label": "TermOnMax", "config": { "max_messages": 40 } }
+              ]
+            }
+          }
+        }
+      },
+
+      /* ───────────────────────────────────────────
+         OUTREACH TEAM
+         ─────────────────────────────────────────── */
+      {
+        "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+        "component_type": "team",
+        "label": "Outreach Team",
+        "description": "Segments, triggers campaigns, handles email/chat.",
+        "config": {
+          "participants": [
+
+            /* Segmentation */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Segmentation & Targeting Agent",
+              "config": {
+                "name": "segmentation_targeting_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "segmentation_and_targeting", "config": { "name": "segmentation_and_targeting", "source_code": "def segmentation_and_targeting(lead_id:str):\n print('Segment',lead_id);\n return {'status':'segmented','segment':'A'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Assign audience segment & trigger campaign -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Email Outreach */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Email Outreach Agent",
+              "config": {
+                "name": "email_outreach_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "email_outreach", "config": { "name": "email_outreach", "source_code": "def email_outreach(lead_id:str,email_payload:dict):\n print('Email',lead_id);\n return {'status':'email_sent'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Draft & send personalized emails -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Chatbot */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Chatbot Agent",
+              "config": {
+                "name": "chatbot_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "chatbot_agent", "config": { "name": "chatbot_agent", "source_code": "def chatbot_agent(visitor_id:str,question:str):\n print('Chatbot',visitor_id);\n return {'status':'answered'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Live Q&A with visitors; escalate if unsure -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            }
+          ],
+          "termination_condition": {
+            "provider": "autogen_agentchat.base.OrTerminationCondition",
+            "component_type": "termination",
+            "label": "OrTermination",
+            "config": {
+              "conditions": [
+                { "provider": "autogen_agentchat.conditions.TextMentionTermination", "component_type": "termination", "label": "TermOnText", "config": { "text": "TERMINATE" } },
+                { "provider": "autogen_agentchat.conditions.MaxMessageTermination", "component_type": "termination", "label": "TermOnMax", "config": { "max_messages": 40 } }
+              ]
+            }
+          }
+        }
+      },
+
+      /* ───────────────────────────────────────────
+         PIPELINE TEAM
+         ─────────────────────────────────────────── */
+      {
+        "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+        "component_type": "team",
+        "label": "Pipeline Team",
+        "description": "Proposal, negotiation, contract & onboarding.",
+        "config": {
+          "participants": [
+
+            /* Proposal Generator */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Proposal Generator Agent",
+              "config": {
+                "name": "proposal_generator_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "generate_proposal", "config": { "name": "generate_proposal", "source_code": "def generate_proposal(client_id:str,deal:dict):\n print('Proposal',client_id);\n return {'status':'generated'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Generate & deliver proposals -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Negotiation */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Negotiation Agent",
+              "config": {
+                "name": "negotiation_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "negotiation_agent", "config": { "name": "negotiation_agent", "source_code": "def negotiation_agent(deal_id:str,payload:dict):\n print('Negotiate',deal_id);\n return {'status':'negotiation_complete'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Handle pricing & guardrails -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Contract */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Contract Agent",
+              "config": {
+                "name": "contract_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "contract_agent", "config": { "name": "contract_agent", "source_code": "def contract_agent(contact_email:str,payload:dict):\n print('Contract',contact_email);\n return {'status':'contract_sent'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Send contracts for e-signature & track -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Onboarding */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Onboarding Agent",
+              "config": {
+                "name": "onboarding_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "onboarding_agent", "config": { "name": "onboarding_agent", "source_code": "def onboarding_agent(client_id:str):\n print('Onboard',client_id);\n return {'status':'onboarding_started'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Kick off welcome & project tasks -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* CRM Pipeline (follow-ups) */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "CRM Pipeline Agent",
+              "config": {
+                "name": "crm_pipeline_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "crm_pipeline_agent", "config": { "name": "crm_pipeline_agent", "source_code": "def crm_pipeline_agent(deal_id:str):\n print('Pipeline',deal_id);\n return {'status':'pipeline_checked'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Monitor deal stages & nudge follow-ups -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            }
+          ],
+          "termination_condition": {
+            "provider": "autogen_agentchat.base.OrTerminationCondition",
+            "component_type": "termination",
+            "label": "OrTermination",
+            "config": {
+              "conditions": [
+                { "provider": "autogen_agentchat.conditions.TextMentionTermination", "component_type": "termination", "label": "TermOnText", "config": { "text": "TERMINATE" } },
+                { "provider": "autogen_agentchat.conditions.MaxMessageTermination", "component_type": "termination", "label": "TermOnMax", "config": { "max_messages": 60 } }
+              ]
+            }
+          }
+        }
+      },
+
+      /* ───────────────────────────────────────────
+         CUSTOMER SUCCESS TEAM
+         ─────────────────────────────────────────── */
+      {
+        "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+        "component_type": "team",
+        "label": "Customer Success Team",
+        "description": "CSAT, upsell, referral",
+        "config": {
+          "participants": [
+
+            /* CSAT Checker */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "CSAT Checker Agent",
+              "config": {
+                "name": "csat_checker_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "csat_checker_agent", "config": { "name": "csat_checker_agent", "source_code": "def csat_checker_agent(client_id:str):\n print('CSAT',client_id);\n return {'status':'csat_sent'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Send CSAT & recover low scores -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+            /* Upsell */
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Upsell Agent",
+              "config": {
+                "name": "upsell_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "upsell_agent", "config": { "name": "upsell_agent", "source_code": "def upsell_agent(client_id:str,offer:dict):\n print('Upsell',client_id);\n return {'status':'upsell_sent'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Detect upsell/cross-sell signals -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            },
+
+
+            {
+              "provider": "autogen_agentchat.agents.AssistantAgent",
+              "label": "Referral Agent",
+              "config": {
+                "name": "referral_agent",
+                "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+                "workbench": {
+                  "provider": "autogen_core.tools.StaticWorkbench",
+                  "label": "StaticWorkbench",
+                  "config": {
+                    "tools": [
+                      { "provider": "autogen_core.tools.FunctionTool", "label": "referral_agent", "config": { "name": "referral_agent", "source_code": "def referral_agent(client_id:str):\n print('Referral',client_id);\n return {'status':'referral_requested'}" } }
+                    ]
+                  }
+                },
+                "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+                "system_message": "Request & track referrals -> TERMINATE.",
+                "reflect_on_tool_use": true,
+                "tool_call_summary_format": "{result}"
+              }
+            }
+          ],
+          "termination_condition": {
+            "provider": "autogen_agentchat.base.OrTerminationCondition",
+            "component_type": "termination",
+            "label": "OrTermination",
+            "config": {
+              "conditions": [
+                { "provider": "autogen_agentchat.conditions.TextMentionTermination", "component_type": "termination", "label": "TermOnText", "config": { "text": "TERMINATE" } },
+                { "provider": "autogen_agentchat.conditions.MaxMessageTermination", "component_type": "termination", "label": "TermOnMax", "config": { "max_messages": 40 } }
+              ]
+            }
+          }
+        }
+      },
+
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "label": "Visitor Tracking Agent",
+        "description": "Standalone agent logging page views.",
+        "config": {
+          "name": "visitor_tracking_agent",
+          "model_client": { "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient", "label": "OpenAIChatCompletionClient", "config": { "model": "gpt-4o-mini", "api_key": "YOUR_API_KEY_HERE" } },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                { "provider": "autogen_core.tools.FunctionTool", "label": "visitor_tracking", "config": { "name": "visitor_tracking", "source_code": "def visitor_tracking(visitor:dict):\n print('Track',visitor);\n return {'status':'tracked'}" } }
+              ]
+            }
+          },
+          "model_context": { "provider": "autogen_core.model_context.UnboundedChatCompletionContext", "label": "Ctx","config": {} },
+          "system_message": "Fingerprint site visitors & log pages -> TERMINATE.",
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}"
+        }
+      }
+    ],
+
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "GlobalTermination",
+      "config": {
+        "conditions": [
+          { "provider": "autogen_agentchat.conditions.TextMentionTermination", "component_type": "termination", "label": "TermOnText", "config": { "text": "TERMINATE" } },
+          { "provider": "autogen_agentchat.conditions.MaxMessageTermination", "component_type": "termination", "label": "TermOnMax", "config": { "max_messages": 200 } }
+        ]
+      }
+    },
+
+    "emit_team_events": false
+  }
+}
