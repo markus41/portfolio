@@ -1,0 +1,1238 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "Full autonomous sales & marketing agent hierarchy for Brookside BI.",
+  "label": "Sales AI Agentic System",
+  "config": {
+    "participants": [
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Central coordinator that routes events between all sales-automation agents, enforces sequence, retries, logging and human-escalation rules.",
+        "label": "Orchestrator Agent",
+        "config": {
+          "name": "orchestrator_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench holding a static set of callable tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "log_event",
+                  "description": "Write a line to the central audit log and chronological trace.",
+                  "config": {
+                    "name": "log_event",
+                    "description": "Write a line to the central audit log and chronological trace.",
+                    "source_code": "def log_event(event_id: str, step: str, payload=None):\\n    print({\\\"event_id\\\": event_id, \\\"step\\\": step, \\\"payload\\\": payload})\\n    return {\\\"status\\\": \\\"logged\\\"}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                },
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "invoke_agent",
+                  "description": "Call a specialised expert agent and wait for its status response.",
+                  "config": {
+                    "name": "invoke_agent",
+                    "description": "Call a specialised expert agent and wait for its status response.",
+                    "source_code": "def invoke_agent(agent_id: str, input):\\n    print(f\\\"Invoking {agent_id} with input: {input}\\\")\\n    return {\\\"status\\\": \\\"done\\\", \\\"agent\\\": agent_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                },
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "notify_human",
+                  "description": "Escalate an issue or decision to a human operator.",
+                  "config": {
+                    "name": "notify_human",
+                    "description": "Escalate an issue or decision to a human operator.",
+                    "source_code": "def notify_human(severity: str, message: str):\\n    print(f\\\"[{severity.upper()}] {message}\\\")\\n    return {\\\"status\\\": \\\"sent\\\", \\\"severity\\\": severity}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "An agent that provides assistance with ability to use tools.",
+          "system_message": "You are the Orchestrator Agent inside Brookside BI’s autonomous sales system.\n\n**Goal**: For every incoming event object, decide the minimal set of specialised agents or tools needed to advance the business workflow and return a compact JSON instruction list.\n\n**Rules**\n1. Never perform the business action yourself – only delegate.\n2. After delegating, wait for each child agent’s {status:\"done\"} reply, retry up to 3× on {status:\"error\"}, then mark the parent event complete.\n3. Escalate by calling notify_human() if retries fail or confidence < 0.7.\n4. Log every decision first with log_event().\n5. When all subtasks are finished, respond exactly **TERMINATE**.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for normalizing inbound forms, emails, or chats as structured leads.",
+        "label": "Lead Capture Agent",
+        "config": {
+          "name": "lead_capture_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench holding tools for lead capture.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "lead_capture",
+                  "description": "Normalize and register inbound web forms, emails, or chats as a structured lead.",
+                  "config": {
+                    "name": "lead_capture",
+                    "description": "Normalize and register inbound web forms, emails, or chats as a structured lead.",
+                    "source_code": "def lead_capture(raw_input: dict):\\n    print(f'Captured lead: {raw_input}')\\n    return {'status': 'captured', 'lead': raw_input}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for normalizing inbound forms, emails, or chats as structured leads.",
+          "system_message": "You are the Lead Capture Agent. Your job is to receive unstructured inbound form, email, or chat data and produce a normalized lead object. Use the lead_capture tool. When done, return the new lead ID.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for enriching leads with firmographic and social data.",
+        "label": "Lead Enrichment Agent",
+        "config": {
+          "name": "lead_enrichment_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench holding tools for lead enrichment.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "lead_enrichment",
+                  "description": "Enrich a lead with additional firmographics (Clearbit, LinkedIn, etc).",
+                  "config": {
+                    "name": "lead_enrichment",
+                    "description": "Enrich a lead with additional firmographics (Clearbit, LinkedIn, etc).",
+                    "source_code": "def lead_enrichment(lead_id: str):\\n    print(f'Enriching lead {lead_id}')\\n    return {'status': 'enriched', 'lead_id': lead_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for enriching leads with firmographic and social data.",
+          "system_message": "You are the Lead Enrichment Agent. Your job is to add firmographic and social data to a lead record using the lead_enrichment tool. Return the enriched lead object.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for scoring leads using ML or rule-based logic.",
+        "label": "Lead Scoring Agent",
+        "config": {
+          "name": "lead_scoring_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench holding tools for lead scoring.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "lead_scoring",
+                  "description": "Score a lead using machine learning or rule-based criteria.",
+                  "config": {
+                    "name": "lead_scoring",
+                    "description": "Score a lead using machine learning or rule-based criteria.",
+                    "source_code": "def lead_scoring(lead_id: str):\\n    print(f'Scoring lead {lead_id}')\\n    return {'status': 'scored', 'lead_id': lead_id, 'score': 80}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for scoring leads using ML or rule-based logic.",
+          "system_message": "You are the Lead Scoring Agent. Score leads with the lead_scoring tool. Return the score and recommended next steps.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for drafting and sending personalized sales emails.",
+        "label": "Email Outreach Agent",
+        "config": {
+          "name": "email_outreach_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench holding tools for email outreach.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "email_outreach",
+                  "description": "Draft and send personalized emails to leads.",
+                  "config": {
+                    "name": "email_outreach",
+                    "description": "Draft and send personalized emails to leads.",
+                    "source_code": "def email_outreach(lead_id: str, email_payload: dict):\\n    print(f'Sending outreach email to lead {lead_id}')\\n    return {'status': 'email_sent', 'lead_id': lead_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for drafting and sending personalized sales emails.",
+          "system_message": "You are the Email Outreach Agent. Generate and send personalized email messages using the email_outreach tool. Return the delivery status.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for generating sales proposals (Word/PDF) and delivering to leads.",
+        "label": "Proposal Generator Agent",
+        "config": {
+          "name": "proposal_generator_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for proposal generation tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "generate_proposal",
+                  "description": "Generate a sales proposal document.",
+                  "config": {
+                    "name": "generate_proposal",
+                    "description": "Generate a sales proposal document.",
+                    "source_code": "def generate_proposal(client_id: str, deal_details: dict):\\n    print(f'Generating proposal for {client_id} with {deal_details}')\\n    return {'status': 'generated', 'client_id': client_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for generating sales proposals (Word/PDF) and delivering to leads.",
+          "system_message": "You are the Proposal Generator Agent. Build proposal documents (Word/PDF) using generate_proposal, and deliver them to clients. Return the proposal link or delivery status.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for handling pricing negotiation and discount enforcement.",
+        "label": "Negotiation Agent",
+        "config": {
+          "name": "negotiation_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for negotiation and discount enforcement.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "negotiation_agent",
+                  "description": "Handle pricing questions and enforce discount guardrails.",
+                  "config": {
+                    "name": "negotiation_agent",
+                    "description": "Handle pricing questions and enforce discount guardrails.",
+                    "source_code": "def negotiation_agent(deal_id: str, negotiation_payload: dict):\\n    print(f'Negotiating deal {deal_id}')\\n    return {'status': 'negotiation_complete', 'deal_id': deal_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for handling pricing negotiation and discount enforcement.",
+          "system_message": "You are the Negotiation Agent. Handle pricing questions and ensure discounts do not violate business guardrails. Use negotiation_agent tool. Return results or escalate if outside guardrails.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for sending contracts for e-signature and tracking their status.",
+        "label": "Contract Agent",
+        "config": {
+          "name": "contract_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for contract management tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "contract_agent",
+                  "description": "Send contracts for e-signature and track signatures.",
+                  "config": {
+                    "name": "contract_agent",
+                    "description": "Send contracts for e-signature and track signatures.",
+                    "source_code": "def contract_agent(contact_email: str, contract_payload: dict):\\n    print(f'Sending contract to {contact_email}')\\n    return {'status': 'contract_sent', 'contact_email': contact_email}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for sending contracts for e-signature and tracking their status.",
+          "system_message": "You are the Contract Agent. Prepare and send contracts for e-signature using contract_agent tool, and monitor for signature status. Escalate if client is unresponsive.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for starting onboarding, welcome sequences, and project tasks.",
+        "label": "Onboarding Agent",
+        "config": {
+          "name": "onboarding_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for onboarding automation.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "onboarding_agent",
+                  "description": "Kick off welcome series and client project tasks.",
+                  "config": {
+                    "name": "onboarding_agent",
+                    "description": "Kick off welcome series and client project tasks.",
+                    "source_code": "def onboarding_agent(client_id: str):\\n    print(f'Onboarding client {client_id}')\\n    return {'status': 'onboarding_started', 'client_id': client_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for starting onboarding, welcome sequences, and project tasks.",
+          "system_message": "You are the Onboarding Agent. Start client onboarding sequences and project tasks using onboarding_agent tool. Escalate to humans if onboarding stalls.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for sending CSAT surveys and triggering customer recovery.",
+        "label": "CSAT Checker Agent",
+        "config": {
+          "name": "csat_checker_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for CSAT survey tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "csat_checker_agent",
+                  "description": "Send CSAT surveys and start recovery if low.",
+                  "config": {
+                    "name": "csat_checker_agent",
+                    "description": "Send CSAT surveys and start recovery if low.",
+                    "source_code": "def csat_checker_agent(client_id: str):\\n    print(f'CSAT survey for client {client_id}')\\n    return {'status': 'csat_sent', 'client_id': client_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for sending CSAT surveys and triggering customer recovery.",
+          "system_message": "You are the CSAT Checker Agent. Send CSAT surveys and, if a poor rating is detected, start recovery processes or escalate to customer service.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for detecting cross-sell/upsell opportunities and sending offers.",
+        "label": "Upsell Agent",
+        "config": {
+          "name": "upsell_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for upsell and cross-sell automation.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "upsell_agent",
+                  "description": "Detect cross-sell signals and send offers.",
+                  "config": {
+                    "name": "upsell_agent",
+                    "description": "Detect cross-sell signals and send offers.",
+                    "source_code": "def upsell_agent(client_id: str, offer_payload: dict):\\n    print(f'Sending upsell offer to {client_id}')\\n    return {'status': 'upsell_sent', 'client_id': client_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for detecting cross-sell/upsell opportunities and sending offers.",
+          "system_message": "You are the Upsell Agent. Detect cross-sell or upsell signals in customer data, send offers using upsell_agent tool, and report outcome. Escalate if unable to deliver.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for requesting and tracking client referrals.",
+        "label": "Referral Agent",
+        "config": {
+          "name": "referral_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for referral automation.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "referral_agent",
+                  "description": "Request and track referrals from existing clients.",
+                  "config": {
+                    "name": "referral_agent",
+                    "description": "Request and track referrals from existing clients.",
+                    "source_code": "def referral_agent(client_id: str):\\n    print(f'Requesting referral from {client_id}')\\n    return {'status': 'referral_requested', 'client_id': client_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for requesting and tracking client referrals.",
+          "system_message": "You are the Referral Agent. Request referrals from satisfied clients using referral_agent tool and track status. Escalate if referral is not delivered after follow-up.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Live Q&A chatbot for site visitors, with escalation if unsure.",
+        "label": "Chatbot Agent",
+        "config": {
+          "name": "chatbot_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for chatbot tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "chatbot_agent",
+                  "description": "Live Q&A with website visitors, escalating when unsure.",
+                  "config": {
+                    "name": "chatbot_agent",
+                    "description": "Live Q&A with website visitors, escalating when unsure.",
+                    "source_code": "def chatbot_agent(visitor_id: str, question: str):\\n    print(f'Chatbot handling question for visitor {visitor_id}: {question}')\\n    return {'status': 'answered', 'visitor_id': visitor_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Live Q&A chatbot for site visitors, with escalation if unsure.",
+          "system_message": "You are the Chatbot Agent. Engage website visitors in real-time Q&A using chatbot_agent tool. If you do not know an answer, escalate to a human agent.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for fingerprinting site visitors and logging page views.",
+        "label": "Visitor Tracking Agent",
+        "config": {
+          "name": "visitor_tracking_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for visitor tracking.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "visitor_tracking",
+                  "description": "Track and fingerprint website visitors and log page views.",
+                  "config": {
+                    "name": "visitor_tracking",
+                    "description": "Track and fingerprint website visitors and log page views.",
+                    "source_code": "def visitor_tracking(visitor_data: dict):\\n    print(f'Tracking visitor: {visitor_data}')\\n    return {'status': 'tracked', 'visitor': visitor_data}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for fingerprinting site visitors and logging page views.",
+          "system_message": "You are the Visitor Tracking Agent. Log all site visitors and page views using visitor_tracking tool. Escalate any anomalies or bot detection.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for audience clustering and ad/email trigger campaigns.",
+        "label": "Segmentation & Targeting Agent",
+        "config": {
+          "name": "segmentation_targeting_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for segmentation and campaign triggers.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "segmentation_and_targeting",
+                  "description": "Assign leads to audience segments and trigger ad or email campaigns.",
+                  "config": {
+                    "name": "segmentation_and_targeting",
+                    "description": "Assign leads to audience segments and trigger ad or email campaigns.",
+                    "source_code": "def segmentation_and_targeting(lead_id: str):\\n    print(f'Segmenting and targeting lead {lead_id}')\\n    return {'status': 'segmented', 'lead_id': lead_id, 'segment': 'A'}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for audience clustering and ad/email trigger campaigns.",
+          "system_message": "You are the Segmentation & Targeting Agent. Assign audience segments and launch relevant campaigns. Escalate if a lead is ambiguous or cannot be segmented.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for safe creation/update of CRM records and deduplication.",
+        "label": "CRM Entry Dedup Agent",
+        "config": {
+          "name": "crm_entry_dedup_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for CRM entry/deduplication tools.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "crm_entry_dedup",
+                  "description": "Safely create or update CRM records, ensuring no duplicates.",
+                  "config": {
+                    "name": "crm_entry_dedup",
+                    "description": "Safely create or update CRM records, ensuring no duplicates.",
+                    "source_code": "def crm_entry_dedup(lead_data: dict):\\n    print(f'CRM dedup/entry: {lead_data}')\\n    return {'status': 'crm_synced', 'lead': lead_data}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for safe creation/update of CRM records and deduplication.",
+          "system_message": "You are the CRM Entry/Dedup Agent. Safely create or update CRM records, and deduplicate leads/contacts. Escalate if a potential merge conflict is detected.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for monitoring deal stages and nudging sales follow-ups.",
+        "label": "CRM Pipeline Agent",
+        "config": {
+          "name": "crm_pipeline_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for pipeline tracking.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "crm_pipeline_agent",
+                  "description": "Monitor CRM deal stages and nudge sales follow-ups.",
+                  "config": {
+                    "name": "crm_pipeline_agent",
+                    "description": "Monitor CRM deal stages and nudge sales follow-ups.",
+                    "source_code": "def crm_pipeline_agent(deal_id: str):\\n    print(f'Monitoring pipeline for deal {deal_id}')\\n    return {'status': 'pipeline_checked', 'deal_id': deal_id}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for monitoring deal stages and nudging sales follow-ups.",
+          "system_message": "You are the CRM Pipeline Agent. Monitor CRM pipeline stages, nudge owners on follow-up, and escalate stuck deals. Use crm_pipeline_agent tool.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      }
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Agent for pushing metrics to Prometheus for analytics.",
+        "label": "Analytics Agent",
+        "config": {
+          "name": "analytics_agent",
+          "model_client": {
+            "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+            "component_type": "model",
+            "version": 1,
+            "component_version": 1,
+            "description": "Chat completion client for OpenAI hosted models.",
+            "label": "OpenAIChatCompletionClient",
+            "config": {
+              "model": "gpt-4o-mini",
+              "api_key": "Your_api_here"
+            }
+          },
+          "workbench": {
+            "provider": "autogen_core.tools.StaticWorkbench",
+            "component_type": "workbench",
+            "version": 1,
+            "component_version": 1,
+            "description": "Workbench for metrics collection.",
+            "label": "StaticWorkbench",
+            "config": {
+              "tools": [
+                {
+                  "provider": "autogen_core.tools.FunctionTool",
+                  "component_type": "tool",
+                  "version": 1,
+                  "component_version": 1,
+                  "label": "push_metric",
+                  "description": "Push metrics to Prometheus.",
+                  "config": {
+                    "name": "push_metric",
+                    "description": "Push metrics to Prometheus.",
+                    "source_code": "def push_metric(metric: str, value: float, labels=None):\\n    print({'metric': metric, 'value': value, 'labels': labels})\\n    return {'status': 'queued'}",
+                    "global_imports": [],
+                    "has_cancellation_support": false
+                  }
+                }
+              ]
+            }
+          },
+          "model_context": {
+            "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+            "component_type": "chat_completion_context",
+            "version": 1,
+            "component_version": 1,
+            "description": "Unbounded chat context storing every message.",
+            "label": "UnboundedChatCompletionContext",
+            "config": {}
+          },
+          "description": "Agent for pushing metrics to Prometheus for analytics.",
+          "system_message": "You are the Analytics Agent. Record key events and push metrics to Prometheus using push_metric tool.",
+          "model_client_stream": false,
+          "reflect_on_tool_use": true,
+          "tool_call_summary_format": "{result}",
+          "metadata": {}
+        }
+      },
+    ],
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "GlobalTermination",
+      "config": {
+        "conditions": [
+          {
+            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "component_type": "termination",
+            "label": "TermOnText",
+            "config": {
+              "text": "TERMINATE"
+            }
+          },
+          {
+            "provider": "autogen_agentchat.conditions.MaxMessageTermination",
+            "component_type": "termination",
+            "label": "TermOnMax",
+            "config": {
+              "max_messages": 200
+            }
+          }
+        ]
+      }
+    },
+    "emit_team_events": false
+  }
+}

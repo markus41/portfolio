@@ -10,29 +10,19 @@ Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-b
 
 ├── .coding/
 │ └─ Code-style & linting configs
-├── Agents/
-│ ├─ base_agent.py – Core abstract interface
-│ ├─ orchestrator_agent.py – Routes & sequences your workflow
-│ ├─ chatbot_agent.py – Live Q&A chatbot
-│ ├─ contract_agent.py – E-signature & contract tracking
-│ ├─ crm_entry_agent.py – Safe CRM create/update & dedupe
-│ ├─ crm_pipeline_agent.py – Deal stage monitoring & nudges
-│ ├─ csat_checker_agent.py – CSAT survey & recovery flows
-│ ├─ lead_capture_agent.py – Normalize inbound lead data
-│ ├─ lead_enrichment_agent.py – Firmographic & social enrichment
-│ ├─ lead_scoring_agent.py – Rule/ML-based lead scoring
-│ ├─ negotiation_agent.py – Price negotiation & discounts
-│ ├─ onboarding_agent.py – Welcome sequences & tasks
-│ ├─ outreach_agent.py – Draft & send emails via SendGrid
-│ ├─ proposal_generator_agent.py – Generate Word/PDF proposals
-│ ├─ referral_agent.py – Request & track referrals
-│ ├─ scheduling_agent.py – Google Calendar event creation
-│ ├─ segmentation_ad_targeting_agent.py – Audience clustering & ad triggers
-│ ├─ upsell_agent.py – Cross-sell/upsell automation
-│ └─ visitor_tracking_agent.py – Fingerprinting & page-view logging
+├── src/
+│ ├─ agents/ – Core agent implementations
+│ │   ├─ base_agent.py
+│ │   ├─ chatbot_agent.py
+│ │   ├─ crm_pipeline_agent.py
+│ │   ├─ lead_capture_agent.py
+│ │   ├─ segmentation_ad_targeting_agent.py
+│ │   └─ analytics_agent.py
+│ ├─ tools/ – Helper utilities used by agents
+│ ├─ constants.py – Env vars & API keys
+│ └─ teams/ – RoundRobinGroupChat definitions
 ├── Frameworks/
-│ └─ sales_team_full/ – AutoGen JSON & orchestrator configs
-├── Engines/
+│ └─ sales_team_full/ – Legacy AutoGen configs
 │ ├─ constants.py – Env vars & API keys
 │ ├─ logger.py – Standardized structured logging
 │ └─ disqualifier_engine.py – (Example) rule-based gating logic
