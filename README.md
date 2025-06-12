@@ -19,3 +19,7 @@ Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-b
 ```
 
 The `tools` package contains submodules for CRM integrations, email and doc generation, ad campaign helpers and more. Each agent has a corresponding unit test under `tests/`.
+
+### 🏡 Real Estate Expansion
+
+A new `Real Estate Team` demonstrates how the framework can be adapted for other industries. It bundles agents for finding leads, pulling MLS data, creating listings and posting them to major portals. See `src/teams/real_estate_team.json` for the configuration and the accompanying tools under `src/tools/real_estate_tools`.
