@@ -1,0 +1,55 @@
+import json
+import sys
+import types
+from pathlib import Path
+
+import pytest
+
+from src.solution_orchestrator import SolutionOrchestrator
+from src.agents.base_agent import BaseAgent
+
+
+class DummyAgentA(BaseAgent):
+    def run(self, payload):
+        return {"handled_by": "A", **payload}
+
+
+class DummyAgentB(BaseAgent):
+    def run(self, payload):
+        return {"handled_by": "B", **payload}
+
+
+def _write_team(tmp_path: Path, agent_name: str) -> Path:
+    config = {
+        "config": {
+            "participants": [
+                {"config": {"name": agent_name}}
+            ]
+        }
+    }
+    team_file = tmp_path / f"{agent_name}.json"
+    team_file.write_text(json.dumps(config))
+    return team_file
+
+
+def test_solution_orchestrator_routing(tmp_path, monkeypatch):
+    team_a = _write_team(tmp_path, "dummy_agent_a")
+    team_b = _write_team(tmp_path, "dummy_agent_b")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    mod_b = types.ModuleType("src.agents.dummy_agent_b")
+    mod_b.DummyAgentB = DummyAgentB
+    sys.modules["src.agents.dummy_agent_b"] = mod_b
+
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+
+    out_a = orch.handle_event("A", {"type": "dummy_agent_a", "payload": {"foo": 1}})
+    out_b = orch.handle_event("B", {"type": "dummy_agent_b", "payload": {"bar": 2}})
+
+    assert out_a["result"]["handled_by"] == "A"
+    assert out_b["result"]["handled_by"] == "B"
+    assert orch.history[0]["team"] == "A"
+    assert orch.history[1]["team"] == "B"
