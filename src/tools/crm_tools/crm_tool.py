@@ -1,4 +1,4 @@
-# src/tools/crm_tool.py
+"""Simplified CRM API client used across agents."""
 
 try:
     import requests

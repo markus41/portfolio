@@ -1,4 +1,4 @@
-# src/agents/mls_agent.py
+"""Agent that pulls listing data from the MLS."""
 
 from .base_agent import BaseAgent
 from ..tools.real_estate_tools.mls_client import MLSClient
@@ -12,5 +12,6 @@ class MLSAgent(BaseAgent):
 
     def run(self, payload: dict) -> dict:
         """Pull an MLS listing by ID."""
+        # delegate to the real MLS client which does the HTTP call
         listing = self.client.pull_listing(payload["mls_id"])
         return {"listing": listing}

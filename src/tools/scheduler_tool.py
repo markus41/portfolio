@@ -1,4 +1,4 @@
-# src/tools/scheduler_tool.py
+"""Google Calendar integration used by :class:`CRMPipelineAgent`."""
 
 try:
     from google.oauth2 import service_account

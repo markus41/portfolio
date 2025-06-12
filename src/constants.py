@@ -1,4 +1,11 @@
-# src/constants.py
+
+"""Configuration constants populated from environment variables.
+
+This module exposes a flat list of API keys, URLs and other settings used
+by the various agent and tool classes throughout the repository.  Each
+constant simply reads the value from ``os.getenv`` which means tests can
+easily override them by modifying ``os.environ``.
+"""
 
 import os
 

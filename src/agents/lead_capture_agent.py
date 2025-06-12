@@ -1,4 +1,4 @@
-# src/agents/lead_capture_agent.py
+"""Extract and normalise lead form submissions."""
 
 from .base_agent import BaseAgent
 from ..utils.logger import get_logger

@@ -1,4 +1,4 @@
-# src/agents/real_estate_lead_agent.py
+"""Locate potential real-estate buyers or sellers."""
 
 from .base_agent import BaseAgent
 from ..tools.real_estate_tools.lead_finder import LeadFinder
@@ -13,5 +13,6 @@ class RealEstateLeadAgent(BaseAgent):
     def run(self, payload: dict) -> dict:
         """Find potential leads in a given city."""
         city = payload.get("city", "")
+        # delegate to LeadFinder which performs the actual API call
         leads = self.finder.search_leads(city)
         return {"leads": leads}

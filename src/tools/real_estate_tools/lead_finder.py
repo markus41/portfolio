@@ -1,3 +1,5 @@
+"""HTTP client for fetching lead data from a real estate provider."""
+
 try:
     import requests
 except ImportError:  # pragma: no cover - optional dependency
