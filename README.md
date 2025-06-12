@@ -40,3 +40,13 @@ create a new industry workflow:
 By editing these declarative configs you can quickly deploy specialised agent
 teams for finance, healthcare, manufacturing or any other domain without
 changing the core orchestrator code.
+
+## 📦 Installation
+
+Install the Python dependencies with pip using the `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
+The optional packages listed in that file (such as `openai` and `google-api-python-client`) are not needed when running the unit tests but enable additional runtime integrations.
