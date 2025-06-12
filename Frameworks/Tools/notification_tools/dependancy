@@ -1,2 +1,0 @@
-#bash
-pip install twilio boto3 requests pyfcm pushover discord.py boto3

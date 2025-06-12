@@ -1,8 +1,0 @@
-// contract.js
-const docusign = require('docusign-esign');
-
-async function sendEnvelope(templateId, signer) {
-  let api = new docusign.EnvelopesApi();
-  let envelopeDef = {/* ... */};
-  await api.createEnvelope(accountId, { envelopeDefinition: envelopeDef });
-}

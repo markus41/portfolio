@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "steps": [
+    {"id": "lead_capture", "agent": "Lead Capture Agent"},
+    {"id": "crm_entry", "agent": "CRM Entry Agent", "needs": ["lead_capture"]}
+  ]
+}
