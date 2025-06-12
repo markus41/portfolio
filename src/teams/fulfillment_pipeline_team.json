@@ -1,0 +1,64 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "Sales order fulfillment pipeline.",
+  "label": "Fulfillment Pipeline Team",
+  "config": {
+    "participants": [
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Fulfill ecommerce orders and reserve inventory.",
+        "label": "Fulfillment Agent",
+        "config": {"name": "fulfillment_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Manage warehouse inventory counts.",
+        "label": "Inventory Management Agent",
+        "config": {"name": "inventory_management_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Integrate with the TMS system for shipping updates.",
+        "label": "TMS Agent",
+        "config": {"name": "tms_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Send notifications to Microsoft Teams.",
+        "label": "Notification Agent",
+        "config": {"name": "notification_agent"}
+      }
+    ],
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "TerminateOnText",
+      "config": {
+        "conditions": [
+          {
+            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "component_type": "termination",
+            "label": "TermOnText",
+            "config": {"text": "TERMINATE"}
+          }
+        ]
+      }
+    },
+    "emit_team_events": false
+  }
+}

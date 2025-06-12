@@ -15,4 +15,6 @@ __all__ = [
     "scoring_service_tools",
     "segmentation_tools",
     "visitor_tracking_tools",
+    "operations_tools",
+    "ecommerce_tool",
 ]

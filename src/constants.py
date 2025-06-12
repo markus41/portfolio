@@ -95,3 +95,11 @@ PUSHOVER_API_TOKEN        = os.getenv("PUSHOVER_API_TOKEN")
 DISCORD_WEBHOOK_URL       = os.getenv("DISCORD_WEBHOOK_URL")
 AWS_SES_REGION            = os.getenv("AWS_SES_REGION", "us-east-1")
 CONFIG_PATH               = os.getenv("CONFIG_PATH", "config/playbook.yaml")
+
+# Logistics & e-commerce APIs
+TMS_API_URL           = os.getenv("TMS_API_URL")
+TMS_API_KEY           = os.getenv("TMS_API_KEY")
+INVENTORY_API_URL     = os.getenv("INVENTORY_API_URL")
+INVENTORY_API_KEY     = os.getenv("INVENTORY_API_KEY")
+ECOMMERCE_API_URL     = os.getenv("ECOMMERCE_API_URL")
+ECOMMERCE_API_KEY     = os.getenv("ECOMMERCE_API_KEY")
