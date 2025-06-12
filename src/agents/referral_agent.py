@@ -1,7 +1,7 @@
 # src/agents/referral_agent.py
 
 from .base_agent import BaseAgent
-from ..tools/email_tool import EmailTool
+from ..tools.email_tool import EmailTool
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
