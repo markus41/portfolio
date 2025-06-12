@@ -29,6 +29,10 @@ __all__ = [
     'SegmentationAdTargetingAgent',
     'UpsellAgent',
     'VisitorTrackingAgent',
+    'RealEstateLeadAgent',
+    'MLSAgent',
+    'ListingAgent',
+    'ListingPosterAgent',
 ]
 
 _module_map: Dict[str, str] = {
@@ -56,6 +60,10 @@ _module_map: Dict[str, str] = {
     'SegmentationAdTargetingAgent': 'segmentation_ad_targeting_agent',
     'UpsellAgent': 'upsell_agent',
     'VisitorTrackingAgent': 'visitor_tracking_agent',
+    'RealEstateLeadAgent': 'real_estate_lead_agent',
+    'MLSAgent': 'mls_agent',
+    'ListingAgent': 'listing_agent',
+    'ListingPosterAgent': 'listing_poster_agent',
 }
 
 

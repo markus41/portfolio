@@ -1,0 +1,64 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "Autonomous agents for real estate operations.",
+  "label": "Real Estate Team",
+  "config": {
+    "participants": [
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Find potential buyer and seller leads.",
+        "label": "RealEstateLeadAgent",
+        "config": {"name": "real_estate_lead_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Pull listing data from the MLS.",
+        "label": "MLSAgent",
+        "config": {"name": "mls_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Create property listings.",
+        "label": "ListingAgent",
+        "config": {"name": "listing_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Post listings on major real estate websites.",
+        "label": "ListingPosterAgent",
+        "config": {"name": "listing_poster_agent"}
+      }
+    ],
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "TerminateOnText",
+      "config": {
+        "conditions": [
+          {
+            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "component_type": "termination",
+            "label": "TermOnText",
+            "config": {"text": "TERMINATE"}
+          }
+        ]
+      }
+    },
+    "emit_team_events": false
+  }
+}
