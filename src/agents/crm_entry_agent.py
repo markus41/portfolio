@@ -1,7 +1,7 @@
 # src/agents/crm_entry_agent.py
 
 from .base_agent import BaseAgent
-from ..tools.crm_tool import CRMTool
+from ..tools.crm_tools.crm_tool import CRMTool
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
