@@ -40,6 +40,7 @@ __all__ = [
     'FulfillmentAgent',
     'OnRoadAgent',
     'EcommerceAgent',
+    'SupportAgent',
 ]
 
 _module_map: Dict[str, str] = {
@@ -78,6 +79,7 @@ _module_map: Dict[str, str] = {
     'FulfillmentAgent': 'fulfillment_agent',
     'OnRoadAgent': 'on_road_agent',
     'EcommerceAgent': 'ecommerce_agent',
+    'SupportAgent': 'support_agent',
 }
 
 
