@@ -13,6 +13,11 @@ Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-b
 │   ├── agents/                # Core agent implementations
 │   ├── tools/                 # Reusable utilities used by agents
 │   ├── constants.py           # Env vars & API keys
+│   ├── orchestrator.py        # Event bus wiring
+│   ├── crm_connector.py       # CRM interface stubs
+│   ├── dev_assist.py          # Boilerplate generator
+│   ├── debugger_agent.py      # Auto patch suggestions
+│   ├── qa_agent.py            # Conversation tester
 │   └── teams/                 # RoundRobinGroupChat definitions
 ├── tests/                     # pytest suite
 └── README.md                  # You are here!
@@ -54,3 +59,18 @@ pip install -r requirements.txt
 ```
 
 The optional packages listed in that file (such as `openai` and `google-api-python-client`) are not needed when running the unit tests but enable additional runtime integrations.
+
+## 📊 RevOps & Tooling
+
+Recent updates introduce a `RevOpsAgent` that summarizes CRM pipeline KPIs and
+publishes revenue forecasts. The orchestrator wires this agent into a global
+`EventBus` and triggers it on a monthly cron tick. Several internal utilities are
+also included:
+
+* `dev_assist.py` – generate boilerplate modules and matching tests.
+* `debugger_agent.py` – listen for `*.Error` events and propose patches.
+* `qa_agent.py` – run scripted conversations against `SupportAgent` and emit QA
+  reports.
+
+These helper scripts keep network calls behind feature flags so they remain
+test-safe by default.
