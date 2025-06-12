@@ -50,6 +50,23 @@ By editing these declarative configs you can quickly deploy specialised agent
 teams for finance, healthcare, manufacturing or any other domain without
 changing the core orchestrator code.
 
+### 🧩 Team & Solution Orchestrators
+
+Teams packaged as JSON in `src/teams/` can now be loaded at runtime using `TeamOrchestrator`. It creates all agents listed under `participants` and provides an `EventBus` for intra-team messaging. Multiple teams are combined with `SolutionOrchestrator` which routes events to the appropriate team and collects their results.
+
+To initialise:
+```python
+from src.solution_orchestrator import SolutionOrchestrator
+
+orch = SolutionOrchestrator({
+    "sales": "src/teams/sales_team_full.json",
+    "operations": "src/teams/operations_team.json",
+})
+orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
+```
+
+Teams can report progress upward via `orch.report_status(team, status)`.
+
 ## 📦 Installation
 
 Install the Python dependencies with pip using the `requirements.txt` file:
