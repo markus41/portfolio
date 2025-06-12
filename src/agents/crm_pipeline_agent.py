@@ -8,7 +8,7 @@ logger = get_logger(__name__)
 
 class CRMPipelineAgent(BaseAgent):
     def __init__(self):
-        CRMTool = importlib.import_module("src.tools.crm_tool").CRMTool
+        CRMTool = importlib.import_module("src.tools.crm_tools.crm_tool").CRMTool
         SchedulerTool = importlib.import_module("src.tools.scheduler_tool").SchedulerTool
         self.crm = CRMTool()
         self.scheduler = SchedulerTool()

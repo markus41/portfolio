@@ -1,7 +1,7 @@
 # src/agents/email_reply_monitor_agent.py
 
 from .base_agent import BaseAgent
-from ..tools.hubspot_tool import HubSpotTool
+from ..tools.crm_tools.hubspot_tool import HubSpotTool
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)

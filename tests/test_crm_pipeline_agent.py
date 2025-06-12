@@ -10,7 +10,7 @@ class DummyScheduler:
     def create_event(self, cid, ev): return {"id":"evt123"}
 
 def test_pipeline_agent(monkeypatch):
-    monkeypatch.setattr("src.tools.crm_tool.CRMTool", DummyCRM)
+    monkeypatch.setattr("src.tools.crm_tools.crm_tool.CRMTool", DummyCRM)
     monkeypatch.setattr("src.tools.scheduler_tool.SchedulerTool", lambda: DummyScheduler())
     agent = CRMPipelineAgent()
     payload = {"deal_id":"d1","calendar_id":"cal1","followup_template":{"summary":"Follow-up","attendees":[{"email":"a@b.com"}]}}
