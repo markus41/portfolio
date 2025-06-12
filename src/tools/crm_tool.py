@@ -29,8 +29,6 @@ class CRMTool:
         resp = requests.get(f"{CRM_API_URL}/contacts", params={"email": email}, headers=CRMTool.headers)
         resp.raise_for_status()
         return bool(resp.json().get("results"))
-# src/tools/crm_tool.py
-
 
     @staticmethod
     def get_deal(deal_id: str) -> dict:
