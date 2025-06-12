@@ -1,11 +1,16 @@
 from .base_agent import BaseAgent
-from ..tools.metrics_tools.prometheus_tool import PrometheusPusher
+try:
+    from ..tools.metrics_tools.prometheus_tool import PrometheusPusher
+except Exception:  # pragma: no cover - optional dependency
+    PrometheusPusher = None
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class AnalyticsAgent(BaseAgent):
     def __init__(self):
+        if not PrometheusPusher:
+            raise RuntimeError("prometheus_client is not installed")
         self.pusher = PrometheusPusher(job="sales_analytics")
 
     def run(self, payload: dict) -> dict:

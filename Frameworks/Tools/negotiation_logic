@@ -1,6 +1,0 @@
-// negotiation.js
-function evaluateDiscount(requested, maxAuto=5) {
-  if (requested <= maxAuto) return { approved: true };
-  if (requested <= 10) return { escalate: 'manager' };
-  return { escalate: 'cfo' };
-}

@@ -1,9 +1,0 @@
-// referral.js
-const express = require('express');
-const app = express();
-
-app.post('/trigger-referral', (req, res) => {
-  const { customerId } = req.body;
-  // send email via Outreach Agent
-  res.sendStatus(200);
-});
