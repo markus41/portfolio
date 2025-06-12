@@ -4,8 +4,8 @@ try:
     import requests
 except ImportError:  # pragma: no cover - optional dependency
     requests = None
-from .constants import CRM_API_URL, CRM_API_KEY
-from .utils.logger import get_logger
+from src.constants import CRM_API_URL, CRM_API_KEY
+from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
