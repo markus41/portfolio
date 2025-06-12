@@ -16,6 +16,6 @@ class PrometheusPusher:
         labels = labels or {}
         gauge = Gauge(name, f"{name} gauge", labelnames=list(labels.keys()), registry=self.registry)
         gauge.labels(**labels).set(value)
-        timestamp = int(time.time())
         logger.info(f"Pushing metric {name}={value} to Prometheus (job={self.job})")
         push_to_gateway(PROMETHEUS_PUSHGATEWAY, job=self.job, registry=self.registry)
+

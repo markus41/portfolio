@@ -21,7 +21,7 @@ Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-b
 │ ├─ tools/ – Helper utilities used by agents
 │ ├─ constants.py – Env vars & API keys
 │ └─ teams/ – RoundRobinGroupChat definitions
-├── Tests/
+├── tests/
 │ ├─ test_chatbot_agent.py
 │ ├─ test_crm_pipeline_agent.py
 │ ├─ test_lead_capture.py

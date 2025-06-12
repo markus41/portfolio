@@ -1,7 +1,7 @@
 from .base_agent import BaseAgent
 try:
     from ..tools.metrics_tools.prometheus_tool import PrometheusPusher
-except Exception:  # pragma: no cover - optional dependency
+except ImportError:  # pragma: no cover - optional dependency
     PrometheusPusher = None
 from ..utils.logger import get_logger
 
