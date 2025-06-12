@@ -24,6 +24,10 @@ The `tools` package contains submodules for CRM integrations, email and doc gene
 
 A new `Real Estate Team` demonstrates how the framework can be adapted for other industries. It bundles agents for finding leads, pulling MLS data, creating listings and posting them to major portals. See `src/teams/real_estate_team.json` for the configuration and the accompanying tools under `src/tools/real_estate_tools`.
 
+### 🚚 Operations & Fulfillment Teams
+
+Several additional JSON configs showcase logistics workflows. New teams cover warehouse operations, inventory management, order fulfillment, driver tracking and e-commerce. These rely on the tools in `src/tools/operations_tools` and `src/tools/ecommerce_tool.py` for TMS, inventory and shopping cart integrations along with Microsoft Teams notifications.
+
 ### 🚧 Building Modular AutoGen Teams
 
 The JSON files under `src/teams/` showcase how to wire multiple agents together

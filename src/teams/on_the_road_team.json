@@ -1,0 +1,46 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "Drivers and shipment tracking team.",
+  "label": "On The Road Team",
+  "config": {
+    "participants": [
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Update live shipment locations.",
+        "label": "On Road Agent",
+        "config": {"name": "on_road_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Send notifications to Microsoft Teams.",
+        "label": "Notification Agent",
+        "config": {"name": "notification_agent"}
+      }
+    ],
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "TerminateOnText",
+      "config": {
+        "conditions": [
+          {
+            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "component_type": "termination",
+            "label": "TermOnText",
+            "config": {"text": "TERMINATE"}
+          }
+        ]
+      }
+    },
+    "emit_team_events": false
+  }
+}

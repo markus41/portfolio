@@ -33,6 +33,13 @@ __all__ = [
     'MLSAgent',
     'ListingAgent',
     'ListingPosterAgent',
+    'InboundAgent',
+    'OutboundAgent',
+    'InventoryManagementAgent',
+    'TMSAgent',
+    'FulfillmentAgent',
+    'OnRoadAgent',
+    'EcommerceAgent',
 ]
 
 _module_map: Dict[str, str] = {
@@ -64,6 +71,13 @@ _module_map: Dict[str, str] = {
     'MLSAgent': 'mls_agent',
     'ListingAgent': 'listing_agent',
     'ListingPosterAgent': 'listing_poster_agent',
+    'InboundAgent': 'inbound_agent',
+    'OutboundAgent': 'outbound_agent',
+    'InventoryManagementAgent': 'inventory_management_agent',
+    'TMSAgent': 'tms_agent',
+    'FulfillmentAgent': 'fulfillment_agent',
+    'OnRoadAgent': 'on_road_agent',
+    'EcommerceAgent': 'ecommerce_agent',
 }
 
 

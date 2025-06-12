@@ -1,0 +1,55 @@
+{
+  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "component_type": "team",
+  "version": 1,
+  "component_version": 1,
+  "description": "E-commerce order management team.",
+  "label": "E-commerce Team",
+  "config": {
+    "participants": [
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Create ecommerce orders.",
+        "label": "Ecommerce Agent",
+        "config": {"name": "ecommerce_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Fulfill ecommerce orders and update inventory.",
+        "label": "Fulfillment Agent",
+        "config": {"name": "fulfillment_agent"}
+      },
+      {
+        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "component_type": "agent",
+        "version": 1,
+        "component_version": 1,
+        "description": "Send notifications to Microsoft Teams.",
+        "label": "Notification Agent",
+        "config": {"name": "notification_agent"}
+      }
+    ],
+    "termination_condition": {
+      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "component_type": "termination",
+      "label": "TerminateOnText",
+      "config": {
+        "conditions": [
+          {
+            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "component_type": "termination",
+            "label": "TermOnText",
+            "config": {"text": "TERMINATE"}
+          }
+        ]
+      }
+    },
+    "emit_team_events": false
+  }
+}
