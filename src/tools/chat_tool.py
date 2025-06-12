@@ -1,4 +1,4 @@
-# src/tools/chat_tool.py
+"""Wrapper around the OpenAI Chat API used by :class:`ChatbotAgent`."""
 
 try:
     import openai
@@ -13,7 +13,10 @@ if openai:
     openai.api_key = OPENAI_API_KEY
 
 class ChatTool:
+    """Minimal helper for calling ``openai.ChatCompletion``."""
+
     def chat(self, messages: list, model: str = "gpt-4") -> str:
+        """Return the assistant reply for ``messages`` using ``model``."""
         logger.info("Invoking OpenAI ChatCompletion")
         if not openai:
             raise RuntimeError("openai package is not installed")

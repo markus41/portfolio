@@ -1,4 +1,4 @@
-# src/tools/ad_tool.py
+"""Utility for creating simple ad campaigns on Facebook and Google."""
 
 import logging
 from ..constants import FACEBOOK_ACCESS_TOKEN, GOOGLE_ADS_API_KEY

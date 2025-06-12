@@ -1,3 +1,5 @@
+"""Post property listings to an external portal."""
+
 try:
     import requests
 except ImportError:  # pragma: no cover - optional dependency

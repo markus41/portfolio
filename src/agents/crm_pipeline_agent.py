@@ -1,4 +1,4 @@
-# src/agents/crm_pipeline_agent.py
+"""Advance deals through a CRM pipeline and schedule follow-ups."""
 
 from .base_agent import BaseAgent
 import importlib
@@ -24,6 +24,7 @@ class CRMPipelineAgent(BaseAgent):
           }
         }
         """
+        # pull deal details from the CRM
         deal = self.crm.get_deal(payload["deal_id"])
         stage = deal.get("stage")
         action = "none"
@@ -36,6 +37,7 @@ class CRMPipelineAgent(BaseAgent):
                 "end":   deal["next_action_date"],
                 "attendees": payload["followup_template"].get("attendees", [])
             }
+            # schedule a follow-up meeting in the prospect's calendar
             res = self.scheduler.create_event(payload["calendar_id"], ev)
             event_id = res["id"]
             action = "followup_scheduled"

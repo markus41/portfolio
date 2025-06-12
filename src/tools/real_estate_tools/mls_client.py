@@ -1,3 +1,5 @@
+"""Client for retrieving MLS data via REST."""
+
 try:
     import requests
 except ImportError:  # pragma: no cover - optional dependency
