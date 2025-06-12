@@ -1,0 +1,5 @@
+openai
+requests
+google-api-python-client
+google-auth
+pytest

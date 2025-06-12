@@ -40,3 +40,41 @@ create a new industry workflow:
 By editing these declarative configs you can quickly deploy specialised agent
 teams for finance, healthcare, manufacturing or any other domain without
 changing the core orchestrator code.
+
+### 🔧 Setup
+
+Install the project dependencies from `requirements.txt`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### ✅ Running the Tests
+
+Execute the pytest suite from the repository root:
+
+```bash
+pytest
+```
+
+### ▶️ Quick Orchestrator Demo
+
+The orchestrator wires together the agents and a simple memory service.  It can
+be driven with a minimal script:
+
+```python
+from src.orchestrator import Orchestrator
+
+orc = Orchestrator("http://localhost:8000")
+result = orc.handle_event({
+    "type": "lead_capture",
+    "payload": {
+        "form_data": {"Email": "demo@example.com"},
+        "source": "web"
+    }
+})
+print(result)
+```
+
