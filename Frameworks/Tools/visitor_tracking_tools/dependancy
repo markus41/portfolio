@@ -1,3 +1,0 @@
-#bash
-pip install mixpanel analytics-python amplitude-analytics ua-parser ipinfo requests
-
