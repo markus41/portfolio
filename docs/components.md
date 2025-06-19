@@ -53,3 +53,20 @@ An in-memory publish/subscribe mechanism. Agents and orchestrators subscribe to 
 
 These steps let you compose new business flows without touching the core orchestrator logic.
 
+### Registering Custom Agents via Plugins
+
+Agents can also be distributed as standalone packages and discovered at runtime
+through Python entry points. Register your agent class under the
+``brookside.agents`` group in ``setup.cfg``:
+
+```ini
+[options.entry_points]
+brookside.agents =
+    lead_capture = src.agents.lead_capture_agent:LeadCaptureAgent
+```
+
+With the entry point installed, :func:`src.utils.plugin_loader.load_agent` will
+resolve ``lead_capture`` to ``LeadCaptureAgent`` without requiring explicit
+imports. The ``TeamOrchestrator`` automatically uses this loader when
+initialising agents from a team JSON file.
+

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib
 import json
 from pathlib import Path
 from typing import Any, Dict
@@ -10,6 +9,7 @@ from typing import Any, Dict
 from agentic_core import EventBus, AsyncEventBus
 
 from .base_orchestrator import BaseOrchestrator
+from .utils.plugin_loader import load_agent
 
 
 class TeamOrchestrator(BaseOrchestrator):
@@ -28,10 +28,13 @@ class TeamOrchestrator(BaseOrchestrator):
 
         Notes
         -----
-        At construction time every participant listed in the JSON is imported
-        dynamically using :func:`importlib.import_module`. The orchestrator then
-        instantiates the corresponding agent classes and registers them on an
-        internal event bus (:class:`EventBus` or :class:`AsyncEventBus`) for message routing.
+        At construction time every participant listed in the JSON is resolved
+        using :func:`~src.utils.plugin_loader.load_agent`. This function looks
+        for classes registered via the ``brookside.agents`` entry point group
+        before falling back to modules under :mod:`src.agents`. The orchestrator
+        then instantiates the resulting agent classes and registers them on an
+        internal event bus (:class:`EventBus` or :class:`AsyncEventBus`) for
+        message routing.
         """
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
@@ -45,8 +48,6 @@ class TeamOrchestrator(BaseOrchestrator):
             name = part.get("config", {}).get("name")
             if not name:
                 continue
-            module = importlib.import_module(f"src.agents.{name}")
-            class_name = "".join(word.capitalize() for word in name.split("_"))
-            agent_cls = getattr(module, class_name)
+            agent_cls = load_agent(name)
             self.agents[name] = agent_cls()
 
