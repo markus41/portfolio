@@ -38,7 +38,7 @@ Reusable utilities live under `src/tools/`. They encapsulate third-party integra
 * `real_estate_tools.py` – fetch MLS data and post listings.
 * `ecommerce_tool.py` – manage product catalogs and shopping carts.
 
-Tool classes can be registered as `FunctionTool` entries in a team JSON file so agents can call them during a conversation.
+Tool classes can be registered as `FunctionTool` entries in a team JSON file so agents can call them during a conversation. The :func:`src.utils.retry.retry_tool` decorator can be applied to methods interacting with external services to automatically retry failures and optionally execute a fallback when all attempts fail.
 
 ## EventBus
 

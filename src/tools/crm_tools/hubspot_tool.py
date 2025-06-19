@@ -3,6 +3,7 @@
 import requests
 from ...config import settings
 from ...utils.logger import get_logger
+from ...utils import retry_tool
 
 logger = get_logger(__name__)
 
@@ -11,6 +12,7 @@ class HubSpotTool:
         self.base_url = "https://api.hubapi.com"
         self.params = {"hapikey": settings.HUBSPOT_API_KEY}
 
+    @retry_tool()
     def create_contact(self, email: str, properties: dict) -> dict:
         url = f"{self.base_url}/crm/v3/objects/contacts"
         data = {"properties": {"email": email, **properties}}
@@ -18,6 +20,7 @@ class HubSpotTool:
         resp.raise_for_status()
         return resp.json()
 
+    @retry_tool()
     def get_contact_by_email(self, email: str) -> dict | None:
         url = f"{self.base_url}/crm/v3/objects/contacts/search"
         payload = {
@@ -31,6 +34,7 @@ class HubSpotTool:
         results = resp.json().get("results", [])
         return results[0] if results else None
 
+    @retry_tool()
     def update_contact(self, contact_id: str, properties: dict) -> dict:
         url = f"{self.base_url}/crm/v3/objects/contacts/{contact_id}"
         data = {"properties": properties}

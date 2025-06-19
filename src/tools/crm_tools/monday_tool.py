@@ -4,6 +4,7 @@ import json
 import requests
 from ...config import settings
 from ...utils.logger import get_logger
+from ...utils import retry_tool
 
 logger = get_logger(__name__)
 
@@ -15,6 +16,7 @@ class MondayTool:
             "Content-Type": "application/json"
         }
 
+    @retry_tool()
     def create_item(self, board_id: int, item_name: str, column_values: dict = None) -> dict:
         query = """
         mutation ($boardId: Int!, $itemName: String!, $columnValues: JSON) {
@@ -32,6 +34,7 @@ class MondayTool:
         resp.raise_for_status()
         return resp.json()["data"]["create_item"]
 
+    @retry_tool()
     def get_item(self, item_id: int) -> dict:
         query = """
         query ($itemId: Int!) {
@@ -47,6 +50,7 @@ class MondayTool:
         resp.raise_for_status()
         return resp.json()["data"]["items"][0]
 
+    @retry_tool()
     def update_item(self, item_id: int, column_values: dict) -> dict:
         query = """
         mutation ($itemId: Int!, $columnValues: JSON!) {

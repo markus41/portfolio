@@ -4,6 +4,7 @@ import requests
 from msal import ConfidentialClientApplication
 from ...config import settings
 from ...utils.logger import get_logger
+from ...utils import retry_tool
 
 logger = get_logger(__name__)
 
@@ -25,6 +26,7 @@ class DynamicsTool:
             raise RuntimeError("Failed to acquire Dynamics access token")
         return token
 
+    @retry_tool()
     def create_contact(self, data: dict) -> dict:
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
@@ -32,6 +34,7 @@ class DynamicsTool:
         resp.raise_for_status()
         return resp.json()
 
+    @retry_tool()
     def get_contact(self, contact_id: str) -> dict:
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}"}
@@ -39,6 +42,7 @@ class DynamicsTool:
         resp.raise_for_status()
         return resp.json()
 
+    @retry_tool()
     def update_contact(self, contact_id: str, data: dict) -> bool:
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
