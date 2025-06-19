@@ -148,6 +148,14 @@ brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"e
 brookside-cli status
 ```
 
+A helper utility ``brookside-assistant`` extracts campaign parameters from free
+text. Provide a description on the command line or via stdin and it returns a
+JSON object with any detected ``budget``, ``dates`` and ``target_audience``:
+
+```bash
+echo "Budget $300 targeting students on 01/02/2025" | brookside-assistant
+```
+
 ### 🌐 HTTP API
 
 An HTTP interface is available for programmatic access to the
