@@ -5,6 +5,12 @@
   "component_version": 1,
   "description": "Sales order fulfillment pipeline.",
   "label": "Fulfillment Pipeline Team",
+  "responsibilities": [
+    "fulfillment_agent",
+    "inventory_management_agent",
+    "tms_agent",
+    "notification_agent"
+  ],
   "config": {
     "participants": [
       {

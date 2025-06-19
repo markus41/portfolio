@@ -11,7 +11,12 @@ import pytest
 
 
 def _write_team(tmp_path: Path) -> Path:
-    cfg = {"config": {"participants": [{"config": {"name": "operations.dummy_cli_agent"}}]}}
+    cfg = {
+        "responsibilities": ["operations.dummy_cli_agent"],
+        "config": {
+            "participants": [{"config": {"name": "operations.dummy_cli_agent"}}]
+        },
+    }
     path = tmp_path / "team.json"
     path.write_text(json.dumps(cfg))
     return path

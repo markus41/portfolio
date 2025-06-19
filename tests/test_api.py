@@ -42,7 +42,10 @@ class EchoAgent(BaseAgent):
 
 
 def _write_team(tmp_path: Path) -> Path:
-    cfg = {"config": {"participants": [{"config": {"name": "echo_agent"}}]}}
+    cfg = {
+        "responsibilities": ["echo_agent"],
+        "config": {"participants": [{"config": {"name": "echo_agent"}}]},
+    }
     path = tmp_path / "team.json"
     path.write_text(json.dumps(cfg))
     return path

@@ -5,6 +5,12 @@
   "component_version": 1,
   "description": "Autonomous agents for real estate operations.",
   "label": "Real Estate Team",
+  "responsibilities": [
+    "real_estate_lead_agent",
+    "mls_agent",
+    "listing_agent",
+    "listing_poster_agent"
+  ],
   "config": {
     "participants": [
       {

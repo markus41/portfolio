@@ -21,6 +21,7 @@ class DummyAgentB(BaseAgent):
 
 def _write_team(tmp_path: Path, agent_name: str) -> Path:
     config = {
+        "responsibilities": [agent_name],
         "config": {
             "participants": [
                 {"config": {"name": agent_name}}

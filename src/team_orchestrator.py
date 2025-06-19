@@ -26,6 +26,12 @@ class TeamOrchestrator(BaseOrchestrator):
             expected to define ``config.name`` pointing to an agent module under
             :mod:`src.agents`.
 
+        The configuration may also provide a ``responsibilities`` array listing
+        the agent names allowed to run within this team. Any participant not
+        present in this list will cause a :class:`ValueError` during
+        initialisation.
+
+
         Notes
         -----
         At construction time every participant listed in the JSON is resolved
@@ -39,7 +45,17 @@ class TeamOrchestrator(BaseOrchestrator):
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
             data = json.load(fh)
+
+        self.responsibilities: list[str] = data.get("responsibilities", [])
         participants = data.get("config", {}).get("participants", [])
+
+        if self.responsibilities:
+            for part in participants:
+                name = part.get("config", {}).get("name")
+                if name and name not in self.responsibilities:
+                    raise ValueError(
+                        f"Agent '{name}' not permitted by responsibilities"
+                    )
 
         bus = bus or AsyncEventBus()
         super().__init__(bus=bus)

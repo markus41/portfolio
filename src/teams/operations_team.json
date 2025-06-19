@@ -5,6 +5,13 @@
   "component_version": 1,
   "description": "Autonomous agents for logistics operations.",
   "label": "Operations Team",
+  "responsibilities": [
+    "inbound_agent",
+    "outbound_agent",
+    "inventory_management_agent",
+    "tms_agent",
+    "notification_agent"
+  ],
   "config": {
     "participants": [
       {

@@ -5,6 +5,26 @@
   "component_version": 1,
   "description": "Full autonomous sales & marketing agent hierarchy for Brookside BI.",
   "label": "Sales AI Agentic System",
+  "responsibilities": [
+    "orchestrator_agent",
+    "lead_capture_agent",
+    "lead_enrichment_agent",
+    "lead_scoring_agent",
+    "email_outreach_agent",
+    "proposal_generator_agent",
+    "negotiation_agent",
+    "contract_agent",
+    "onboarding_agent",
+    "csat_checker_agent",
+    "upsell_agent",
+    "referral_agent",
+    "chatbot_agent",
+    "visitor_tracking_agent",
+    "segmentation_targeting_agent",
+    "crm_entry_dedup_agent",
+    "crm_pipeline_agent",
+    "analytics_agent"
+  ],
   "config": {
     "participants": [
       {
@@ -1141,7 +1161,7 @@
           "tool_call_summary_format": "{result}",
           "metadata": {}
         }
-      }
+      },
       {
         "provider": "src.agents.roles.AnalystAgent",
         "component_type": "agent",
@@ -1206,7 +1226,7 @@
           "tool_call_summary_format": "{result}",
           "metadata": {}
         }
-      },
+      }
     ],
     "termination_condition": {
       "provider": "autogen_agentchat.base.OrTerminationCondition",
