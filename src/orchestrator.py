@@ -27,6 +27,8 @@ except Exception:  # pragma: no cover - optional dependency
 
 from agentic_core import EventBus
 
+from .base_orchestrator import BaseOrchestrator
+
 from .agents.lead_capture_agent import LeadCaptureAgent
 from .agents.chatbot_agent import ChatbotAgent
 from .agents.crm_pipeline_agent import CRMPipelineAgent
@@ -68,7 +70,7 @@ class _SupportTools:
         return "t1"
 
 
-class Orchestrator:
+class Orchestrator(BaseOrchestrator):
     """Route incoming events to specialised agents.
 
     Parameters
@@ -80,10 +82,9 @@ class Orchestrator:
     """
 
     def __init__(self, memory_endpoint: str, use_llm_planner: bool = False, config_path: str | None = None):
-        # the in-memory storage (could be a vector DB or search engine)
-        self.memory = MemoryService(memory_endpoint)
-
-        self.bus = EventBus()
+        bus = EventBus()
+        memory = MemoryService(memory_endpoint)
+        super().__init__(bus=bus, memory=memory)
         self.use_llm_planner = use_llm_planner
 
         if config_path:
@@ -139,35 +140,3 @@ class Orchestrator:
         """Emit the RevOps analysis cron event."""
         self.bus.publish("RevOps.Analyze", {"tenant_id": "demo"})
 
-    def handle_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
-        """Persist the event and delegate handling to an agent.
-
-        Parameters
-        ----------
-        event:
-            Dictionary describing the event.  It must contain a ``type`` key
-            which determines the target agent and an optional ``payload`` key
-            containing the data that should be processed by that agent.
-
-        Returns
-        -------
-        dict
-            ``{"status": "done", "result": ...}`` when an agent handled the
-            event or ``{"status": "ignored"}`` for unknown events.
-        """
-
-        event_type = event.get("type")
-        payload = event.get("payload", {})
-        logger.info(f"Handling event type={event_type}")
-
-        # store the raw event payload for auditing/debugging purposes
-        self.memory.store(event_type or "unknown", payload)
-
-        agent = self.agents.get(event_type)
-        if not agent:
-            logger.warning(f"Unknown event type: {event_type}")
-            return {"status": "ignored"}
-
-        # delegate to the specific agent instance
-        result = agent.run(payload)
-        return {"status": "done", "result": result}

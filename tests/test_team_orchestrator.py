@@ -1,0 +1,33 @@
+import json
+import sys
+import types
+from pathlib import Path
+
+from src.base_orchestrator import BaseOrchestrator
+from src.team_orchestrator import TeamOrchestrator
+from src.agents.base_agent import BaseAgent
+
+
+class DummyAgent(BaseAgent):
+    def run(self, payload):
+        return {"echo": payload}
+
+
+def _write_team(tmp_path: Path) -> Path:
+    cfg = {"config": {"participants": [{"config": {"name": "dummy_agent"}}]}}
+    path = tmp_path / "team.json"
+    path.write_text(json.dumps(cfg))
+    return path
+
+
+def test_team_orchestrator_inherits(tmp_path):
+    team_cfg = _write_team(tmp_path)
+    mod = types.ModuleType("src.agents.dummy_agent")
+    mod.DummyAgent = DummyAgent
+    sys.modules["src.agents.dummy_agent"] = mod
+
+    orch = TeamOrchestrator(str(team_cfg))
+    assert issubclass(TeamOrchestrator, BaseOrchestrator)
+    assert orch.memory is None
+    out = orch.handle_event({"type": "dummy_agent", "payload": {"foo": 1}})
+    assert out["result"]["echo"]["foo"] == 1
