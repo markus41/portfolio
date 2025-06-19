@@ -50,6 +50,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 Brookside BI's utilities live under `src/tools/` and provide integrations that agents can call directly.
 
 - **CRM tools** (`crm_tools/`) – connectors for Salesforce, HubSpot, Monday and other CRMs.
+- **CRM connector** (`../src/crm_connector.py`) – simple wrapper that fetches deal data using `CRM_API_URL` and `CRM_API_KEY`.
 - **Notification tools** (`notification_tools/`) – helpers for Slack, Teams, SMS and more.
 - **Real estate tools** (`real_estate_tools/`) – fetch MLS data and post property listings.
 - **Operations tools** (`operations_tools/`) – inventory management and transportation APIs.
