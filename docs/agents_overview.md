@@ -6,7 +6,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 
 * **AnalyticsAgent** (`src/agents/sales/analytics_agent.py`) – Push a metric to Prometheus via the PrometheusPusher tool.
 * **BaseAgent** (`src/agents/base_agent.py`) – Common abstract base class for all agents used in the examples.
-* **ChatbotAgent** (`src/agents/sales/chatbot_agent.py`) – Agent wrapping a very small OpenAI `ChatCompletion` invocation.
+* **ChatbotAgent** (`src/agents/sales/chatbot_agent.py`) – Agent wrapping a very small OpenAI `ChatCompletion` invocation. Automatically trims conversation history using `utils.context.summarize_messages`.
 * **ContractAgent** (`src/agents/sales/contract_agent.py`) – Handles contract operations.
 * **ContractSignMonitorAgent** (`src/agents/sales/contract_sign_monitor_agent.py`) – Handles contract sign monitor operations.
 * **CRMEntryAgent** (`src/agents/sales/crm_entry_agent.py`) – Handles crmentry operations.

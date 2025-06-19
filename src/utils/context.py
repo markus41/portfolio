@@ -32,7 +32,7 @@ def _simple_summary(texts: List[str], max_tokens: int) -> str:
     return " ".join(words)
 
 
-def summarise_messages(
+def summarize_messages(
     messages: List[Dict[str, str]],
     *,
     max_tokens: int = 2000,
@@ -70,9 +70,31 @@ def summarise_messages(
     while current and total_tokens(current) > max_tokens - summary_tokens:
         removed.append(current.pop(0))
 
-    summary_text = _simple_summary([m.get("content", "") for m in removed], summary_tokens)
+    summary_text = _simple_summary(
+        [m.get("content", "") for m in removed], summary_tokens
+    )
     summary_msg = {
         "role": "system",
         "content": f"Summary of earlier messages: {summary_text}",
     }
     return [summary_msg] + current
+
+
+# ---------------------------------------------------------------------------
+# Backwards compatibility
+# ---------------------------------------------------------------------------
+
+
+def summarise_messages(
+    messages: List[Dict[str, str]],
+    *,
+    max_tokens: int = 2000,
+    summary_tokens: int = 200,
+) -> List[Dict[str, str]]:
+    """Alias for :func:`summarize_messages` using UK spelling."""
+
+    return summarize_messages(
+        messages,
+        max_tokens=max_tokens,
+        summary_tokens=summary_tokens,
+    )

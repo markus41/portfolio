@@ -274,6 +274,7 @@ also included:
 * `qa_agent.py` – run scripted conversations against `SupportAgent` and emit QA
   reports.
 * `review_agent.py` – automatically approve or reject drafts published on the event bus.
+* `utils.context.summarize_messages` – keeps chat histories within sensible token limits by inserting summaries when needed.
 
 These helper scripts keep network calls behind feature flags so they remain
 test-safe by default.
