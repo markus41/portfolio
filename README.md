@@ -500,6 +500,41 @@ npm install
 npm run dev:dashboard
 ```
 
+### Running the Dashboard
+
+Start the HTTP API with an authentication key and at least one team configuration:
+
+```bash
+API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+```
+
+Create a `.env` file inside `frontend/dashboard` so the React app can use the same key when
+communicating with the backend:
+
+```bash
+cd frontend/dashboard
+cp ../.env.example .env
+echo "VITE_API_KEY=mysecret" >> .env
+npm run dev:dashboard
+```
+
+Open the browser at [http://localhost:5173/dashboard](http://localhost:5173/dashboard). Fill in the
+team name (e.g. `sales`), choose an event type like `lead_capture` and enter the event payload in JSON
+format. Submitting the form posts the event to `/teams/<name>/event` and refreshes the status panel.
+
+The screenshot below demonstrates a typical lead submission form with the team name,
+event type, and JSON payload fields.
+
+![Lead submission form](docs/images/dashboard_lead_submission.svg)
+_Example placeholder screenshot_
+
+The dashboard polls `/teams/<name>/status` every few seconds and shows the most recent update:
+
+![Status display](docs/images/dashboard_status_display.svg)
+_Example placeholder screenshot_
+
+The "Live Stream" section demonstrates real-time updates from `/teams/<name>/stream`.
+
 Run the tests with `npm test`. Building the project outputs both the editor and
 dashboard into `dist/` using the shared `vite.config.js`. The dashboard's
 "Live Stream" section showcases the `/teams/<name>/stream` endpoint in action.
