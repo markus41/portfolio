@@ -104,6 +104,13 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
 
 Teams can report progress upward via `orch.report_status(team, status)`.
 
+Agents may also advertise a list of `skills`. The orchestrator can route a task
+to the first agent declaring the requested skill:
+
+```python
+orch.delegate_by_skill_sync("copywriting", {"text": "draft this"})
+```
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the

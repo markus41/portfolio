@@ -21,7 +21,7 @@ The implementation can be swapped at runtime so your agents can persist data to 
 
 ## Agents
 
-Agents live under `src/agents/` and are simple Python classes with a `run()` method. Many derive from a small `BaseAgent` helper that handles event subscription. Examples include:
+Agents live under `src/agents/` and are simple Python classes with a `run()` method. Many derive from a small `BaseAgent` helper that handles event subscription. Each agent can optionally declare a list of `skills` describing its capabilities. Examples include:
 
 * `ChatbotAgent` – responds to user queries.
 * `LeadCaptureAgent` – parses forms and enters prospects into the CRM.
