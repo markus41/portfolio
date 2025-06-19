@@ -3,6 +3,7 @@
 from .base_agent import BaseAgent
 import importlib
 from ..utils.logger import get_logger
+from ..events import ChatbotEvent
 
 logger = get_logger(__name__)
 
@@ -15,7 +16,7 @@ class ChatbotAgent(BaseAgent):
         ChatTool = importlib.import_module("src.tools.chat_tool").ChatTool
         self.chat_tool = ChatTool()
 
-    def run(self, payload: dict) -> dict:
+    def run(self, payload: ChatbotEvent) -> dict:
         """Return the assistant response for a list of chat messages.
 
         Parameters
@@ -27,5 +28,5 @@ class ChatbotAgent(BaseAgent):
 
         logger.info("Running ChatbotAgent")
         # forward the messages to ChatTool which wraps the OpenAI call
-        response = self.chat_tool.chat(payload["messages"])
+        response = self.chat_tool.chat(payload.messages)
         return {"response": response}

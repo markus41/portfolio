@@ -1,10 +1,14 @@
 # src/tests/test_lead_capture.py
 
 from src.agents.lead_capture_agent import LeadCaptureAgent
+from src.events import LeadCaptureEvent
 
 def test_lead_capture_normalization():
     agent = LeadCaptureAgent()
-    payload = {"form_data":{"Email":"Test@Ex.com","Name":" Foo ","Phone":"(123) 456-7890"},"source":"web"}
+    payload = LeadCaptureEvent(
+        form_data={"Email": "Test@Ex.com", "Name": " Foo ", "Phone": "(123) 456-7890"},
+        source="web",
+    )
     out = agent.run(payload)
     assert out["lead"]["email"] == "test@ex.com"
     assert out["lead"]["name"] == "Foo"

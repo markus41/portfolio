@@ -2,9 +2,15 @@ from __future__ import annotations
 
 """Common orchestrator base class used across examples."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 from agentic_core import EventBus
+from .events import (
+    LeadCaptureEvent,
+    ChatbotEvent,
+    CRMPipelineEvent,
+    SegmentationEvent,
+)
 
 from .memory_service import MemoryService
 from .utils.logger import get_logger
@@ -22,6 +28,12 @@ class BaseOrchestrator:
         self.bus = bus or EventBus()
         self.memory = memory
         self.agents: Dict[str, Any] = {}
+        self.event_schemas: Dict[str, Type[Any]] = {
+            "lead_capture": LeadCaptureEvent,
+            "chatbot": ChatbotEvent,
+            "crm_pipeline": CRMPipelineEvent,
+            "segmentation": SegmentationEvent,
+        }
 
     def handle_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
         """Persist ``event`` if a memory service is available and dispatch it."""
@@ -37,5 +49,15 @@ class BaseOrchestrator:
             logger.warning(f"Unknown event type: {event_type}")
             return {"status": "ignored"}
 
-        result = agent.run(payload)
+        schema = self.event_schemas.get(event_type)
+        if schema:
+            try:
+                payload_obj = schema(**payload)
+            except TypeError as exc:
+                logger.warning(f"Invalid payload for {event_type}: {exc}")
+                return {"status": "invalid"}
+        else:
+            payload_obj = payload
+
+        result = agent.run(payload_obj)
         return {"status": "done", "result": result}
