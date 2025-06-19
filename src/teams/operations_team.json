@@ -8,7 +8,7 @@
   "config": {
     "participants": [
       {
-        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "provider": "src.agents.roles.AssistantAgent",
         "component_type": "agent",
         "version": 1,
         "component_version": 1,
@@ -17,7 +17,7 @@
         "config": {"name": "inbound_agent"}
       },
       {
-        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "provider": "src.agents.roles.AssistantAgent",
         "component_type": "agent",
         "version": 1,
         "component_version": 1,
@@ -26,7 +26,7 @@
         "config": {"name": "outbound_agent"}
       },
       {
-        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "provider": "src.agents.roles.AssistantAgent",
         "component_type": "agent",
         "version": 1,
         "component_version": 1,
@@ -35,7 +35,7 @@
         "config": {"name": "inventory_management_agent"}
       },
       {
-        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "provider": "src.agents.roles.AssistantAgent",
         "component_type": "agent",
         "version": 1,
         "component_version": 1,
@@ -44,7 +44,7 @@
         "config": {"name": "tms_agent"}
       },
       {
-        "provider": "autogen_agentchat.agents.AssistantAgent",
+        "provider": "src.agents.roles.AssistantAgent",
         "component_type": "agent",
         "version": 1,
         "component_version": 1,
