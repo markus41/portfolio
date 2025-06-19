@@ -310,6 +310,37 @@ memory services, agents, tools and the in-memory event bus with pointers on how
 to extend them.
 [docs/agents_overview.md](docs/agents_overview.md) contains a catalog of every built-in agent and the utility modules they rely on.
 
+## ⛓️ Workflow Engine
+
+This release introduces a lightweight workflow engine implemented as a simple
+state machine. Workflows are defined as an ordered list of steps in a JSON or
+YAML file. The engine loads the file, tracks the current step and exposes helper
+methods to advance through the chain.
+
+An example definition can be found at
+`src/workflows/examples/content_creation.json`:
+
+```json
+{
+  "name": "content_creation",
+  "steps": ["Research", "Draft", "Edit", "Send"]
+}
+```
+
+Load and execute the workflow:
+
+```python
+from src.workflows.engine import WorkflowEngine
+
+engine = WorkflowEngine.from_file("src/workflows/examples/content_creation.json")
+while not engine.is_complete():
+    print(f"Currently at: {engine.current}")
+    engine.advance()
+print(f"Finished on: {engine.current}")
+```
+
+See [docs/workflows.md](docs/workflows.md) for a detailed overview.
+
 ## 🤝 Contributing
 
 We welcome community contributions! Install the pre-commit hooks so your changes follow our formatting and style guidelines.

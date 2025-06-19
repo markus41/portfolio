@@ -1,0 +1,38 @@
+# Workflow Engine
+
+The workflow engine provides a tiny state machine for moving through a series of
+steps defined in JSON or YAML. Each workflow file contains a list of step names
+and an optional `name` field. The `WorkflowEngine` loads this definition and
+exposes methods to query the current step, advance to the next one and reset the
+flow.
+
+## Definition Format
+
+```json
+{
+  "name": "content_creation",
+  "steps": ["Research", "Draft", "Edit", "Send"]
+}
+```
+
+Save the file anywhere on disk and load it using
+`WorkflowEngine.from_file(path)`.
+
+## Basic Usage
+
+```python
+from src.workflows.engine import WorkflowEngine
+
+engine = WorkflowEngine.from_file("path/to/workflow.json")
+print(engine.current)  # -> first step
+engine.advance()       # move to next
+```
+
+`advance()` raises `StopIteration` once the workflow reaches the final step.
+Call `reset()` to start over.
+
+## Example
+
+The repository ships with a ready-made workflow at
+`src/workflows/examples/content_creation.json`. The unit tests demonstrate how to
+walk through the steps using the engine.
