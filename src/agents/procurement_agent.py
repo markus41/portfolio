@@ -15,7 +15,7 @@ from agentic_core import (
 )
 from ..suppliers import BaseSupplierAdapter, Quote
 from ..utils.logger import get_logger
-from ..constants import OPENAI_API_KEY
+from ..config import settings
 
 try:
     import openai
@@ -47,7 +47,7 @@ class ProcurementAgent(AbstractAgent):
         self.bus = bus
         self.suppliers: List[BaseSupplierAdapter] = list(suppliers)
         if openai:
-            openai.api_key = OPENAI_API_KEY
+            openai.api_key = settings.OPENAI_API_KEY
         self.bus.subscribe("Project.MaterialsNeeded", self.run)
 
     def _format_prompt(

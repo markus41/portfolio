@@ -2,14 +2,14 @@
 
 from .base_agent import BaseAgent
 from ..tools.docusign_tool import DocuSignTool
-from ..constants import DOCUSIGN_ACCESS_TOKEN
+from ..config import settings
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class ContractAgent(BaseAgent):
     def __init__(self):
-        self.docusign = DocuSignTool(DOCUSIGN_ACCESS_TOKEN)
+        self.docusign = DocuSignTool(settings.DOCUSIGN_ACCESS_TOKEN)
 
     def run(self, payload):
         """

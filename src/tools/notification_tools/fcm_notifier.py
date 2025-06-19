@@ -1,7 +1,7 @@
 # Tools/notification_tools/fcm_notifier.py
 
 import requests
-from ...constants import FCM_SERVER_KEY
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -14,7 +14,7 @@ class FCMNotifier:
     FCM_URL = "https://fcm.googleapis.com/fcm/send"
 
     def __init__(self):
-        self.server_key = FCM_SERVER_KEY
+        self.server_key = settings.FCM_SERVER_KEY
 
     def send(self, token: str, title: str, body: str, data: dict = None) -> bool:
         headers = {

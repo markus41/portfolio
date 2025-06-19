@@ -5,7 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     requests = None
 
-from ...constants import TMS_API_URL, TMS_API_KEY
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -16,9 +16,9 @@ class TMSTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.post(
-            f"{TMS_API_URL}/shipments",
+            f"{settings.TMS_API_URL}/shipments",
             json=data,
-            headers={"Authorization": f"Bearer {TMS_API_KEY}"},
+            headers={"Authorization": f"Bearer {settings.TMS_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()
@@ -28,9 +28,9 @@ class TMSTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.put(
-            f"{TMS_API_URL}/shipments/{shipment_id}",
+            f"{settings.TMS_API_URL}/shipments/{shipment_id}",
             json={"status": status},
-            headers={"Authorization": f"Bearer {TMS_API_KEY}"},
+            headers={"Authorization": f"Bearer {settings.TMS_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()

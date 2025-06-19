@@ -2,13 +2,13 @@
 
 import requests
 from ...utils.logger import get_logger
-from ...constants import SLACK_WEBHOOK_URL
+from ...config import settings
 
 logger = get_logger(__name__)
 
 class SlackNotifier:
     def __init__(self):
-        self.webhook = SLACK_WEBHOOK_URL
+        self.webhook = settings.SLACK_WEBHOOK_URL
 
     def send(self, channel: str, text: str):
         payload = {"channel": channel, "text": text}

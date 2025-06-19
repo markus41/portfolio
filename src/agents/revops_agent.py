@@ -16,7 +16,7 @@ from agentic_core import (
 
 from ..crm_connector import Deal, fetch_deals
 from ..utils.logger import get_logger
-from ..constants import OPENAI_API_KEY
+from ..config import settings
 
 try:  # pragma: no cover - optional dependency
     import openai
@@ -42,7 +42,7 @@ class RevOpsAgent(AbstractAgent):
         super().__init__("revops")
         self.bus = bus
         if openai:
-            openai.api_key = OPENAI_API_KEY
+            openai.api_key = settings.OPENAI_API_KEY
         self.bus.subscribe("RevOps.Analyze", self.run)
 
     def _summarize_kpis(self, deals: List[Deal]) -> KPI:

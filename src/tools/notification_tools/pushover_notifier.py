@@ -1,7 +1,7 @@
 # Tools/notification_tools/pushover_notifier.py
 
 import requests
-from ...constants import PUSHOVER_USER_KEY, PUSHOVER_API_TOKEN
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -15,8 +15,8 @@ class PushoverNotifier:
 
     def send(self, message: str, title: str = None, priority: int = 0) -> bool:
         data = {
-            "token": PUSHOVER_API_TOKEN,
-            "user": PUSHOVER_USER_KEY,
+            "token": settings.PUSHOVER_API_TOKEN,
+            "user": settings.PUSHOVER_USER_KEY,
             "message": message,
             "priority": priority
         }

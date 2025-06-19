@@ -2,7 +2,7 @@
 
 import boto3
 from botocore.exceptions import ClientError
-from ...constants import AWS_SNS_TOPIC_ARN, AWS_REGION
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,8 +13,8 @@ class SNSNotifier:
     """
 
     def __init__(self):
-        self.client = boto3.client('sns', region_name=AWS_REGION)
-        self.topic_arn = AWS_SNS_TOPIC_ARN
+        self.client = boto3.client('sns', region_name=settings.AWS_REGION)
+        self.topic_arn = settings.AWS_SNS_TOPIC_ARN
 
     def publish(self, subject: str, message: str) -> dict:
         logger.info(f"Publishing to SNS topic {self.topic_arn}")

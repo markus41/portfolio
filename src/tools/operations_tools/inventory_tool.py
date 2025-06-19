@@ -5,7 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     requests = None
 
-from ...constants import INVENTORY_API_URL, INVENTORY_API_KEY
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -16,9 +16,9 @@ class InventoryTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.post(
-            f"{INVENTORY_API_URL}/items/{item_id}",
+            f"{settings.INVENTORY_API_URL}/items/{item_id}",
             json={"quantity": quantity},
-            headers={"Authorization": f"Bearer {INVENTORY_API_KEY}"},
+            headers={"Authorization": f"Bearer {settings.INVENTORY_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()
@@ -28,8 +28,8 @@ class InventoryTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.get(
-            f"{INVENTORY_API_URL}/items/{item_id}",
-            headers={"Authorization": f"Bearer {INVENTORY_API_KEY}"},
+            f"{settings.INVENTORY_API_URL}/items/{item_id}",
+            headers={"Authorization": f"Bearer {settings.INVENTORY_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()

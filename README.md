@@ -32,7 +32,7 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@
 ├── src/
 │   ├── agents/                # Core agent implementations
 │   ├── tools/                 # Reusable utilities used by agents
-│   ├── constants.py           # Env vars & API keys
+│   ├── config.py             # Env vars & API keys
 │   ├── orchestrator.py        # Event bus wiring
 │   ├── crm_connector.py       # CRM interface stubs
 │   ├── dev_assist.py          # Boilerplate generator
@@ -143,8 +143,10 @@ The optional packages listed in that file (such as `openai` and `google-api-pyth
 ## 📐 Environment Variables
 
 The system relies on a number of environment variables for API keys and service
-endpoints. The most common ones are summarised below. Any of them can be set in
-your shell before running the orchestrator or tests.
+endpoints. They are loaded via `src.config.Settings` which reads from the
+process environment or an optional `.env` file at the project root. The most
+common variables are summarised below. Any of them can be set in your shell or
+added to a `.env` file before running the orchestrator or tests.
 
 | Variable | Purpose |
 |----------|---------|

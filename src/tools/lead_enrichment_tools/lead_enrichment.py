@@ -1,5 +1,5 @@
 import requests
-from ...constants import CLEARBIT_API_KEY
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -12,7 +12,7 @@ class LeadEnrichmentTool:
         resp = requests.get(
             "https://person.clearbit.com/v2/people/find",
             params={"email": email},
-            headers={"Authorization": f"Bearer {CLEARBIT_API_KEY}"},
+            headers={"Authorization": f"Bearer {settings.CLEARBIT_API_KEY}"},
         )
         if resp.status_code == 200:
             return resp.json()

@@ -1,6 +1,9 @@
 # Environment Variable Reference
 
-This document describes every environment variable consumed in the project. The constants are defined in [src/constants.py](../src/constants.py) and are loaded at runtime using `os.getenv`.
+This document describes every environment variable consumed in the project. The
+values live in [src/config.py](../src/config.py) and are provided by a Pydantic
+`BaseSettings` class. They can be loaded from environment variables or a local
+`.env` file.
 
 ## AI Providers
 - `OPENAI_API_KEY` – API key for OpenAI models.

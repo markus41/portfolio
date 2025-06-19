@@ -1,15 +1,15 @@
 """Utility for creating simple ad campaigns on Facebook and Google."""
 
 import logging
-from ..constants import FACEBOOK_ACCESS_TOKEN, GOOGLE_ADS_API_KEY
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
 class AdTool:
     def __init__(self):
         # real init would configure SDK clients
-        self.facebook_token = FACEBOOK_ACCESS_TOKEN
-        self.google_key = GOOGLE_ADS_API_KEY
+        self.facebook_token = settings.FACEBOOK_ACCESS_TOKEN
+        self.google_key = settings.GOOGLE_ADS_API_KEY
 
     def create_facebook_campaign(self, name: str, audience_ids: list, budget: int) -> dict:
         logger.info(f"Creating FB campaign {name} for audiences {audience_ids}")

@@ -2,24 +2,21 @@
 
 import requests
 from msal import ConfidentialClientApplication
-from ...constants import (
-    DYNAMICS_TENANT_ID, DYNAMICS_CLIENT_ID,
-    DYNAMICS_CLIENT_SECRET, DYNAMICS_API_URL
-)
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class DynamicsTool:
     def __init__(self):
-        authority = f"https://login.microsoftonline.com/{DYNAMICS_TENANT_ID}"
-        scope = [f"{DYNAMICS_API_URL}/.default"]
+        authority = f"https://login.microsoftonline.com/{settings.DYNAMICS_TENANT_ID}"
+        scope = [f"{settings.DYNAMICS_API_URL}/.default"]
         self.app = ConfidentialClientApplication(
-            client_id=DYNAMICS_CLIENT_ID,
+            client_id=settings.DYNAMICS_CLIENT_ID,
             authority=authority,
-            client_credential=DYNAMICS_CLIENT_SECRET
+            client_credential=settings.DYNAMICS_CLIENT_SECRET
         )
-        self.base_url = DYNAMICS_API_URL
+        self.base_url = settings.DYNAMICS_API_URL
 
     def _get_token(self) -> str:
         result = self.app.acquire_token_for_client(scopes=[f"{self.base_url}/.default"])

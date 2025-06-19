@@ -1,7 +1,7 @@
 # Tools/crm_tools/hubspot_tool.py
 
 import requests
-from ...constants import HUBSPOT_API_KEY
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -9,7 +9,7 @@ logger = get_logger(__name__)
 class HubSpotTool:
     def __init__(self):
         self.base_url = "https://api.hubapi.com"
-        self.params = {"hapikey": HUBSPOT_API_KEY}
+        self.params = {"hapikey": settings.HUBSPOT_API_KEY}
 
     def create_contact(self, email: str, properties: dict) -> dict:
         url = f"{self.base_url}/crm/v3/objects/contacts"
