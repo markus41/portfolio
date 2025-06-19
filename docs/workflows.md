@@ -36,3 +36,11 @@ Call `reset()` to start over.
 The repository ships with a ready-made workflow at
 `src/workflows/examples/content_creation.json`. The unit tests demonstrate how to
 walk through the steps using the engine.
+
+## Graph Workflows
+
+For more complex flows you can describe nodes and edges explicitly. The
+[`frontend`](../frontend) editor exports a graph conforming to the JSON schema in
+[`workflow_schema.json`](workflow_schema.json). Each node represents an `agent`
+or `tool` and edges model the execution order. Persist the file via the `/workflows`
+endpoint and load it later with `GraphWorkflowDefinition.from_file()`.

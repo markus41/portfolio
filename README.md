@@ -460,6 +460,13 @@ pre-commit install
 
 Running `pre-commit` will automatically format code with **black**, lint with **flake8**, and run the unit tests via **pytest** before each commit.
 
+## 🔗 Workflow Editor
+
+A minimal ReactFlow editor lives in the [`frontend/`](frontend/) directory. It lets
+you design workflows composed of agent and tool nodes. The editor persists the
+graph by POSTing it to `/workflows` where the backend stores the definition for
+execution. The JSON format is described in [`docs/workflow_schema.json`](docs/workflow_schema.json).
+
 ---
 
 This project is released under the [MIT License](LICENSE).
