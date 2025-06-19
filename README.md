@@ -2,7 +2,7 @@
 
 # 🚀 Brookside BI – Autonomous Sales & Marketing Agents
 
-Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-based framework of specialized AI “expert” agents that power everything from lead capture to contract delivery, all orchestrated under a central Orchestrator agent. Whether you’re adding a new campaign agent or tweaking your CRM integration, you’ll find a clean separation of concerns that makes extending and testing your workflow a breeze.
+Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-based framework of specialized AI “expert” agents that power everything from lead capture to contract delivery, all orchestrated under a central Orchestrator agent. Whether you’re adding a new campaign agent or tweaking your CRM integration, you’ll find a clean separation of concerns that makes extending and testing your workflow a breeze. A lightweight `crm_connector` module now fetches deals directly from your CRM using `CRM_API_URL` and `CRM_API_KEY`.
 
 For a deeper explanation of the architecture—including the event bus, memory service and how AutoGen teams are loaded and how teams start running—see [docs/architecture.md](docs/architecture.md).
 
@@ -34,7 +34,7 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@
 │   ├── tools/                 # Reusable utilities used by agents
 │   ├── config.py             # Env vars & API keys
 │   ├── orchestrator.py        # Event bus wiring
-│   ├── crm_connector.py       # CRM interface stubs
+│   ├── crm_connector.py       # Basic CRM API connector
 │   ├── dev_assist.py          # Boilerplate generator
 │   ├── debugger_agent.py      # Auto patch suggestions
 │   ├── qa_agent.py            # Conversation tester
@@ -332,7 +332,7 @@ dotenv file before running the orchestrator or tests.
 | Variable | Purpose |
 |----------|---------|
 | `OPENAI_API_KEY` | Used by agents that call OpenAI models |
-| `CRM_API_URL` / `CRM_API_KEY` | Endpoint and key for your CRM integration |
+| `CRM_API_URL` / `CRM_API_KEY` | Endpoint and key for your CRM integration used by `crm_connector.fetch_deals` |
 | `SENDGRID_API_KEY` | Sending transactional email |
 | `REDIS_URL` | Backend store for caching and message passing |
 | `MEMORY_BACKEND` | Selects memory service (`rest`, `file`, `redis`) |
