@@ -12,6 +12,7 @@ logger = get_logger(__name__)
 if openai:
     openai.api_key = settings.OPENAI_API_KEY
 
+
 class ChatTool:
     """Minimal helper for calling ``openai.ChatCompletion``."""
 

@@ -5,6 +5,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class ListingAgent(BaseAgent):
     def run(self, payload: dict) -> dict:
         """Create a property listing payload."""

@@ -7,15 +7,23 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class SESNotifier:
     """
     Send emails via AWS SES.
     """
 
     def __init__(self):
-        self.client = boto3.client('ses', region_name=settings.AWS_SES_REGION)
+        self.client = boto3.client("ses", region_name=settings.AWS_SES_REGION)
 
-    def send_email(self, from_addr: str, to_addrs: list, subject: str, html_body: str, text_body: str = None) -> dict:
+    def send_email(
+        self,
+        from_addr: str,
+        to_addrs: list,
+        subject: str,
+        html_body: str,
+        text_body: str = None,
+    ) -> dict:
         logger.info(f"Sending SES email to {to_addrs}")
         try:
             resp = self.client.send_email(
@@ -25,9 +33,9 @@ class SESNotifier:
                     "Subject": {"Data": subject},
                     "Body": {
                         "Html": {"Data": html_body},
-                        **({"Text": {"Data": text_body}} if text_body else {})
-                    }
-                }
+                        **({"Text": {"Data": text_body}} if text_body else {}),
+                    },
+                },
             )
             return {"MessageId": resp.get("MessageId")}
         except ClientError as e:

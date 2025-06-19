@@ -10,6 +10,7 @@ from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class EcommerceTool:
     def create_order(self, order: dict) -> dict:
         logger.info("Creating ecommerce order")

@@ -38,5 +38,3 @@ def test_orchestrator_file_backend(tmp_path, monkeypatch):
     contents = mem_file.read_text().strip().splitlines()
     assert len(contents) == 1
     assert "lead_capture" in contents[0]
-
-

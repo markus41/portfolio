@@ -7,11 +7,15 @@ def test_inbound_agent(monkeypatch):
     class DummyTMS:
         def create_shipment(self, data):
             return {"id": "ship1"}
+
     class DummyInv:
         def update_inventory(self, item_id, qty):
             return {"id": item_id, "qty": qty}
+
     monkeypatch.setattr("src.tools.operations_tools.tms_tool.TMSTool", DummyTMS)
-    monkeypatch.setattr("src.tools.operations_tools.inventory_tool.InventoryTool", DummyInv)
+    monkeypatch.setattr(
+        "src.tools.operations_tools.inventory_tool.InventoryTool", DummyInv
+    )
     agent = InboundAgent()
     out = agent.run({"trailer_id": "T1", "items": [{"sku": "A", "qty": 2}]})
     assert out["status"] == "inbound_processed"
@@ -22,7 +26,10 @@ def test_inventory_management_agent(monkeypatch):
     class DummyInv:
         def update_inventory(self, item_id, qty):
             return {"id": item_id, "qty": qty}
-    monkeypatch.setattr("src.tools.operations_tools.inventory_tool.InventoryTool", DummyInv)
+
+    monkeypatch.setattr(
+        "src.tools.operations_tools.inventory_tool.InventoryTool", DummyInv
+    )
     agent = InventoryManagementAgent()
     out = agent.run({"item_id": "A", "qty": 5})
     assert out["status"] == "updated"
@@ -33,6 +40,7 @@ def test_tms_agent(monkeypatch):
     class DummyTMS:
         def update_status(self, sid, status):
             return {"ok": True}
+
     monkeypatch.setattr("src.tools.operations_tools.tms_tool.TMSTool", DummyTMS)
     agent = TMSAgent()
     out = agent.run({"shipment_id": "S1", "status": "delivered"})

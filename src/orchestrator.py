@@ -67,10 +67,14 @@ class _SupportTools:
     def lookup_order(self, order_id: str) -> dict:  # pragma: no cover - demo stub
         return {"status": "shipped", "days_delayed": 0}
 
-    def issue_refund(self, order_id: str, pct: int) -> str:  # pragma: no cover - demo stub
+    def issue_refund(
+        self, order_id: str, pct: int
+    ) -> str:  # pragma: no cover - demo stub
         return "r1"
 
-    def create_ticket(self, summary: str, customer_id: str) -> str:  # pragma: no cover - demo stub
+    def create_ticket(
+        self, summary: str, customer_id: str
+    ) -> str:  # pragma: no cover - demo stub
         return "t1"
 
 
@@ -182,4 +186,3 @@ class Orchestrator(BaseOrchestrator):
     async def monthly_tick(self) -> None:
         """Emit the RevOps analysis cron event."""
         await run_maybe_async(self.bus.publish, "RevOps.Analyze", {"tenant_id": "demo"})
-

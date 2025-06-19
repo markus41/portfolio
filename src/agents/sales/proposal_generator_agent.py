@@ -7,6 +7,7 @@ import uuid
 
 logger = get_logger(__name__)
 
+
 class ProposalGeneratorAgent(BaseAgent):
     def __init__(self, template_path: str = "templates/proposal.docx"):
         self.doc_tool = DocGenTool(template_path)

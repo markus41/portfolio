@@ -10,6 +10,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class InventoryTool:
     def update_inventory(self, item_id: str, quantity: int) -> dict:
         logger.info(f"Updating inventory {item_id} by {quantity}")

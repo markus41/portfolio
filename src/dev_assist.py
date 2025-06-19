@@ -17,7 +17,7 @@ def main() -> None:
         code_file.write_text(f'"""TODO: {desc}."""\n')
     if not test_file.exists():
         test_file.write_text(
-            '"""Tests for {name}"""\n\n\n' 'def test_placeholder():\n    assert True\n'
+            '"""Tests for {name}"""\n\n\n' "def test_placeholder():\n    assert True\n"
         )
     print(f"Created {code_file} and {test_file}")
 

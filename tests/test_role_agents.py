@@ -19,4 +19,3 @@ def test_analyst_permissions():
     agent = AnalystAgent()
     assert agent.can_use("metrics_tools")
     assert agent.run({"tool": "metrics_tools"}) == {"status": "ok"}
-

@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class FCMNotifier:
     """
     Send mobile push via Firebase Cloud Messaging.
@@ -19,12 +20,12 @@ class FCMNotifier:
     def send(self, token: str, title: str, body: str, data: dict = None) -> bool:
         headers = {
             "Authorization": f"key={self.server_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         payload = {
             "to": token,
             "notification": {"title": title, "body": body},
-            "data": data or {}
+            "data": data or {},
         }
         logger.info(f"Sending FCM notification to {token}")
         resp = requests.post(self.FCM_URL, json=payload, headers=headers)

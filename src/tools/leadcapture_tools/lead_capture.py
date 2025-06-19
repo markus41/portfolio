@@ -3,6 +3,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 def normalize_form(form_data: dict) -> dict:
     """Normalize raw form submission data."""
     email = form_data.get("Email") or form_data.get("email") or ""

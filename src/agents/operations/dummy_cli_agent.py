@@ -8,4 +8,3 @@ class DummyCliAgent(BaseAgent):
 
     def run(self, payload):
         return {"echo": payload}
-

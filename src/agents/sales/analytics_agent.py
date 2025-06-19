@@ -4,6 +4,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class AnalyticsAgent(BaseAgent):
     def __init__(self):
         self.pusher = PrometheusPusher(job="sales_analytics")

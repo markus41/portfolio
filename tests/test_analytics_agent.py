@@ -7,7 +7,9 @@ sys.modules.setdefault(
     "prometheus_client",
     types.SimpleNamespace(
         CollectorRegistry=lambda: object(),
-        Gauge=lambda *a, **k: types.SimpleNamespace(labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)),
+        Gauge=lambda *a, **k: types.SimpleNamespace(
+            labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)
+        ),
         push_to_gateway=lambda *a, **k: None,
     ),
 )
@@ -28,7 +30,9 @@ def test_analytics_agent_push(monkeypatch, caplog):
 
     agent = AnalyticsAgent()
     with caplog.at_level(logging.INFO):
-        result = agent.run({"metric": "sales", "value": 100, "labels": {"region": "us"}})
+        result = agent.run(
+            {"metric": "sales", "value": 100, "labels": {"region": "us"}}
+        )
 
     assert result == {"status": "pushed"}
     assert pushed == [("sales", 100.0, {"region": "us"})]

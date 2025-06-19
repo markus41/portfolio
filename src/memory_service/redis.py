@@ -60,4 +60,3 @@ class RedisMemoryService(BaseMemoryService):
             except Exception:  # pragma: no cover - ignore malformed entries
                 continue
         return results
-

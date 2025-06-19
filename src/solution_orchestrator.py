@@ -29,7 +29,9 @@ class SolutionOrchestrator:
         planner_plans: Optional[Dict[str, List[Dict[str, Any]]]] = None,
         log_path: str | None = None,
     ) -> None:
-        self.teams = {name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()}
+        self.teams = {
+            name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()
+        }
         self.history: list[dict] = []
         self.status: Dict[str, str] = {}
         self.planner: Optional[PlannerAgent] = None

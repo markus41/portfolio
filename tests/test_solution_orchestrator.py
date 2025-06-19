@@ -22,11 +22,7 @@ class DummyAgentB(BaseAgent):
 def _write_team(tmp_path: Path, agent_name: str) -> Path:
     config = {
         "responsibilities": [agent_name],
-        "config": {
-            "participants": [
-                {"config": {"name": agent_name}}
-            ]
-        }
+        "config": {"participants": [{"config": {"name": agent_name}}]},
     }
     team_file = tmp_path / f"{agent_name}.json"
     team_file.write_text(json.dumps(config))
@@ -47,8 +43,12 @@ def test_solution_orchestrator_routing(tmp_path, monkeypatch):
 
     orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
 
-    out_a = orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {"foo": 1}})
-    out_b = orch.handle_event_sync("B", {"type": "dummy_agent_b", "payload": {"bar": 2}})
+    out_a = orch.handle_event_sync(
+        "A", {"type": "dummy_agent_a", "payload": {"foo": 1}}
+    )
+    out_b = orch.handle_event_sync(
+        "B", {"type": "dummy_agent_b", "payload": {"bar": 2}}
+    )
 
     assert out_a["result"]["handled_by"] == "A"
     assert out_b["result"]["handled_by"] == "B"

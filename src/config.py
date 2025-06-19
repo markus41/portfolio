@@ -17,6 +17,7 @@ variables:
 Instances validate a few fields (like AWS regions) to catch
 misconfiguration early in application startup.
 """
+
 from __future__ import annotations
 
 from typing import Literal, Optional

@@ -15,7 +15,9 @@ from .utils.plugin_loader import load_agent
 class TeamOrchestrator(BaseOrchestrator):
     """Load a team config and delegate events to its agents."""
 
-    def __init__(self, config_path: str, bus: EventBus | AsyncEventBus | None = None) -> None:
+    def __init__(
+        self, config_path: str, bus: EventBus | AsyncEventBus | None = None
+    ) -> None:
         """Initialise the orchestrator from a team JSON file.
 
         Parameters
@@ -66,4 +68,3 @@ class TeamOrchestrator(BaseOrchestrator):
                 continue
             agent_cls = load_agent(name)
             self.agents[name] = agent_cls()
-

@@ -51,7 +51,9 @@ def test_execute_goal(tmp_path):
         ]
     }
 
-    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, planner_plans=plans)
+    orch = SolutionOrchestrator(
+        {"A": str(team_a), "B": str(team_b)}, planner_plans=plans
+    )
 
     result = orch.execute_goal("demo")
     assert result["status"] == "complete"

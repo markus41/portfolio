@@ -7,6 +7,7 @@ from ...config import settings
 
 logger = get_logger(__name__)
 
+
 class PrometheusPusher:
     def __init__(self, job: str):
         self.registry = CollectorRegistry()
@@ -14,8 +15,15 @@ class PrometheusPusher:
 
     def push_metric(self, name: str, value: float, labels: dict = None):
         labels = labels or {}
-        gauge = Gauge(name, f"{name} gauge", labelnames=list(labels.keys()), registry=self.registry)
+        gauge = Gauge(
+            name,
+            f"{name} gauge",
+            labelnames=list(labels.keys()),
+            registry=self.registry,
+        )
         gauge.labels(**labels).set(value)
         timestamp = int(time.time())
         logger.info(f"Pushing metric {name}={value} to Prometheus (job={self.job})")
-        push_to_gateway(settings.PROMETHEUS_PUSHGATEWAY, job=self.job, registry=self.registry)
+        push_to_gateway(
+            settings.PROMETHEUS_PUSHGATEWAY, job=self.job, registry=self.registry
+        )

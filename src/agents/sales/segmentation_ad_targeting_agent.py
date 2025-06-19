@@ -7,6 +7,7 @@ from ...events import SegmentationEvent
 
 logger = get_logger(__name__)
 
+
 class SegmentationAdTargetingAgent(BaseAgent):
     def __init__(self):
         AdTool = importlib.import_module("src.tools.ad_tool").AdTool

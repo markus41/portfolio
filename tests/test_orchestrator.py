@@ -28,12 +28,15 @@ def test_orchestrator_is_base_class():
     assert issubclass(Orchestrator, BaseOrchestrator)
 
 
-@pytest.mark.parametrize("event_type", [
-    "lead_capture",
-    "chatbot",
-    "crm_pipeline",
-    "segmentation",
-])
+@pytest.mark.parametrize(
+    "event_type",
+    [
+        "lead_capture",
+        "chatbot",
+        "crm_pipeline",
+        "segmentation",
+    ],
+)
 def test_known_event_types(monkeypatch, event_type):
     class DummyScheduler:
         def create_event(self, cid, ev):
@@ -50,8 +53,8 @@ def test_known_event_types(monkeypatch, event_type):
     store_calls = {}
 
     def fake_store(key, payload):
-        store_calls['key'] = key
-        store_calls['payload'] = payload
+        store_calls["key"] = key
+        store_calls["payload"] = payload
         return True
 
     monkeypatch.setattr(orch.memory, "store", fake_store)
@@ -59,7 +62,7 @@ def test_known_event_types(monkeypatch, event_type):
     run_payload = {}
 
     def fake_run(payload):
-        run_payload['payload'] = payload
+        run_payload["payload"] = payload
         return {"handled": event_type}
 
     monkeypatch.setattr(orch.agents[event_type], "run", fake_run)
@@ -86,7 +89,7 @@ def test_known_event_types(monkeypatch, event_type):
 
     assert store_calls == {"key": event_type, "payload": payload}
     expected_cls = event_classes[event_type]
-    assert run_payload['payload'] == expected_cls(**payload)
+    assert run_payload["payload"] == expected_cls(**payload)
     assert res["status"] == "done"
     assert res["result"] == {"handled": event_type}
 
@@ -106,8 +109,8 @@ def test_unknown_event_type(monkeypatch):
     store_calls = {}
 
     def fake_store(key, payload):
-        store_calls['key'] = key
-        store_calls['payload'] = payload
+        store_calls["key"] = key
+        store_calls["payload"] = payload
         return True
 
     monkeypatch.setattr(orch.memory, "store", fake_store)
@@ -116,11 +119,14 @@ def test_unknown_event_type(monkeypatch):
 
     # ensure none of the agents are invoked
     for name, agent in orch.agents.items():
+
         def make_fake(n):
             def fake_run(payload):
                 called.append(n)
                 return {}
+
             return fake_run
+
         monkeypatch.setattr(agent, "run", make_fake(name))
 
     payload = {"foo": "bar"}

@@ -4,10 +4,15 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class FulfillmentAgent(BaseAgent):
     def __init__(self):
-        EcommerceTool = importlib.import_module("src.tools.ecommerce_tool").EcommerceTool
-        InventoryTool = importlib.import_module("src.tools.operations_tools.inventory_tool").InventoryTool
+        EcommerceTool = importlib.import_module(
+            "src.tools.ecommerce_tool"
+        ).EcommerceTool
+        InventoryTool = importlib.import_module(
+            "src.tools.operations_tools.inventory_tool"
+        ).InventoryTool
         self.ecommerce = EcommerceTool()
         self.inventory = InventoryTool()
 

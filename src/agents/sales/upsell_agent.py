@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class UpsellAgent(BaseAgent):
     def __init__(self):
         self.email = EmailTool()
@@ -19,5 +20,7 @@ class UpsellAgent(BaseAgent):
         }
         """
         body = f"We thought you might like {payload['product_suggestion']} because {payload['reason']}."
-        sent = self.email.send_email(to_email=payload["to"], subject="Recommended for you", html_content=body)
+        sent = self.email.send_email(
+            to_email=payload["to"], subject="Recommended for you", html_content=body
+        )
         return {"status": "upsell_sent" if sent else "failed"}

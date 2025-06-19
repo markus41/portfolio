@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class CSATSchedulerAgent(BaseAgent):
     def __init__(self):
         self.scheduler = SchedulerTool()
@@ -24,9 +25,11 @@ class CSATSchedulerAgent(BaseAgent):
         event = {
             "summary": summary,
             "start": payload["due"],
-            "end":   payload["due"],
-            "attendees": [{"email": payload.get("client_email", "")}]
+            "end": payload["due"],
+            "attendees": [{"email": payload.get("client_email", "")}],
         }
         ev = self.scheduler.create_event(payload["calendar_id"], event)
-        logger.info(f"CSATSchedulerAgent → scheduled {ev['id']} for milestone {payload['milestone']}")
+        logger.info(
+            f"CSATSchedulerAgent → scheduled {ev['id']} for milestone {payload['milestone']}"
+        )
         return {"event_id": ev["id"], "status": "scheduled"}

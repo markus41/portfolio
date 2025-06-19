@@ -3,6 +3,7 @@
 from src.agents.sales.lead_capture_agent import LeadCaptureAgent
 from src.events import LeadCaptureEvent
 
+
 def test_lead_capture_normalization():
     agent = LeadCaptureAgent()
     payload = LeadCaptureEvent(

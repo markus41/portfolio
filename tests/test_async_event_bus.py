@@ -1,6 +1,7 @@
 import asyncio
 from agentic_core import AsyncEventBus
 
+
 def test_async_event_bus_publish():
     bus = AsyncEventBus()
     called = []
@@ -15,4 +16,3 @@ def test_async_event_bus_publish():
 
     asyncio.run(main())
     assert called == [{"x": 1}]
-

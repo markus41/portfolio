@@ -65,8 +65,8 @@ _module_map: Dict[str, str] = {
 
 def __getattr__(name: str):
     if name in _module_map:
-        module: ModuleType = importlib.import_module(f'.{_module_map[name]}', __name__)
+        module: ModuleType = importlib.import_module(f".{_module_map[name]}", __name__)
         attr = getattr(module, name)
         globals()[name] = attr
         return attr
-    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

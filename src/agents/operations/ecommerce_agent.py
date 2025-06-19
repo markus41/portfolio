@@ -4,9 +4,12 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class EcommerceAgent(BaseAgent):
     def __init__(self):
-        EcommerceTool = importlib.import_module("src.tools.ecommerce_tool").EcommerceTool
+        EcommerceTool = importlib.import_module(
+            "src.tools.ecommerce_tool"
+        ).EcommerceTool
         self.ecommerce = EcommerceTool()
 
     def run(self, payload: dict) -> dict:

@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class OnboardingAgent(BaseAgent):
     def __init__(self):
         self.email = EmailTool()
@@ -21,7 +22,7 @@ class OnboardingAgent(BaseAgent):
         self.email.send_email(
             to_email=payload["to"],
             subject="Welcome aboard!",
-            html_content=payload["welcome_message"]
+            html_content=payload["welcome_message"],
         )
         # could integrate PlannerTool here to create tasks...
         logger.info(f"Sent welcome to {payload['to']}")

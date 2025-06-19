@@ -57,6 +57,7 @@ class WorkflowModel(BaseModel):
     nodes: List[NodeModel]
     edges: List[EdgeModel]
 
+
 from .solution_orchestrator import SolutionOrchestrator
 from .config import settings
 
@@ -71,7 +72,9 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         omitted an orchestrator with no teams is created.
     """
 
-    app = FastAPI(title="Brookside API", description="SolutionOrchestrator HTTP interface")
+    app = FastAPI(
+        title="Brookside API", description="SolutionOrchestrator HTTP interface"
+    )
     orch = orchestrator or SolutionOrchestrator({})
     workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 

@@ -7,6 +7,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class ContractSignMonitorAgent(BaseAgent):
     def __init__(self):
         self.docusign = DocuSignTool(settings.DOCUSIGN_ACCESS_TOKEN)
