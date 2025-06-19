@@ -104,6 +104,23 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
 
 Teams can report progress upward via `orch.report_status(team, status)`.
 
+### 🖥️ Command Line Usage
+
+The project exposes a small CLI for running and interacting with the
+`SolutionOrchestrator`.  After installing the package in editable mode you can
+start the orchestrator and send events from another shell:
+
+```bash
+# launch the orchestrator (listens on localhost:8765)
+brookside-cli start sales=src/teams/sales_team_full.json
+
+# dispatch an event
+brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
+
+# view latest statuses
+brookside-cli status
+```
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under
@@ -124,10 +141,15 @@ editing the core Python code.
 
 ## 📦 Installation
 
-Install the Python dependencies with pip using the `requirements.txt` file:
+Install the Python dependencies with pip using the `requirements.txt` file or
+install the package in editable mode to make the `brookside-cli` command
+available:
 
 ```bash
 pip install -r requirements.txt
+
+# install the CLI
+pip install -e .
 ```
 
 The optional packages listed in that file (such as `openai` and `google-api-python-client`) are not needed when running the unit tests but enable additional runtime integrations.
