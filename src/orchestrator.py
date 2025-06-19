@@ -16,6 +16,9 @@ infrastructure specific details.
 """
 
 from typing import Dict, Any, List
+import importlib
+import json
+from pathlib import Path
 
 try:  # pragma: no cover - optional dependency
     import openai
@@ -72,24 +75,37 @@ class Orchestrator:
     ----------
     memory_endpoint:
         URL of the memory service used to persist and retrieve events.
+    config_path:
+        Optional path to a JSON file mapping event types to agent classes.
     """
 
-    def __init__(self, memory_endpoint: str, use_llm_planner: bool = False):
+    def __init__(self, memory_endpoint: str, use_llm_planner: bool = False, config_path: str | None = None):
         # the in-memory storage (could be a vector DB or search engine)
         self.memory = MemoryService(memory_endpoint)
 
         self.bus = EventBus()
         self.use_llm_planner = use_llm_planner
 
-        # Register a very small set of agents keyed by event type.  In a real
-        # system this might be configurable or use entry points/plugins.
-        # fixed mapping of event types to agent instances used in tests
-        self.agents = {
-            "lead_capture": LeadCaptureAgent(),
-            "chatbot": ChatbotAgent(),
-            "crm_pipeline": CRMPipelineAgent(),
-            "segmentation": SegmentationAdTargetingAgent(),
-        }
+        if config_path:
+            path = Path(config_path)
+            with path.open() as fh:
+                mapping = json.load(fh)
+            self.agents = {}
+            for event, target in mapping.items():
+                module_name, class_name = target.rsplit(".", 1)
+                module = importlib.import_module(module_name)
+                agent_cls = getattr(module, class_name)
+                self.agents[event] = agent_cls()
+        else:
+            # Register a very small set of agents keyed by event type.  In a real
+            # system this might be configurable or use entry points/plugins.
+            # fixed mapping of event types to agent instances used in tests
+            self.agents = {
+                "lead_capture": LeadCaptureAgent(),
+                "chatbot": ChatbotAgent(),
+                "crm_pipeline": CRMPipelineAgent(),
+                "segmentation": SegmentationAdTargetingAgent(),
+            }
 
         # Additional global agents used outside of handle_event
         self.support = SupportAgent(

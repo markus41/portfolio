@@ -1,0 +1,6 @@
+{
+  "lead_capture": "src.agents.lead_capture_agent.LeadCaptureAgent",
+  "chatbot": "src.agents.chatbot_agent.ChatbotAgent",
+  "crm_pipeline": "src.agents.crm_pipeline_agent.CRMPipelineAgent",
+  "segmentation": "src.agents.segmentation_ad_targeting_agent.SegmentationAdTargetingAgent"
+}

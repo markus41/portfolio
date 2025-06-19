@@ -61,6 +61,16 @@ GET /fetch?key=lead_capture:42&top_k=5
 ### Orchestrator
 
 `src.orchestrator.Orchestrator` wires a handful of Python agents together.  `handle_event()` stores incoming payloads via `MemoryService` and then calls the agent associated with the event `type`.
+The mapping of event types to agent classes can be supplied via a small JSON file. When the orchestrator is constructed with ``config_path`` it loads this file and imports the listed modules dynamically. An example can be found in ``src/orchestrator_config.json``:
+
+```json
+{
+  "lead_capture": "src.agents.lead_capture_agent.LeadCaptureAgent",
+  "chatbot": "src.agents.chatbot_agent.ChatbotAgent"
+}
+```
+
+If ``config_path`` is not provided, a built-in default mapping identical to the example above is used.
 
 ### TeamOrchestrator
 
