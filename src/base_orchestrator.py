@@ -38,6 +38,14 @@ class BaseOrchestrator:
             "segmentation": SegmentationEvent,
         }
 
+    def get_agent_by_skill(self, skill: str):
+        """Return the first agent advertising ``skill`` or ``None``."""
+
+        for agent in self.agents.values():
+            if skill in getattr(agent, "skills", []):
+                return agent
+        return None
+
     async def handle_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
         """Persist ``event`` if a memory service is available and dispatch it."""
         event_type = event.get("type")
@@ -67,6 +75,29 @@ class BaseOrchestrator:
             result = await result
         return {"status": "done", "result": result}
 
+    async def delegate_by_skill(
+        self, skill: str, payload: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Dispatch ``payload`` to the first agent advertising ``skill``."""
+
+        logger.info(f"Delegating using skill={skill}")
+        agent = self.get_agent_by_skill(skill)
+        if not agent:
+            logger.warning(f"No agent found with skill: {skill}")
+            return {"status": "unhandled"}
+
+        result = agent.run(payload)
+        if inspect.isawaitable(result):
+            result = await result
+        return {"status": "done", "result": result}
+
     def handle_event_sync(self, event: Dict[str, Any]) -> Dict[str, Any]:
         """Synchronous wrapper around :meth:`handle_event`."""
         return run_sync(self.handle_event(event))
+
+    def delegate_by_skill_sync(
+        self, skill: str, payload: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Synchronous wrapper around :meth:`delegate_by_skill`."""
+
+        return run_sync(self.delegate_by_skill(skill, payload))
