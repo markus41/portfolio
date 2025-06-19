@@ -1,16 +1,57 @@
 """Centralised project configuration using pydantic settings.
 
-This module defines :class:`Settings` which aggregates all configuration
-values previously scattered across ``constants.py``.  Values are
-populated from environment variables or an optional ``.env`` file at the
-project root.  Instances validate a few fields (like AWS regions) to
-catch misconfiguration early in application startup.
+``Settings`` aggregates configuration previously scattered across
+``constants.py``.  Values are loaded from environment variables and an
+``.env`` file whose location depends on the running environment.  The
+file selection logic is controlled by the ``ENV`` and ``ENV_FILE``
+variables:
+
+``ENV_FILE``
+    When set, provides an explicit path to the dotenv file.
+
+``ENV``
+    Chooses a file named ``.env.<ENV>``.  ``ENV=prod`` loads ``.env`` to
+    mimic typical production deployments.  The default is ``dev`` which
+    reads ``.env.dev`` if present.
+
+Instances validate a few fields (like AWS regions) to catch
+misconfiguration early in application startup.
 """
 from __future__ import annotations
 
 from typing import Literal, Optional
+import os
 
 from pydantic import BaseSettings, Field, validator
+
+
+def _choose_env_file() -> str:
+    """Determine which ``.env`` file to load based on environment vars."""
+    explicit = os.getenv("ENV_FILE")
+    if explicit:
+        return explicit
+    env = os.getenv("ENV", "dev")
+    return ".env" if env == "prod" else f".env.{env}"
+
+
+_DEFAULT_ENV_FILE = _choose_env_file()
+
+
+def _load_env_file(path: str) -> dict[str, str]:
+    """Return key-value pairs parsed from ``path`` if it exists."""
+    data: dict[str, str] = {}
+    if not os.path.exists(path):
+        return data
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            data[key] = value
+    return data
 
 
 class Settings(BaseSettings):
@@ -138,8 +179,16 @@ class Settings(BaseSettings):
     ECOMMERCE_API_KEY: Optional[str] = None
 
     class Config:
-        env_file = ".env"
         case_sensitive = False
+
+        @classmethod
+        def customise_sources(cls, init_settings, env_settings, file_secret_settings):
+            """Insert dotenv loading without requiring ``python-dotenv``."""
+
+            def dotenv_settings(settings):
+                return _load_env_file(_DEFAULT_ENV_FILE)
+
+            return init_settings, env_settings, dotenv_settings, file_secret_settings
 
     @validator("AWS_REGION", allow_reuse=True)
     def validate_region(cls, value: str) -> str:

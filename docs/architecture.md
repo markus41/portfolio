@@ -118,7 +118,7 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `autogen_agentchat.agents.AssistantAgent` or `autogen_ext.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.
 
-OpenAI powered components (via `OpenAIChatCompletionClient`) are created at this stage using the API keys defined in `src/constants.py` or environment variables.  Whenever an AutoGen agent needs a model response, the provider invokes the OpenAI API to generate the next message.
+OpenAI powered components (via `OpenAIChatCompletionClient`) are created using API keys provided by `src.config.settings`.  The settings object reads values from environment variables and the relevant `.env` file.  Whenever an AutoGen agent needs a model response, the provider invokes the OpenAI API to generate the next message.
 
 ### AutoGen Invocation
 
