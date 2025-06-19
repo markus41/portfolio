@@ -2,16 +2,16 @@
 
 import json
 import requests
-from ...constants import MONDAY_API_TOKEN, MONDAY_API_URL
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class MondayTool:
     def __init__(self):
-        self.url = MONDAY_API_URL
+        self.url = settings.MONDAY_API_URL
         self.headers = {
-            "Authorization": MONDAY_API_TOKEN,
+            "Authorization": settings.MONDAY_API_TOKEN,
             "Content-Type": "application/json"
         }
 

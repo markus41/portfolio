@@ -1,11 +1,7 @@
 # Tools/crm_tools/salesforce_tool.py
 
 from simple_salesforce import Salesforce
-from ...constants import (
-    SF_CLIENT_ID, SF_CLIENT_SECRET,
-    SF_USERNAME, SF_PASSWORD,
-    SF_SECURITY_TOKEN, SF_DOMAIN
-)
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -14,11 +10,11 @@ class SalesforceTool:
     def __init__(self):
         logger.info("Authenticating to Salesforce")
         self.sf = Salesforce(
-            username=SF_USERNAME,
-            password=SF_PASSWORD,
-            security_token=SF_SECURITY_TOKEN,
-            client_id=SF_CLIENT_ID,
-            domain=SF_DOMAIN  # use "test" for sandbox
+            username=settings.SF_USERNAME,
+            password=settings.SF_PASSWORD,
+            security_token=settings.SF_SECURITY_TOKEN,
+            client_id=settings.SF_CLIENT_ID,
+            domain=settings.SF_DOMAIN  # use "test" for sandbox
         )
 
     def create_contact(self, data: dict) -> dict:

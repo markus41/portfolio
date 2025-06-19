@@ -2,13 +2,13 @@
 
 import requests
 from ...utils.logger import get_logger
-from ...constants import TEAMS_WEBHOOK_URL
+from ...config import settings
 
 logger = get_logger(__name__)
 
 class TeamsNotifier:
     def __init__(self):
-        self.webhook = TEAMS_WEBHOOK_URL
+        self.webhook = settings.TEAMS_WEBHOOK_URL
 
     def send(self, title: str, text: str):
         card = {

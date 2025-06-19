@@ -5,12 +5,12 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     openai = None
 
-from ..constants import OPENAI_API_KEY
+from ..config import settings
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 if openai:
-    openai.api_key = OPENAI_API_KEY
+    openai.api_key = settings.OPENAI_API_KEY
 
 class ChatTool:
     """Minimal helper for calling ``openai.ChatCompletion``."""

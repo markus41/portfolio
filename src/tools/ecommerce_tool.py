@@ -5,7 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     requests = None
 
-from ..constants import ECOMMERCE_API_URL, ECOMMERCE_API_KEY
+from ..config import settings
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -16,9 +16,9 @@ class EcommerceTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.post(
-            f"{ECOMMERCE_API_URL}/orders",
+            f"{settings.ECOMMERCE_API_URL}/orders",
             json=order,
-            headers={"Authorization": f"Bearer {ECOMMERCE_API_KEY}"},
+            headers={"Authorization": f"Bearer {settings.ECOMMERCE_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()
@@ -28,8 +28,8 @@ class EcommerceTool:
         if not requests:
             raise RuntimeError("requests package is not installed")
         resp = requests.get(
-            f"{ECOMMERCE_API_URL}/orders/{order_id}",
-            headers={"Authorization": f"Bearer {ECOMMERCE_API_KEY}"},
+            f"{settings.ECOMMERCE_API_URL}/orders/{order_id}",
+            headers={"Authorization": f"Bearer {settings.ECOMMERCE_API_KEY}"},
         )
         resp.raise_for_status()
         return resp.json()

@@ -1,6 +1,6 @@
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from ..constants import SENDGRID_API_KEY
+from ..config import settings
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -9,7 +9,7 @@ class EmailTool:
     """Simple wrapper around SendGrid for sending HTML emails."""
 
     def __init__(self):
-        self.client = SendGridAPIClient(SENDGRID_API_KEY)
+        self.client = SendGridAPIClient(settings.SENDGRID_API_KEY)
 
     def send_email(self, to_email: str, subject: str, html_content: str) -> bool:
         logger.info(f"Sending email to {to_email}")

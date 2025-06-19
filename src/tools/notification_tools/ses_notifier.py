@@ -2,7 +2,7 @@
 
 import boto3
 from botocore.exceptions import ClientError
-from ...constants import AWS_SES_REGION
+from ...config import settings
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,7 +13,7 @@ class SESNotifier:
     """
 
     def __init__(self):
-        self.client = boto3.client('ses', region_name=AWS_SES_REGION)
+        self.client = boto3.client('ses', region_name=settings.AWS_SES_REGION)
 
     def send_email(self, from_addr: str, to_addrs: list, subject: str, html_body: str, text_body: str = None) -> dict:
         logger.info(f"Sending SES email to {to_addrs}")

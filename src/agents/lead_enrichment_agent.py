@@ -3,7 +3,7 @@
 from .base_agent import BaseAgent
 import requests
 from ..utils.logger import get_logger
-from ..constants import CLEARBIT_API_KEY
+from ..config import settings
 
 logger = get_logger(__name__)
 
@@ -14,7 +14,7 @@ class LeadEnrichmentAgent(BaseAgent):
         resp = requests.get(
             "https://person.clearbit.com/v2/people/find",
             params={"email": payload["email"]},
-            headers={"Authorization": f"Bearer {CLEARBIT_API_KEY}"}
+            headers={"Authorization": f"Bearer {settings.CLEARBIT_API_KEY}"}
         )
         if resp.status_code == 200:
             enriched = resp.json()
