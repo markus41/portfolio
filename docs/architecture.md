@@ -94,7 +94,7 @@ If ``config_path`` is not provided, a built-in default mapping identical to the 
 1. Reads the team configuration file.
 2. For each participant entry, dynamically imports the agent class using
    `importlib.import_module(f"src.agents.{name}")`.
-3. Builds the AutoGen agents (e.g. `autogen_agentchat.agents.AssistantAgent`) and registers them on an internal `EventBus`.
+3. Builds the AutoGen agents (e.g. `src.agents.roles.AssistantAgent`) and registers them on an internal `EventBus`.
 
 All AutoGen import statements therefore execute when the team orchestrator is constructed.  The modules remain loaded for the lifetime of the orchestrator.
 
@@ -116,7 +116,7 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 ## AutoGen Agents and Providers
 
-Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `autogen_agentchat.agents.AssistantAgent` or `autogen_ext.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.
+Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `src.agents.roles.AssistantAgent` or `autogen_ext.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.
 
 OpenAI powered components (via `OpenAIChatCompletionClient`) are created using API keys provided by `src.config.settings`.  The settings object reads values from environment variables and the relevant `.env` file.  Whenever an AutoGen agent needs a model response, the provider invokes the OpenAI API to generate the next message.
 
