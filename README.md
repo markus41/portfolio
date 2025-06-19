@@ -157,7 +157,8 @@ your shell before running the orchestrator or tests.
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
 
-See [`src/constants.py`](src/constants.py) for the full list.
+For an exhaustive description of all variables see
+[docs/environment.md](docs/environment.md).
 
 ## 🔬 Testing
 
