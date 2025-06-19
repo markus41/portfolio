@@ -171,6 +171,22 @@ Fetch the latest status:
 curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
 ```
 
+### 📊 Streamlit UI
+
+A lightweight web interface built with Streamlit allows non-technical users to
+trigger workflows.  Point it at your running API server and select the desired
+team and event type from the dropdowns.  Provide an optional JSON payload and
+click **Launch** to dispatch the request.
+
+```bash
+BACKEND_URL=http://localhost:8000 \
+API_KEY=mysecret \
+streamlit run web/streamlit_app.py
+```
+
+The UI displays the response from the orchestrator and fetches the latest status
+for the selected team.
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under
