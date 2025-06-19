@@ -2,6 +2,25 @@
 
 This document explains how the Brookside BI agent system fits together and how AutoGen driven teams are constructed.
 
+```
+                 +-----------------------+
+                 |  SolutionOrchestrator |
+                 +-----------+-----------+
+                             |
+          +------------------+------------------+
+          |                                     |
+  +-------v--------+                     +-------v--------+
+  | TeamOrchestrator|                     | TeamOrchestrator|
+  |     (sales)     |                     |      (ops)     |
+  +-------+--------+                     +-------+--------+
+          |                                     |
+        EventBus                             EventBus
+          |                                     |
+        Agents                               Agents
+          |
+    MemoryService
+```
+
 ## EventBus
 
 `EventBus` is a minimal in-memory pub/sub utility defined in `agentic_core.EventBus`.  Agents subscribe to topics and publish events synchronously.  The bus is used by the orchestrators and agents to exchange messages without tight coupling.
@@ -21,6 +40,21 @@ bus.publish("greet", {"msg": "hello"})
 * `agentic_core.MemoryService` – simple in-memory store used in tests and demos.
 
 Events handled by the orchestrators are stored via this service so that later agents can query previous context.
+
+Example HTTP calls when the REST variant is used:
+
+```http
+POST /store
+{
+  "key": "lead_capture:42",
+  "data": {"email": "user@example.com"}
+}
+
+GET /fetch?key=lead_capture:42&top_k=5
+[
+  {"key": "lead_capture:42", "data": {"email": "user@example.com"}}
+]
+```
 
 ## Orchestrator Flow
 
@@ -82,3 +116,22 @@ When `TeamOrchestrator.handle_event` receives an event it forwards the payload t
 4. Register the team with `SolutionOrchestrator` by mapping a name to the JSON file path.
 
 With these pieces in place, events sent to the solution orchestrator will automatically activate your new team alongside the existing ones.
+
+## Advanced Customization
+
+Beyond the standard setup you can extend almost every component:
+
+* **Swap MemoryService** – implement the simple `store()` and `fetch()` REST
+  endpoints in your favorite database or caching layer and point
+  `src.memory_service.MemoryService` to the new base URL.
+* **Pluggable EventBus** – the in-memory bus works for single-process demos. In
+  production you might adapt it to wrap Redis pub/sub or Kafka topics. As long
+  as the API exposes `subscribe(topic, handler)` and `publish(topic, data)` the
+  orchestrators will function the same.
+* **Custom Providers** – AutoGen agents rely on model providers for LLM access.
+  You can create new providers for different AI services by implementing the
+  same interface that `OpenAIChatCompletionClient` exposes and referencing that
+  class in your team JSON.
+
+These extension points allow the Brookside framework to scale from unit tests to
+real-world deployments with minimal changes.
