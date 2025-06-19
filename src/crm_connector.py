@@ -51,8 +51,10 @@ def fetch_deals(tenant_id: str) -> List[Deal]:
     Raises ``RuntimeError`` if the optional ``requests`` dependency is missing.
     """
 
-    if not requests:  # pragma: no cover - optional dependency
-        logger.warning("requests package is not installed; returning empty list")
+    if not getattr(requests, "get", None):  # pragma: no cover - optional dep
+        logger.warning(
+            "requests package is not installed or lacks 'get'; returning empty list"
+        )
         return []
 
     url = f"{settings.CRM_API_URL}/deals"

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactFlow, { Background, Controls, addEdge } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { getApiKey } from './config';
 
 export default function App() {
   const [nodes, setNodes] = useState([]);
@@ -11,12 +12,25 @@ export default function App() {
   const save = async () => {
     const workflow = {
       name: 'workflow',
-      nodes: nodes.map((n) => ({ id: n.id, type: n.type || 'agent', label: n.data?.label || n.id })),
-      edges: edges.map((e) => ({ source: e.source, target: e.target, label: e.label })),
+      nodes: nodes.map((n) => ({
+        id: n.id,
+        type: n.type || 'agent',
+        label: n.data?.label || n.id,
+      })),
+      edges: edges.map((e) => ({
+        source: e.source,
+        target: e.target,
+        label: e.label,
+      })),
     };
+
+    const headers = { 'Content-Type': 'application/json' };
+    const apiKey = getApiKey();
+    if (apiKey) headers['X-API-Key'] = apiKey;
+
     await fetch('/workflows', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': 'secret' },
+      headers,
       body: JSON.stringify(workflow),
     });
   };
