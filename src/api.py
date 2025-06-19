@@ -54,6 +54,17 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="unknown team")
         return {"team": name, "status": status}
 
+    @app.post("/goals/{goal}")
+    def run_goal(goal: str, dry_run: bool = False, _=Depends(_auth)) -> Dict[str, Any]:
+        """Execute or preview the planner sequence for ``goal``."""
+        try:
+            result = orch.execute_goal(goal, dry_run=dry_run)
+        except RuntimeError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        if result.get("status") == "unknown_goal":
+            raise HTTPException(status_code=404, detail="unknown goal")
+        return result
+
     return app
 
 

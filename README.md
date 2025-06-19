@@ -126,6 +126,9 @@ plans = {
 }
 orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"}, planner_plans=plans)
 orch.execute_goal("demo")
+
+# preview the plan without executing any agents
+orch.execute_goal("demo", dry_run=True)
 ```
 
 The planner dispatches each event to the appropriate team in order and returns
@@ -146,6 +149,9 @@ brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"e
 
 # view latest statuses
 brookside-cli status
+
+# preview a goal without running agents
+brookside-cli goal demo --dry-run
 ```
 
 ### 🌐 HTTP API
@@ -169,6 +175,13 @@ Fetch the latest status:
 
 ```bash
 curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
+```
+
+Preview a goal without executing agents:
+
+```bash
+curl -H "X-API-Key: mysecret" \
+     -X POST 'http://localhost:8000/goals/demo?dry_run=true'
 ```
 
 ### 🌟 Creating Custom Teams

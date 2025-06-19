@@ -57,8 +57,16 @@ class SolutionOrchestrator:
         """Return last reported status for ``team`` if available."""
         return self.status.get(team)
 
-    def execute_goal(self, goal: str) -> Dict[str, Any]:
-        """Run the planner for the given ``goal``.
+    def execute_goal(self, goal: str, *, dry_run: bool = False) -> Dict[str, Any]:
+        """Run or preview the planner for the given ``goal``.
+
+        Parameters
+        ----------
+        goal:
+            Name of the goal to execute.
+        dry_run:
+            When ``True`` return the planned sequence without executing any
+            agents.
 
         Raises
         ------
@@ -68,4 +76,4 @@ class SolutionOrchestrator:
 
         if not self.planner:
             raise RuntimeError("Planner is not configured")
-        return self.planner.run({"goal": goal})
+        return self.planner.run({"goal": goal}, dry_run=dry_run)

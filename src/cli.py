@@ -22,8 +22,9 @@ async def _handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWri
     """Process a single client connection.
 
     Clients send one JSON line with a ``cmd`` field. Supported commands are
-    ``send`` for dispatching an event and ``status`` to fetch the latest team
-    statuses.  Results are written back as a single JSON line.
+    ``send`` for dispatching an event, ``status`` to fetch the latest team
+    statuses and ``goal`` to execute planner goals.  Results are written back
+    as a single JSON line.
     """
 
     try:
@@ -49,6 +50,14 @@ async def _handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWri
         writer.write(json.dumps(result).encode() + b"\n")
     elif cmd == "status":
         writer.write(json.dumps(orch.status).encode() + b"\n")
+    elif cmd == "goal":
+        goal = message.get("goal")
+        dry_run = bool(message.get("dry_run"))
+        try:
+            result = orch.execute_goal(goal, dry_run=dry_run)
+        except Exception as exc:  # pragma: no cover - defensive
+            result = {"error": str(exc)}
+        writer.write(json.dumps(result).encode() + b"\n")
     else:
         writer.write(b'{"error": "unknown_command"}\n')
 
@@ -76,7 +85,12 @@ def cmd_start(args: argparse.Namespace) -> None:
     from .solution_orchestrator import SolutionOrchestrator
 
     teams = _parse_team_mapping(tuple(args.teams))
-    orch = SolutionOrchestrator(teams)
+    plans = {}
+    if args.plans:
+        with open(args.plans) as fh:
+            plans = json.load(fh)
+
+    orch = SolutionOrchestrator(teams, planner_plans=plans or None)
 
     async def _run() -> None:
         server = await asyncio.start_server(
@@ -138,6 +152,17 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_goal(args: argparse.Namespace) -> None:
+    """Execute or preview a planner goal on the orchestrator."""
+    payload = {
+        "cmd": "goal",
+        "goal": args.goal,
+        "dry_run": args.dry_run,
+    }
+    resp = _send_payload(args.host, args.port, payload)
+    print(json.dumps(resp))
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -153,6 +178,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     start_p = sub.add_parser("start", help="Run the orchestrator server")
     start_p.add_argument("teams", nargs="+", help="Team config as NAME=PATH pairs")
+    start_p.add_argument("--plans", help="JSON file mapping goals to tasks")
     start_p.add_argument("--host", default=DEFAULT_HOST, help="Bind address")
     start_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Bind port")
     start_p.set_defaults(func=cmd_start)
@@ -168,6 +194,13 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    goal_p = sub.add_parser("goal", help="Execute a planner goal")
+    goal_p.add_argument("goal", help="Goal name")
+    goal_p.add_argument("--dry-run", action="store_true", help="Show planned sequence without executing")
+    goal_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
+    goal_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    goal_p.set_defaults(func=cmd_goal)
 
     return parser
 

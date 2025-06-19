@@ -66,3 +66,35 @@ def test_missing_goal(tmp_path):
 
     result = orch.execute_goal("missing")
     assert result["status"] == "unknown_goal"
+
+
+def test_dry_run(tmp_path, monkeypatch):
+    _register_agents()
+    team_a = _write_team(tmp_path, "dummy_agent_a")
+    team_b = _write_team(tmp_path, "dummy_agent_b")
+
+    plans = {
+        "demo": [
+            {"team": "A", "event": {"type": "dummy_agent_a", "payload": {"foo": 1}}},
+            {"team": "B", "event": {"type": "dummy_agent_b", "payload": {"bar": 2}}},
+        ]
+    }
+
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, planner_plans=plans)
+
+    called: list[tuple[str, dict]] = []
+
+    def fake_handle(team: str, event: dict) -> dict:
+        called.append((team, event))
+        return {}
+
+    monkeypatch.setattr(orch, "handle_event_sync", fake_handle)
+
+    result = orch.execute_goal("demo", dry_run=True)
+
+    assert called == []
+    assert result["status"] == "planned"
+    assert result["sequence"] == [
+        {"team": "A", "event": "dummy_agent_a"},
+        {"team": "B", "event": "dummy_agent_b"},
+    ]

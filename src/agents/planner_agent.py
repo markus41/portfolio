@@ -35,17 +35,42 @@ class PlannerAgent(BaseAgent):
         self.orchestrator = orchestrator
         self.plans = plans
 
-    def run(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the task sequence for ``payload['goal']``.
+    def run(self, payload: Dict[str, Any], *, dry_run: bool = False) -> Dict[str, Any]:
+        """Execute or preview the task sequence for ``payload['goal']``.
 
-        Returns a dictionary with the results of each task. If the goal is not
-        known ``{"status": "unknown_goal"}`` is returned.
+        Parameters
+        ----------
+        payload:
+            Dictionary containing at minimum a ``goal`` key.
+        dry_run:
+            When ``True`` the function returns the planned sequence without
+            dispatching any events.
+
+        Returns
+        -------
+        dict
+            ``{"status": "complete", "results": [...]}"` when executed or
+            ``{"status": "planned", "sequence": [...]}" when ``dry_run`` is
+            enabled. ``{"status": "unknown_goal"}`` is returned if the goal is
+            not present in ``self.plans``.
         """
+
         goal = str(payload.get("goal", ""))
         tasks = self.plans.get(goal)
         if not tasks:
             logger.warning("Planner received unknown goal '%s'", goal)
             return {"status": "unknown_goal"}
+
+        sequence = [
+            {
+                "team": t.get("team"),
+                "event": t.get("event", {}).get("type"),
+            }
+            for t in tasks
+        ]
+        if dry_run:
+            logger.info("Planner dry-run for goal '%s'", goal)
+            return {"status": "planned", "sequence": sequence}
 
         results = []
         for idx, task in enumerate(tasks):

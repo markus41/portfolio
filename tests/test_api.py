@@ -149,3 +149,28 @@ def test_unknown_team(tmp_path):
     finally:
         server.should_exit = True
         thread.join(timeout=5)
+
+
+def test_goal_dry_run(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    plans = {"demo": [{"team": "demo", "event": {"type": "echo_agent"}}]}
+    orch = SolutionOrchestrator({"demo": str(team_cfg)}, planner_plans=plans)
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        code, body = _http_post(
+            f"http://127.0.0.1:{port}/goals/demo?dry_run=true",
+            {},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["status"] == "planned"
+        assert data["sequence"] == [{"team": "demo", "event": "echo_agent"}]
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
