@@ -16,7 +16,7 @@ def get_logger(name: str) -> logging.Logger:
         # Stream all logs to stdout so test runners can capture them
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter(
-            '[%(asctime)s] [%(levelname)s] %(name)s: %(message)s'
+            "[%(asctime)s] [%(levelname)s] %(name)s: %(message)s"
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)

@@ -6,6 +6,7 @@ from ...config import settings
 
 logger = get_logger(__name__)
 
+
 class SlackNotifier:
     def __init__(self):
         self.webhook = settings.SLACK_WEBHOOK_URL

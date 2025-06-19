@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class HubSpotTool:
     def __init__(self):
         self.base_url = "https://api.hubapi.com"
@@ -21,10 +22,14 @@ class HubSpotTool:
     def get_contact_by_email(self, email: str) -> dict | None:
         url = f"{self.base_url}/crm/v3/objects/contacts/search"
         payload = {
-          "filterGroups": [
-            {"filters": [{"propertyName": "email", "operator": "EQ", "value": email}]}
-          ],
-          "limit": 1
+            "filterGroups": [
+                {
+                    "filters": [
+                        {"propertyName": "email", "operator": "EQ", "value": email}
+                    ]
+                }
+            ],
+            "limit": 1,
         }
         resp = requests.post(url, params=self.params, json=payload)
         resp.raise_for_status()

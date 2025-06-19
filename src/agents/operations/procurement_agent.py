@@ -30,8 +30,8 @@ EVALUATE_PROMPT = (
     "Given the following supplier quotes for {qty} x {item}:\n"
     "{quotes}\n"
     "Select the best supplier that meets the target of {target_days} days. "
-    "Respond in JSON as {{\"supplier_id\": \"...\", \"reason\": \"...\", "
-    "\"requires_approval\": false}}."
+    'Respond in JSON as {{"supplier_id": "...", "reason": "...", '
+    '"requires_approval": false}}.'
 )
 
 
@@ -89,7 +89,9 @@ class ProcurementAgent(AbstractAgent):
         cheapest = min(valid or quotes, key=lambda q: q.price)
 
         try:
-            decision = self._gpt_decide(self._format_prompt(item, qty, target_days, quotes))
+            decision = self._gpt_decide(
+                self._format_prompt(item, qty, target_days, quotes)
+            )
             supplier_id = decision.get("supplier_id", cheapest.supplier_id)
             reason = decision.get("reason", "")
             requires_approval = bool(decision.get("requires_approval", False))
@@ -112,7 +114,9 @@ class ProcurementAgent(AbstractAgent):
         }
 
         if requires_approval:
-            await run_maybe_async(self.bus.publish, "Procurement.PendingApproval", event)
+            await run_maybe_async(
+                self.bus.publish, "Procurement.PendingApproval", event
+            )
             return {"status": "pending_approval", **event}
 
         order_id = self.place_order(chosen, item, qty)

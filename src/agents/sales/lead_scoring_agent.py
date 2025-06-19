@@ -6,6 +6,7 @@ from ...tools.scheduler_tool import SchedulerTool  # example import if needed
 
 logger = get_logger(__name__)
 
+
 class LeadScoringAgent(BaseAgent):
     def run(self, payload):
         """

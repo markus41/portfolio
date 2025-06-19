@@ -9,6 +9,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class LeadFinder:
     """Fetch potential real estate leads from an external provider."""
 

@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class TwilioNotifier:
     """
     Send SMS messages via Twilio.
@@ -17,9 +18,5 @@ class TwilioNotifier:
 
     def send_sms(self, to: str, body: str) -> dict:
         logger.info(f"Sending SMS to {to}")
-        msg = self.client.messages.create(
-            body=body,
-            from_=self.from_phone,
-            to=to
-        )
+        msg = self.client.messages.create(body=body, from_=self.from_phone, to=to)
         return {"sid": msg.sid, "status": msg.status}

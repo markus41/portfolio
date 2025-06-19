@@ -7,10 +7,13 @@ from ...events import CRMPipelineEvent
 
 logger = get_logger(__name__)
 
+
 class CRMPipelineAgent(BaseAgent):
     def __init__(self):
         CRMTool = importlib.import_module("src.tools.crm_tools.crm_tool").CRMTool
-        SchedulerTool = importlib.import_module("src.tools.scheduler_tool").SchedulerTool
+        SchedulerTool = importlib.import_module(
+            "src.tools.scheduler_tool"
+        ).SchedulerTool
         self.crm = CRMTool()
         self.scheduler = SchedulerTool()
 
@@ -26,9 +29,9 @@ class CRMPipelineAgent(BaseAgent):
         if stage == "Proposal Sent":
             ev = {
                 "summary": payload.followup_template["summary"],
-                "start": deal["next_action_date"],      # assume ISO datetime
-                "end":   deal["next_action_date"],
-                "attendees": payload.followup_template.get("attendees", [])
+                "start": deal["next_action_date"],  # assume ISO datetime
+                "end": deal["next_action_date"],
+                "attendees": payload.followup_template.get("attendees", []),
             }
             # schedule a follow-up meeting in the prospect's calendar
             res = self.scheduler.create_event(payload.calendar_id, ev)

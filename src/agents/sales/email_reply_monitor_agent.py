@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class EmailReplyMonitorAgent(BaseAgent):
     def __init__(self):
         self.hubspot = HubSpotTool()
@@ -20,6 +21,8 @@ class EmailReplyMonitorAgent(BaseAgent):
         logger.info(f"Checking if {email} replied")
         contact = self.hubspot.get_contact_by_email(email)
         # stub logic — replace with real email/thread check
-        replied = bool(contact and contact.get("properties", {}).get("last_email_reply") == "true")
+        replied = bool(
+            contact and contact.get("properties", {}).get("last_email_reply") == "true"
+        )
         outcome = "positive_reply" if replied else "no_response"
         return {"outcome": outcome}

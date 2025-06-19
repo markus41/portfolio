@@ -6,6 +6,7 @@ from ...config import settings
 
 logger = get_logger(__name__)
 
+
 class TeamsNotifier:
     def __init__(self):
         self.webhook = settings.TEAMS_WEBHOOK_URL
@@ -14,7 +15,7 @@ class TeamsNotifier:
         card = {
             "@type": "MessageCard",
             "summary": title,
-            "sections": [{"activityTitle": title, "text": text}]
+            "sections": [{"activityTitle": title, "text": text}],
         }
         logger.info(f"Posting to Microsoft Teams: {title}")
         resp = requests.post(self.webhook, json=card)

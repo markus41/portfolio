@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class SchedulingAgent(BaseAgent):
     def __init__(self):
         self.scheduler = SchedulerTool()

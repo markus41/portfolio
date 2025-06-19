@@ -7,6 +7,7 @@ import time
 
 logger = get_logger(__name__)
 
+
 class HumanApprovalAgent(BaseAgent):
     def __init__(self):
         self.teams = TeamsNotifier()
@@ -24,4 +25,7 @@ class HumanApprovalAgent(BaseAgent):
             self.teams.send(title="⚠️ Approval Needed", text=msg)
         logger.info("HumanApprovalAgent → waiting for manual approval (stub)")
         time.sleep(1)  # simulate wait; replace with real callback/polling
-        return {"status": "approved", "approved_by": payload.get("approvers", [None])[0]}
+        return {
+            "status": "approved",
+            "approved_by": payload.get("approvers", [None])[0],
+        }

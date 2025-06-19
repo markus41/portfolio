@@ -9,7 +9,6 @@ import subprocess
 import pytest
 
 
-
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
         "responsibilities": ["operations.dummy_cli_agent"],

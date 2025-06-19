@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class SalesforceTool:
     def __init__(self):
         logger.info("Authenticating to Salesforce")
@@ -14,7 +15,7 @@ class SalesforceTool:
             password=settings.SF_PASSWORD,
             security_token=settings.SF_SECURITY_TOKEN,
             client_id=settings.SF_CLIENT_ID,
-            domain=settings.SF_DOMAIN  # use "test" for sandbox
+            domain=settings.SF_DOMAIN,  # use "test" for sandbox
         )
 
     def create_contact(self, data: dict) -> dict:

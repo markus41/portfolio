@@ -4,9 +4,12 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class InventoryManagementAgent(BaseAgent):
     def __init__(self):
-        InventoryTool = importlib.import_module("src.tools.operations_tools.inventory_tool").InventoryTool
+        InventoryTool = importlib.import_module(
+            "src.tools.operations_tools.inventory_tool"
+        ).InventoryTool
         self.inventory = InventoryTool()
 
     def run(self, payload: dict) -> dict:

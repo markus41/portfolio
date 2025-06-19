@@ -14,6 +14,7 @@ from urllib import request as urllib_request
 from src.solution_orchestrator import SolutionOrchestrator
 from src import api
 
+
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
     req = urllib_request.Request(url, headers=headers or {})
     try:
@@ -23,15 +24,20 @@ def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str
         return err.code, err.read().decode()
 
 
-def _http_post(url: str, data: dict, headers: dict[str, str] | None = None) -> tuple[int, str]:
+def _http_post(
+    url: str, data: dict, headers: dict[str, str] | None = None
+) -> tuple[int, str]:
     payload = json.dumps(data).encode()
-    req = urllib_request.Request(url, data=payload, headers=headers or {}, method="POST")
+    req = urllib_request.Request(
+        url, data=payload, headers=headers or {}, method="POST"
+    )
     req.add_header("Content-Type", "application/json")
     try:
         with urllib_request.urlopen(req) as resp:  # noqa: S310 -- in tests
             return resp.getcode(), resp.read().decode()
     except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
         return err.code, err.read().decode()
+
 
 from src.agents.base_agent import BaseAgent
 
@@ -191,9 +197,9 @@ def test_workflow_endpoints(tmp_path):
             "name": "demo",
             "nodes": [
                 {"id": "a", "type": "agent", "label": "A"},
-                {"id": "b", "type": "tool", "label": "B"}
+                {"id": "b", "type": "tool", "label": "B"},
             ],
-            "edges": [{"source": "a", "target": "b"}]
+            "edges": [{"source": "a", "target": "b"}],
         }
         code, _ = _http_post(
             f"http://127.0.0.1:{port}/workflows",

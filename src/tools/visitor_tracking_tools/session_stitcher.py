@@ -3,6 +3,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class SessionStitcher:
     """Utility for creating deterministic visitor IDs from fingerprints."""
 

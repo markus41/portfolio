@@ -5,6 +5,7 @@ It now simply re-exports values from :mod:`src.config` for backward
 compatibility.  New code should import :data:`settings` from
 ``src.config`` instead of importing constants here.
 """
+
 from __future__ import annotations
 
 from .config import settings

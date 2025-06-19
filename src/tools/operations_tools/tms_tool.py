@@ -10,6 +10,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class TMSTool:
     def create_shipment(self, data: dict) -> dict:
         logger.info("Creating shipment in TMS")

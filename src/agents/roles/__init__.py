@@ -67,4 +67,3 @@ class AnalystAgent(RoleAgent):
         "crm_tools",
         "segmentation_tools",
     ]
-

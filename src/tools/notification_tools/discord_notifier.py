@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class DiscordNotifier:
     """
     Post messages to a Discord channel via webhook.
@@ -16,7 +17,8 @@ class DiscordNotifier:
 
     def send(self, content: str, username: str = None) -> bool:
         payload = {"content": content}
-        if username: payload["username"] = username
+        if username:
+            payload["username"] = username
         logger.info("Posting to Discord via webhook")
         resp = requests.post(self.webhook, json=payload)
         resp.raise_for_status()

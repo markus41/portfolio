@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class OutreachAgent(BaseAgent):
     def __init__(self):
         self.email_tool = EmailTool()
@@ -16,6 +17,6 @@ class OutreachAgent(BaseAgent):
         success = self.email_tool.send_email(
             to_email=payload["to"],
             subject=payload["subject"],
-            html_content=payload["body"]
+            html_content=payload["body"],
         )
         return {"status": "sent" if success else "failed"}

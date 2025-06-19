@@ -50,11 +50,8 @@ def test_load_agent_invalid_entry_point(monkeypatch):
     bad_mod.NotAgent = NotAgent
     sys.modules["bad_mod"] = bad_mod
 
-    ep = importlib.metadata.EntryPoint(
-        "bad", "bad_mod:NotAgent", "brookside.agents"
-    )
+    ep = importlib.metadata.EntryPoint("bad", "bad_mod:NotAgent", "brookside.agents")
     monkeypatch.setattr(importlib.metadata, "entry_points", lambda group=None: [ep])
 
     with pytest.raises(TypeError):
         load_agent("bad")
-

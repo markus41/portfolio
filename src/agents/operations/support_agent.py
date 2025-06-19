@@ -5,7 +5,13 @@ from __future__ import annotations
 import re
 from typing import Any, Dict
 
-from agentic_core import AbstractAgent, EventBus, MemoryService, run_maybe_async, run_sync
+from agentic_core import (
+    AbstractAgent,
+    EventBus,
+    MemoryService,
+    run_maybe_async,
+    run_sync,
+)
 from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -30,7 +36,9 @@ Assistant: {"text": "Order is in transit"}
 Keep answers short and helpful.
 """.strip()
 
-    def __init__(self, tenant_id: str, memory: MemoryService, bus: EventBus, toolbox: Any) -> None:
+    def __init__(
+        self, tenant_id: str, memory: MemoryService, bus: EventBus, toolbox: Any
+    ) -> None:
         super().__init__("support")
         self.tenant_id = tenant_id
         self.memory = memory
@@ -62,9 +70,7 @@ Keep answers short and helpful.
                 days = int(info.get("days_delayed", 0))
                 pct = min(15, max(0, days * 5))
                 receipt = self.tools.issue_refund(order_id, pct)
-                reply_text = (
-                    f"Sorry for the delay. A {pct}% refund was issued. Receipt {receipt}."
-                )
+                reply_text = f"Sorry for the delay. A {pct}% refund was issued. Receipt {receipt}."
             else:
                 reply_text = "I'm sorry about the delay. Please share your order id."
         else:
@@ -77,9 +83,7 @@ Keep answers short and helpful.
             "Support.Reply",
             {"customer_id": customer_id, "text": reply_text},
         )
-        self.memory.store(
-            f"faq:{self.tenant_id}", [f"Q:{text}", f"A:{reply_text}"]
-        )
+        self.memory.store(f"faq:{self.tenant_id}", [f"Q:{text}", f"A:{reply_text}"])
         logger.info(f"Responded to customer {customer_id}")
         return {"text": reply_text, "escalate": escalate}
 
@@ -107,7 +111,9 @@ def main() -> None:
     agent = SupportAgent("demo", memory, bus, Toolbox())
 
     bus.publish("Customer.Message", {"customer_id": "c1", "text": "Where is order 42?"})
-    bus.publish("Customer.Message", {"customer_id": "c2", "text": "My order 99 is late"})
+    bus.publish(
+        "Customer.Message", {"customer_id": "c2", "text": "My order 99 is late"}
+    )
 
 
 if __name__ == "__main__":  # pragma: no cover - manual demo

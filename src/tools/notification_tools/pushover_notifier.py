@@ -6,6 +6,7 @@ from ...utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class PushoverNotifier:
     """
     Send push notifications via Pushover.
@@ -18,9 +19,10 @@ class PushoverNotifier:
             "token": settings.PUSHOVER_API_TOKEN,
             "user": settings.PUSHOVER_USER_KEY,
             "message": message,
-            "priority": priority
+            "priority": priority,
         }
-        if title: data["title"] = title
+        if title:
+            data["title"] = title
         logger.info("Sending Pushover notification")
         resp = requests.post(self.API_URL, data=data)
         resp.raise_for_status()

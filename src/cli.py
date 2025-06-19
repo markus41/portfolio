@@ -15,7 +15,6 @@ if __package__ in {None, ""}:  # pragma: no cover - script execution support
     __package__ = "src"
 
 
-
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
 
@@ -37,7 +36,11 @@ TASK_WORKFLOW_MAP: Dict[Iterable[str], str] = {
 # ---------------------------------------------------------------------------
 # Utility networking helpers
 # ---------------------------------------------------------------------------
-async def _handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter, orch: "SolutionOrchestrator") -> None:
+async def _handle_client(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+    orch: "SolutionOrchestrator",
+) -> None:
     """Process a single client connection.
 
     Clients send one JSON line with a ``cmd`` field. Supported commands are
@@ -80,7 +83,9 @@ def _parse_team_mapping(pairs: Tuple[str, ...]) -> Dict[str, str]:
     mapping = {}
     for pair in pairs:
         if "=" not in pair:
-            raise argparse.ArgumentTypeError(f"Invalid team spec '{pair}'. Use NAME=PATH")
+            raise argparse.ArgumentTypeError(
+                f"Invalid team spec '{pair}'. Use NAME=PATH"
+            )
         name, path = pair.split("=", 1)
         mapping[name] = path
     return mapping
@@ -89,6 +94,7 @@ def _parse_team_mapping(pairs: Tuple[str, ...]) -> Dict[str, str]:
 # ---------------------------------------------------------------------------
 # Command implementations
 # ---------------------------------------------------------------------------
+
 
 def cmd_start(args: argparse.Namespace) -> None:
     """Start the orchestrator server and block forever."""
@@ -180,6 +186,7 @@ def cmd_assist(args: argparse.Namespace) -> None:
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
+
 
 def build_parser() -> argparse.ArgumentParser:
     """Construct and return the top-level argument parser."""

@@ -7,13 +7,14 @@ import re
 
 logger = get_logger(__name__)
 
+
 class LeadCaptureAgent(BaseAgent):
     def run(self, payload: LeadCaptureEvent) -> dict:
         """Normalise lead capture fields."""
 
         data = payload.form_data
         email = data.get("Email") or data.get("email") or ""
-        name  = data.get("Name") or data.get("name") or ""
+        name = data.get("Name") or data.get("name") or ""
         # normalize phone numbers
         phone = data.get("Phone", "")
         phone_norm = re.sub(r"\D", "", phone)

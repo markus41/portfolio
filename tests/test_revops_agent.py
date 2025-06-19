@@ -18,11 +18,15 @@ def test_revops_agent(monkeypatch):
     monkeypatch.setattr("src.crm_connector.fetch_deals", lambda tid: deals)
 
     agent = RevOpsAgent(bus)
-    monkeypatch.setattr(agent, "_ask_gpt", lambda prompt: {
-        "forecast": "$3k",
-        "risks": ["stall"],
-        "actions": ["email"],
-    })
+    monkeypatch.setattr(
+        agent,
+        "_ask_gpt",
+        lambda prompt: {
+            "forecast": "$3k",
+            "risks": ["stall"],
+            "actions": ["email"],
+        },
+    )
 
     out = agent.run_sync({"tenant_id": "t1"})
     assert out["forecast"] == "$3k"
@@ -41,11 +45,15 @@ def test_revops_agent_async(monkeypatch):
     monkeypatch.setattr("src.crm_connector.fetch_deals", lambda tid: deals)
 
     agent = RevOpsAgent(bus)
-    monkeypatch.setattr(agent, "_ask_gpt", lambda prompt: {
-        "forecast": "$3k",
-        "risks": ["stall"],
-        "actions": ["email"],
-    })
+    monkeypatch.setattr(
+        agent,
+        "_ask_gpt",
+        lambda prompt: {
+            "forecast": "$3k",
+            "risks": ["stall"],
+            "actions": ["email"],
+        },
+    )
 
     async def main():
         out = await agent.run({"tenant_id": "t1"})
@@ -53,4 +61,3 @@ def test_revops_agent_async(monkeypatch):
         assert reports[0]["actions"] == ["email"]
 
     asyncio.run(main())
-

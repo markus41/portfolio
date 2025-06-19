@@ -24,11 +24,15 @@ def test_auto_order(monkeypatch):
     s1 = DummySupplier("s1", "100", 5)
     s2 = DummySupplier("s2", "120", 6)
     agent = ProcurementAgent(bus, [s1, s2])
-    monkeypatch.setattr(agent, "_gpt_decide", lambda prompt: {
-        "supplier_id": "s1",
-        "reason": "lowest",
-        "requires_approval": False,
-    })
+    monkeypatch.setattr(
+        agent,
+        "_gpt_decide",
+        lambda prompt: {
+            "supplier_id": "s1",
+            "reason": "lowest",
+            "requires_approval": False,
+        },
+    )
 
     result = agent.run_sync({"item": "cement", "qty": 10, "target_days": 7})
     assert result["status"] == "ordered"
@@ -42,11 +46,15 @@ def test_needs_approval(monkeypatch):
 
     s1 = DummySupplier("s1", "6000", 5)
     agent = ProcurementAgent(bus, [s1])
-    monkeypatch.setattr(agent, "_gpt_decide", lambda prompt: {
-        "supplier_id": "s1",
-        "reason": "expensive",
-        "requires_approval": True,
-    })
+    monkeypatch.setattr(
+        agent,
+        "_gpt_decide",
+        lambda prompt: {
+            "supplier_id": "s1",
+            "reason": "expensive",
+            "requires_approval": True,
+        },
+    )
 
     result = agent.run_sync({"item": "steel", "qty": 10, "target_days": 7})
     assert result["status"] == "pending_approval"

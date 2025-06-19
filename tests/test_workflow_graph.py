@@ -11,11 +11,9 @@ def _example_graph(tmp_path: Path) -> Path:
         "name": "demo",
         "nodes": [
             {"id": "a", "type": "agent", "label": "A"},
-            {"id": "b", "type": "tool", "label": "B"}
+            {"id": "b", "type": "tool", "label": "B"},
         ],
-        "edges": [
-            {"source": "a", "target": "b"}
-        ]
+        "edges": [{"source": "a", "target": "b"}],
     }
     path.write_text(json.dumps(data))
     return path

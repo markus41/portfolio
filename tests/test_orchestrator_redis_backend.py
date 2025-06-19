@@ -4,11 +4,14 @@ import sys
 from src.orchestrator import Orchestrator
 from src.memory_service.redis import redis as redis_module
 
+
 class DummyRedis:
     def __init__(self):
         self.store = {}
+
     def rpush(self, key, value):
         self.store.setdefault(key, []).append(value)
+
     def lrange(self, key, start, end):
         data = self.store.get(key, [])
         if start < 0:
@@ -18,8 +21,10 @@ class DummyRedis:
         else:
             end += 1
         return data[start:end]
+
     def ping(self):
         return True
+
 
 def test_orchestrator_redis_backend(monkeypatch):
     class DummyScheduler:
@@ -39,8 +44,8 @@ def test_orchestrator_redis_backend(monkeypatch):
     )
 
     client = DummyRedis()
-    monkeypatch.setattr(redis_module.Redis, 'from_url', lambda *a, **k: client)
-    monkeypatch.setenv('MEMORY_REDIS_URL', 'redis://localhost')
+    monkeypatch.setattr(redis_module.Redis, "from_url", lambda *a, **k: client)
+    monkeypatch.setenv("MEMORY_REDIS_URL", "redis://localhost")
 
     orch = Orchestrator(memory_backend="redis")
 
@@ -49,4 +54,3 @@ def test_orchestrator_redis_backend(monkeypatch):
     assert res["status"] == "done"
 
     assert len(client.store.get("lead_capture", [])) == 1
-
