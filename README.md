@@ -111,6 +111,26 @@ to the first agent declaring the requested skill:
 orch.delegate_by_skill_sync("copywriting", {"text": "draft this"})
 ```
 
+#### Planner Agent
+
+For fully automated flows a `PlannerAgent` can be attached to the
+`SolutionOrchestrator`. Provide a mapping of goals to task sequences when
+constructing the orchestrator:
+
+```python
+plans = {
+    "demo": [
+        {"team": "sales", "event": {"type": "lead_capture", "payload": {"email": "a@example.com"}}},
+        {"team": "sales", "event": {"type": "crm_pipeline", "payload": {"deal_id": "d1", "calendar_id": "c", "followup_template": {}}}},
+    ]
+}
+orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"}, planner_plans=plans)
+orch.execute_goal("demo")
+```
+
+The planner dispatches each event to the appropriate team in order and returns
+their combined results.
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the
