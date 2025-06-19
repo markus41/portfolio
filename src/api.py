@@ -54,6 +54,11 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="unknown team")
         return {"team": name, "status": status}
 
+    @app.get("/activity")
+    def get_activity(limit: int = 10, _=Depends(_auth)) -> Dict[str, Any]:
+        """Return recent orchestrator activity."""
+        return {"activity": orch.get_recent_activity(limit)}
+
     return app
 
 
