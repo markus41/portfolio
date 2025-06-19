@@ -35,6 +35,7 @@ from .agents.sales.crm_pipeline_agent import CRMPipelineAgent
 from .agents.sales.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
 from .memory_service import RestMemoryService
 from .memory_service.file import FileMemoryService
+from .memory_service.redis import RedisMemoryService
 from .memory_service.base import BaseMemoryService
 from .config import settings
 from .utils.logger import get_logger
@@ -115,6 +116,9 @@ class Orchestrator(BaseOrchestrator):
         if backend == "file":
             path = memory_file or settings.MEMORY_FILE_PATH
             memory: BaseMemoryService = FileMemoryService(path)
+        elif backend == "redis":
+            url = settings.MEMORY_REDIS_URL
+            memory = RedisMemoryService(url)
         else:
             endpoint = memory_endpoint or settings.MEMORY_ENDPOINT
             memory = RestMemoryService(endpoint)

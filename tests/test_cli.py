@@ -115,3 +115,17 @@ def test_cli_goal_dry_run(tmp_path):
 
     server.terminate()
     server.wait(timeout=5)
+def test_cli_assist(tmp_path):
+    """The assist subcommand should map phrases to workflow templates."""
+
+    cmd = [sys.executable, "-m", "src.cli", "assist", "handle new inventory"]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+    assert res.returncode == 0
+    data = json.loads(res.stdout.strip())
+    assert data["template"].endswith("inventory_management_team.json")
+
+    cmd_unknown = [sys.executable, "-m", "src.cli", "assist", "unknown gibberish"]
+    res_unknown = subprocess.run(cmd_unknown, capture_output=True, text=True, timeout=5)
+    assert res_unknown.returncode == 0
+    data_unknown = json.loads(res_unknown.stdout.strip())
+    assert data_unknown["template"] is None

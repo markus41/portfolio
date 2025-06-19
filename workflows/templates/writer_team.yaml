@@ -1,0 +1,7 @@
+responsibilities:
+  - writer_agent
+config:
+  participants:
+    - provider: src.agents.writer_agent.WriterAgent
+      config:
+        name: writer_agent
