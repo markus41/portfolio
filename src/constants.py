@@ -116,6 +116,7 @@ PLAID_ENVIRONMENT = settings.PLAID_ENVIRONMENT
 # Utility Services
 GOOGLE_TRANSLATE_API_KEY = settings.GOOGLE_TRANSLATE_API_KEY
 CONFIG_PATH = settings.CONFIG_PATH
+API_AUTH_KEY = settings.API_AUTH_KEY
 
 # Logistics & e-commerce APIs
 TMS_API_URL = settings.TMS_API_URL

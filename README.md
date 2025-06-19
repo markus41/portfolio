@@ -121,6 +121,29 @@ brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"e
 brookside-cli status
 ```
 
+### 🌐 HTTP API
+
+An HTTP interface is available for programmatic access to the
+`SolutionOrchestrator`. Start the server with your team mapping and an API key:
+
+```bash
+API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+```
+
+Send an event using `curl`:
+
+```bash
+curl -H "X-API-Key: mysecret" \
+     -X POST http://localhost:8000/teams/sales/event \
+     -d '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
+```
+
+Fetch the latest status:
+
+```bash
+curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
+```
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under

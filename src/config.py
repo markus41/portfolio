@@ -164,6 +164,7 @@ class Settings(BaseSettings):
     # Utility Services
     GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     CONFIG_PATH: str = "config/playbook.yaml"
+    API_AUTH_KEY: Optional[str] = None
 
     # Memory Service
     MEMORY_BACKEND: Literal["rest", "file"] = "rest"
