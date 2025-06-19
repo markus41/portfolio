@@ -253,6 +253,7 @@ also included:
 * `debugger_agent.py` – listen for `*.Error` events and propose patches.
 * `qa_agent.py` – run scripted conversations against `SupportAgent` and emit QA
   reports.
+* `review_agent.py` – automatically approve or reject drafts published on the event bus.
 
 These helper scripts keep network calls behind feature flags so they remain
 test-safe by default.

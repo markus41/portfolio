@@ -42,6 +42,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 * **ProcurementAgent** (`src/agents/operations/procurement_agent.py`) – Agent for automating material purchasing decisions.
 * **SupportAgent** (`src/agents/operations/support_agent.py`) – Autonomous Customer Support agent.
 * **RevOpsAgent** (`src/agents/sales/revops_agent.py`) – Revenue operations agent producing pipeline forecasts.
+* **ReviewAgent** (`src/agents/review_agent.py`) – Validates drafts and publishes approval results.
 
 ## Key Utilities
 
