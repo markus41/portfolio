@@ -5,6 +5,11 @@
   "component_version": 1,
   "description": "E-commerce order management team.",
   "label": "E-commerce Team",
+  "responsibilities": [
+    "ecommerce_agent",
+    "fulfillment_agent",
+    "notification_agent"
+  ],
   "config": {
     "participants": [
       {

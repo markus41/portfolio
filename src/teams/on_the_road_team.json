@@ -5,6 +5,10 @@
   "component_version": 1,
   "description": "Drivers and shipment tracking team.",
   "label": "On The Road Team",
+  "responsibilities": [
+    "on_road_agent",
+    "notification_agent"
+  ],
   "config": {
     "participants": [
       {

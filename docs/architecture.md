@@ -118,6 +118,11 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `src.agents.roles.AssistantAgent` or `autogen_ext.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.
 
+Each team file may optionally include a `responsibilities` array listing the
+agent names allowed to operate within that team.  When a team is loaded the
+`TeamOrchestrator` validates that every participant's `config.name` appears in
+this list and raises an error otherwise.
+
 OpenAI powered components (via `OpenAIChatCompletionClient`) are created using API keys provided by `src.config.settings`.  The settings object reads values from environment variables and the relevant `.env` file.  Whenever an AutoGen agent needs a model response, the provider invokes the OpenAI API to generate the next message.
 
 ### AutoGen Invocation
@@ -137,7 +142,7 @@ When `TeamOrchestrator.handle_event` receives an event it forwards the payload t
 
 1. Implement a new agent class under `src/agents/` deriving from `BaseAgent` and providing a `run()` method.
 2. Add any helper tools under `src/tools/` and register them with `@Tool` if using `agentic_core` utilities.
-3. Create a new team JSON mirroring those in `src/teams/`.  The `participants` section should reference your agent module names so that `TeamOrchestrator` can import them.
+3. Create a new team JSON mirroring those in `src/teams/`.  The `participants` section should reference your agent module names so that `TeamOrchestrator` can import them. Optionally include a `responsibilities` array listing the allowed agent names.
 4. Register the team with `SolutionOrchestrator` by mapping a name to the JSON file path.
 
 With these pieces in place, events sent to the solution orchestrator will automatically activate your new team alongside the existing ones.

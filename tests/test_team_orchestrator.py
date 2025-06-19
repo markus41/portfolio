@@ -1,6 +1,7 @@
 import json
 import sys
 import types
+import pytest
 from pathlib import Path
 
 from src.base_orchestrator import BaseOrchestrator
@@ -14,7 +15,10 @@ class DummyAgent(BaseAgent):
 
 
 def _write_team(tmp_path: Path) -> Path:
-    cfg = {"config": {"participants": [{"config": {"name": "dummy_agent"}}]}}
+    cfg = {
+        "responsibilities": ["dummy_agent"],
+        "config": {"participants": [{"config": {"name": "dummy_agent"}}]},
+    }
     path = tmp_path / "team.json"
     path.write_text(json.dumps(cfg))
     return path
@@ -31,3 +35,19 @@ def test_team_orchestrator_inherits(tmp_path):
     assert orch.memory is None
     out = orch.handle_event_sync({"type": "dummy_agent", "payload": {"foo": 1}})
     assert out["result"]["echo"]["foo"] == 1
+
+
+def test_team_orchestrator_responsibility_check(tmp_path):
+    cfg = {
+        "responsibilities": ["other_agent"],
+        "config": {"participants": [{"config": {"name": "dummy_agent"}}]},
+    }
+    path = tmp_path / "team.json"
+    path.write_text(json.dumps(cfg))
+
+    mod = types.ModuleType("src.agents.dummy_agent")
+    mod.DummyAgent = DummyAgent
+    sys.modules["src.agents.dummy_agent"] = mod
+
+    with pytest.raises(ValueError):
+        TeamOrchestrator(str(path))

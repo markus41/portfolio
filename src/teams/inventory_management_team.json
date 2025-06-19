@@ -5,6 +5,10 @@
   "component_version": 1,
   "description": "Dedicated inventory management team.",
   "label": "Inventory Management Team",
+  "responsibilities": [
+    "inventory_management_agent",
+    "notification_agent"
+  ],
   "config": {
     "participants": [
       {
