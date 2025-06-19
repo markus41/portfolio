@@ -271,6 +271,21 @@ Query recent activity:
 curl -H "X-API-Key: mysecret" http://localhost:8000/activity?limit=20
 ```
 
+Stream live updates using Server-Sent Events:
+
+```bash
+curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/stream --no-buffer
+```
+
+Clients receive ``status`` and ``activity`` events in real time. The dashboard
+subscribes via ``EventSource``:
+
+```javascript
+const src = new EventSource('/teams/sales/stream?api_key=mysecret');
+src.addEventListener('status', (e) => console.log('status', e.data));
+src.addEventListener('activity', (e) => console.log('activity', e.data));
+```
+
 ### 📈 Activity Logs
 
 Every handled event is appended to a JSON Lines file. Each entry records the
@@ -474,7 +489,8 @@ execution. The JSON format is described in [`docs/workflow_schema.json`](docs/wo
 
 `frontend/dashboard` contains a small React + Bootstrap app for submitting events
 to the backend and tracking team status. It posts to `/teams/<name>/event` and
-polls `/teams/<name>/status`.
+either polls `/teams/<name>/status` or connects to `/teams/<name>/stream` for
+live updates.
 
 ### Development
 
@@ -485,7 +501,8 @@ npm run dev:dashboard
 ```
 
 Run the tests with `npm test`. Building the project outputs both the editor and
-dashboard into `dist/` using the shared `vite.config.js`.
+dashboard into `dist/` using the shared `vite.config.js`. The dashboard's
+"Live Stream" section showcases the `/teams/<name>/stream` endpoint in action.
 
 ---
 

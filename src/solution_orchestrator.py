@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from collections import defaultdict
 from typing import Any, Dict, List, Optional
+import asyncio
 from .utils import ActivityLogger
 
 from .agents.planner_agent import PlannerAgent
@@ -34,10 +36,33 @@ class SolutionOrchestrator:
         }
         self.history: list[dict] = []
         self.status: Dict[str, str] = {}
+        self._subscribers: dict[str, list[asyncio.Queue]] = defaultdict(list)
         self.planner: Optional[PlannerAgent] = None
         self.activity_logger = ActivityLogger(log_path) if log_path else None
         if planner_plans is not None:
             self.planner = PlannerAgent(self, planner_plans)
+
+    def subscribe(self, team: str) -> asyncio.Queue:
+        """Return a queue receiving streaming updates for ``team``."""
+
+        queue: asyncio.Queue = asyncio.Queue()
+        self._subscribers[team].append(queue)
+        return queue
+
+    def unsubscribe(self, team: str, queue: asyncio.Queue) -> None:
+        """Remove ``queue`` from the subscriber list for ``team``."""
+
+        if queue in self._subscribers.get(team, []):
+            self._subscribers[team].remove(queue)
+
+    def _publish(self, team: str, message: dict) -> None:
+        """Send ``message`` to all queues subscribed to ``team``."""
+
+        for q in list(self._subscribers.get(team, [])):
+            try:
+                q.put_nowait(message)
+            except asyncio.QueueFull:  # pragma: no cover - unlikely
+                pass
 
     async def handle_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
         """Forward ``event`` to ``team`` and record the result."""
@@ -52,6 +77,8 @@ class SolutionOrchestrator:
             summary = str(result.get("result", result))
             self.activity_logger.log(agent_id, summary)
 
+        self._publish(team, {"type": "activity", "event": event, "result": result})
+
         return result
 
     def handle_event_sync(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
@@ -63,6 +90,7 @@ class SolutionOrchestrator:
     def report_status(self, team: str, state: str) -> None:
         """Store status updates from team orchestrators."""
         self.status[team] = state
+        self._publish(team, {"type": "status", "status": state})
 
     def get_status(self, team: str) -> str | None:
         """Return last reported status for ``team`` if available."""
