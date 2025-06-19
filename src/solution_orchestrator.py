@@ -3,19 +3,36 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
+
+from .agents.planner_agent import PlannerAgent
 
 from .team_orchestrator import TeamOrchestrator
 
 
 class SolutionOrchestrator:
-    """Route events across a registry of :class:`TeamOrchestrator`."""
+    """Route events across a registry of :class:`TeamOrchestrator`.
 
-    def __init__(self, team_configs: Dict[str, str]):
-        """Initialise orchestrator with ``team_configs`` mapping names to JSON."""
+    Parameters
+    ----------
+    team_configs:
+        Mapping of team names to JSON configuration files.
+    planner_plans:
+        Optional mapping used by :class:`PlannerAgent` to execute goal driven
+        workflows.
+    """
+
+    def __init__(
+        self,
+        team_configs: Dict[str, str],
+        planner_plans: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+    ) -> None:
         self.teams = {name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()}
         self.history: list[dict] = []
         self.status: Dict[str, str] = {}
+        self.planner: Optional[PlannerAgent] = None
+        if planner_plans is not None:
+            self.planner = PlannerAgent(self, planner_plans)
 
     async def handle_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
         """Forward ``event`` to ``team`` and record the result."""
@@ -39,3 +56,16 @@ class SolutionOrchestrator:
     def get_status(self, team: str) -> str | None:
         """Return last reported status for ``team`` if available."""
         return self.status.get(team)
+
+    def execute_goal(self, goal: str) -> Dict[str, Any]:
+        """Run the planner for the given ``goal``.
+
+        Raises
+        ------
+        RuntimeError
+            If the orchestrator was initialised without a planner.
+        """
+
+        if not self.planner:
+            raise RuntimeError("Planner is not configured")
+        return self.planner.run({"goal": goal})

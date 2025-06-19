@@ -43,6 +43,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 * **SupportAgent** (`src/agents/operations/support_agent.py`) – Autonomous Customer Support agent.
 * **RevOpsAgent** (`src/agents/sales/revops_agent.py`) – Revenue operations agent producing pipeline forecasts.
 * **ReviewAgent** (`src/agents/review_agent.py`) – Validates drafts and publishes approval results.
+* **PlannerAgent** (`src/agents/planner_agent.py`) – Executes goal-based plans by sequencing events across teams.
 
 ## Key Utilities
 
