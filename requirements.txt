@@ -1,3 +1,6 @@
 requests>=2.31.0  # optional - tests pass without it
 openai>=1.0.0  # optional - used by ChatTool
 google-api-python-client>=2.0.0  # optional - for Google Calendar
+fastapi>=0.110.0  # memory service server
+uvicorn>=0.22.0
+
