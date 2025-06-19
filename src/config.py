@@ -124,6 +124,11 @@ class Settings(BaseSettings):
     GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     CONFIG_PATH: str = "config/playbook.yaml"
 
+    # Memory Service
+    MEMORY_BACKEND: Literal["rest", "file"] = "rest"
+    MEMORY_ENDPOINT: str = "http://localhost:8000"
+    MEMORY_FILE_PATH: str = "memory.jsonl"
+
     # Logistics & E-commerce
     TMS_API_URL: Optional[str] = None
     TMS_API_KEY: Optional[str] = None

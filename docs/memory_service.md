@@ -1,26 +1,48 @@
 # Memory Service
 
 The `MemoryService` component persists events so that agents can recall prior
-context. The default implementation in `src/memory_service.py` is a thin REST
-client. It expects a server exposing `/store` and `/fetch` endpoints and simply
-forwards requests using `requests`.
+context. Implementations live under `src/memory_service/` and share a common
+`BaseMemoryService` interface.  The default backend is a thin REST client in
+`src/memory_service/rest.py` expecting a server exposing `/store` and `/fetch`
+endpoints.
 
 ## Implementation overview
 
 ```python
-class MemoryService:
+class RestMemoryService(BaseMemoryService):
     def __init__(self, endpoint: str):
         self.endpoint = endpoint
 
     def store(self, key: str, payload: Dict[str, Any]) -> bool:
-        response = requests.post(f"{self.endpoint}/store",
-                                 json={"key": key, "data": payload})
+        response = requests.post(
+            f"{self.endpoint}/store", json={"key": key, "data": payload}
+        )
         return response.ok
 
     def fetch(self, key: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        response = requests.get(f"{self.endpoint}/fetch",
-                                params={"key": key, "top_k": top_k})
+        response = requests.get(
+            f"{self.endpoint}/fetch", params={"key": key, "top_k": top_k}
+        )
         return response.json() if response.ok else []
+
+
+class FileMemoryService(BaseMemoryService):
+    def __init__(self, file_path: str):
+        self.file_path = Path(file_path)
+
+    def store(self, key: str, payload: Dict[str, Any]) -> bool:
+        with open(self.file_path, "a") as fh:
+            fh.write(json.dumps({"key": key, "data": payload}) + "\n")
+        return True
+
+    def fetch(self, key: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        results = []
+        with open(self.file_path) as fh:
+            for line in fh:
+                rec = json.loads(line)
+                if rec.get("key") == key:
+                    results.append(rec.get("data", {}))
+        return results[-top_k:]
 ```
 
 The service makes no attempt to embed or rank data—it simply passes the payload
@@ -56,16 +78,16 @@ sequenceDiagram
 
 ## Swapping backends
 
-You can replace the REST service with a vector database or any other storage
-layer. Two common approaches are:
+Two built-in backends are provided:
 
-1. **Implement a new MemoryService** that directly calls the database library.
-   Keep the `store()` and `fetch()` signatures so orchestrators remain
-   compatible.
-2. **Wrap your database with a small REST API** and point the existing client to
-   the new URL. This keeps the Python code unchanged while allowing the backend
-   to perform embedding, similarity search or other advanced logic.
+1. **REST** – the original implementation used for examples. Configure the
+   endpoint via ``MEMORY_ENDPOINT``.
+2. **File** – persists events to a local JSONL file. Controlled with
+   ``MEMORY_FILE_PATH``.
 
-Whichever method you choose, as long as `store()` saves payloads and `fetch()`
-returns a ranked list of dictionaries, the orchestrators will work without
-further modification.
+Select the backend using the ``MEMORY_BACKEND`` environment variable (``rest``
+or ``file``). The orchestrator reads these settings via ``src.config.Settings``
+so they can be placed in a ``.env`` file or exported in your shell.
+
+You can also provide your own implementation by subclassing
+``BaseMemoryService`` and passing an instance to the orchestrator.

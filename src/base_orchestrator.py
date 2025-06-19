@@ -13,7 +13,7 @@ from .events import (
     SegmentationEvent,
 )
 
-from .memory_service import MemoryService
+from .memory_service.base import BaseMemoryService
 from .utils.logger import get_logger
 
 
@@ -26,7 +26,7 @@ class BaseOrchestrator:
     def __init__(
         self,
         bus: EventBus | AsyncEventBus | None = None,
-        memory: MemoryService | None = None,
+        memory: BaseMemoryService | None = None,
     ) -> None:
         self.bus = bus or AsyncEventBus()
         self.memory = memory
