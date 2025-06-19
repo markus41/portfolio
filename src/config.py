@@ -132,6 +132,8 @@ class Settings(BaseSettings):
     MIXPANEL_TOKEN: Optional[str] = None
     SEGMENT_WRITE_KEY: Optional[str] = None
     AMPLITUDE_API_KEY: Optional[str] = None
+    VISITOR_ANALYTICS_URL: Optional[str] = None
+    VISITOR_ANALYTICS_KEY: Optional[str] = None
     IPINFO_TOKEN: Optional[str] = None
     UA_PARSER_REGEX_PATH: str = ""
 

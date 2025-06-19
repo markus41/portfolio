@@ -340,6 +340,7 @@ dotenv file before running the orchestrator or tests.
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
+| `VISITOR_ANALYTICS_URL` / `VISITOR_ANALYTICS_KEY` | Visitor tracking analytics configuration |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
 
 For an exhaustive description of all variables see
