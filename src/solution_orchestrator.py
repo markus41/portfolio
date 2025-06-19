@@ -17,14 +17,20 @@ class SolutionOrchestrator:
         self.history: list[dict] = []
         self.status: Dict[str, str] = {}
 
-    def handle_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
         """Forward ``event`` to ``team`` and record the result."""
         orchestrator = self.teams.get(team)
         if not orchestrator:
             return {"status": "unknown_team"}
-        result = orchestrator.handle_event(event)
+        result = await orchestrator.handle_event(event)
         self.history.append({"team": team, "event": event, "result": result})
         return result
+
+    def handle_event_sync(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Synchronous wrapper around :meth:`handle_event`."""
+        from agentic_core import run_sync
+
+        return run_sync(self.handle_event(team, event))
 
     def report_status(self, team: str, state: str) -> None:
         """Store status updates from team orchestrators."""

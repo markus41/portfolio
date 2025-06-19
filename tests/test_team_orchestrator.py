@@ -29,5 +29,5 @@ def test_team_orchestrator_inherits(tmp_path):
     orch = TeamOrchestrator(str(team_cfg))
     assert issubclass(TeamOrchestrator, BaseOrchestrator)
     assert orch.memory is None
-    out = orch.handle_event({"type": "dummy_agent", "payload": {"foo": 1}})
+    out = orch.handle_event_sync({"type": "dummy_agent", "payload": {"foo": 1}})
     assert out["result"]["echo"]["foo"] == 1

@@ -25,7 +25,7 @@ try:  # pragma: no cover - optional dependency
 except Exception:  # pragma: no cover - optional dependency
     openai = None
 
-from agentic_core import EventBus
+from agentic_core import EventBus, AsyncEventBus, run_maybe_async, run_sync
 
 from .base_orchestrator import BaseOrchestrator
 
@@ -82,7 +82,7 @@ class Orchestrator(BaseOrchestrator):
     """
 
     def __init__(self, memory_endpoint: str, use_llm_planner: bool = False, config_path: str | None = None):
-        bus = EventBus()
+        bus = AsyncEventBus()
         memory = MemoryService(memory_endpoint)
         super().__init__(bus=bus, memory=memory)
         self.use_llm_planner = use_llm_planner
@@ -123,20 +123,24 @@ class Orchestrator(BaseOrchestrator):
 
     # --- planning callbacks -------------------------------------------------
 
-    def _on_lead_won(self, payload: dict) -> None:
+    async def _on_lead_won(self, payload: dict) -> None:
         """Trigger material planning after a lead is won."""
         if USE_LLM_PLANNER:
             try:
                 gpt_plan("plan materials", ["Project.MaterialsNeeded"])
             except Exception as exc:  # pragma: no cover - network failures
                 logger.warning(f"LLM planner failed: {exc}")
-        self.bus.publish("Project.MaterialsNeeded", payload)
+        await run_maybe_async(self.bus.publish, "Project.MaterialsNeeded", payload)
 
-    def _on_materials_resolved(self, payload: dict) -> None:
+    async def _on_materials_resolved(self, payload: dict) -> None:
         """Schedule project kickoff once materials are procured."""
-        self.bus.publish("Email.SendKickoff", {"project_id": payload.get("project_id")})
+        await run_maybe_async(
+            self.bus.publish,
+            "Email.SendKickoff",
+            {"project_id": payload.get("project_id")},
+        )
 
-    def monthly_tick(self) -> None:
+    async def monthly_tick(self) -> None:
         """Emit the RevOps analysis cron event."""
-        self.bus.publish("RevOps.Analyze", {"tenant_id": "demo"})
+        await run_maybe_async(self.bus.publish, "RevOps.Analyze", {"tenant_id": "demo"})
 

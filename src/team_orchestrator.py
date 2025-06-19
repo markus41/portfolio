@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from agentic_core import EventBus
+from agentic_core import EventBus, AsyncEventBus
 
 from .base_orchestrator import BaseOrchestrator
 
@@ -15,7 +15,7 @@ from .base_orchestrator import BaseOrchestrator
 class TeamOrchestrator(BaseOrchestrator):
     """Load a team config and delegate events to its agents."""
 
-    def __init__(self, config_path: str) -> None:
+    def __init__(self, config_path: str, bus: EventBus | AsyncEventBus | None = None) -> None:
         """Initialise the orchestrator from a team JSON file.
 
         Parameters
@@ -31,14 +31,14 @@ class TeamOrchestrator(BaseOrchestrator):
         At construction time every participant listed in the JSON is imported
         dynamically using :func:`importlib.import_module`. The orchestrator then
         instantiates the corresponding agent classes and registers them on an
-        internal :class:`EventBus` for message routing.
+        internal event bus (:class:`EventBus` or :class:`AsyncEventBus`) for message routing.
         """
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
             data = json.load(fh)
         participants = data.get("config", {}).get("participants", [])
 
-        bus = EventBus()
+        bus = bus or AsyncEventBus()
         super().__init__(bus=bus)
 
         for part in participants:

@@ -82,7 +82,7 @@ def test_known_event_types(monkeypatch, event_type):
     }
 
     payload = payloads[event_type]
-    res = orch.handle_event({"type": event_type, "payload": payload})
+    res = orch.handle_event_sync({"type": event_type, "payload": payload})
 
     assert store_calls == {"key": event_type, "payload": payload}
     expected_cls = event_classes[event_type]
@@ -124,7 +124,7 @@ def test_unknown_event_type(monkeypatch):
         monkeypatch.setattr(agent, "run", make_fake(name))
 
     payload = {"foo": "bar"}
-    res = orch.handle_event({"type": "unknown", "payload": payload})
+    res = orch.handle_event_sync({"type": "unknown", "payload": payload})
 
     assert res == {"status": "ignored"}
     assert store_calls == {"key": "unknown", "payload": payload}

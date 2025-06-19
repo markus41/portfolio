@@ -6,7 +6,13 @@ import json
 from dataclasses import dataclass
 from typing import List
 
-from agentic_core import AbstractAgent, EventBus
+from agentic_core import (
+    AbstractAgent,
+    EventBus,
+    AsyncEventBus,
+    run_maybe_async,
+    run_sync,
+)
 
 from ..crm_connector import Deal, fetch_deals
 from ..utils.logger import get_logger
@@ -32,7 +38,7 @@ class KPI:
 class RevOpsAgent(AbstractAgent):
     """Respond to ``RevOps.Analyze`` events with deal forecasts."""
 
-    def __init__(self, bus: EventBus) -> None:
+    def __init__(self, bus: EventBus | AsyncEventBus) -> None:
         super().__init__("revops")
         self.bus = bus
         if openai:
@@ -57,7 +63,7 @@ class RevOpsAgent(AbstractAgent):
         )
         return json.loads(resp.choices[0].message.content)
 
-    def run(self, payload: dict) -> dict:
+    async def run(self, payload: dict) -> dict:
         tenant = payload.get("tenant_id")
         deals = fetch_deals(tenant)
         kpi = self._summarize_kpis(deals)
@@ -78,5 +84,9 @@ class RevOpsAgent(AbstractAgent):
             "risks": analysis.get("risks", []),
             "actions": analysis.get("actions", []),
         }
-        self.bus.publish("RevOps.Report", report)
+        await run_maybe_async(self.bus.publish, "RevOps.Report", report)
         return report
+
+    def run_sync(self, payload: dict) -> dict:
+        """Compatibility wrapper running :meth:`run` synchronously."""
+        return run_sync(self.run(payload))
