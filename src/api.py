@@ -1,14 +1,28 @@
 from __future__ import annotations
 
-"""HTTP interface exposing :class:`SolutionOrchestrator` via FastAPI."""
+"""HTTP interface exposing :class:`SolutionOrchestrator` via FastAPI.
+
+This module supports being executed directly as ``python src/api.py`` or via
+``python -m src.api``. When run as a script the ``src`` package may not be on
+``sys.path`` which breaks the relative imports below. The bootstrap logic adds
+the project root to ``sys.path`` so the package layout remains valid in both
+scenarios. This mirrors the behaviour of ``python -m`` but allows direct script
+execution as well.
+"""
+
+from pathlib import Path
+import os
+import sys
+
+if __package__ in {None, ""}:  # pragma: no cover - safe for direct execution
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    __package__ = "src"
 
 from typing import Any, Dict, List, Literal
-import os
 import json
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
-from pathlib import Path
 
 
 class Event(BaseModel):

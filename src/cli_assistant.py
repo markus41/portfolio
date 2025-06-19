@@ -5,6 +5,11 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
+
+if __package__ in {None, ""}:  # pragma: no cover - script execution support
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    __package__ = "src"
 
 from .utils.nlp_params import parse_parameters
 
