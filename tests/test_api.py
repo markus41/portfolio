@@ -14,6 +14,7 @@ from urllib import request as urllib_request
 from src.solution_orchestrator import SolutionOrchestrator
 from src import api
 
+
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
     req = urllib_request.Request(url, headers=headers or {})
     try:
@@ -23,15 +24,20 @@ def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str
         return err.code, err.read().decode()
 
 
-def _http_post(url: str, data: dict, headers: dict[str, str] | None = None) -> tuple[int, str]:
+def _http_post(
+    url: str, data: dict, headers: dict[str, str] | None = None
+) -> tuple[int, str]:
     payload = json.dumps(data).encode()
-    req = urllib_request.Request(url, data=payload, headers=headers or {}, method="POST")
+    req = urllib_request.Request(
+        url, data=payload, headers=headers or {}, method="POST"
+    )
     req.add_header("Content-Type", "application/json")
     try:
         with urllib_request.urlopen(req) as resp:  # noqa: S310 -- in tests
             return resp.getcode(), resp.read().decode()
     except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
         return err.code, err.read().decode()
+
 
 from src.agents.base_agent import BaseAgent
 
@@ -171,6 +177,49 @@ def test_goal_dry_run(tmp_path):
         data = json.loads(body)
         assert data["status"] == "planned"
         assert data["sequence"] == [{"team": "demo", "event": "echo_agent"}]
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_goal_unknown(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    plans = {"demo": []}
+    orch = SolutionOrchestrator({"demo": str(team_cfg)}, planner_plans=plans)
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/goals/missing",
+            {},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 404
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_goal_no_planner(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    orch = SolutionOrchestrator({"demo": str(team_cfg)})
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/goals/demo",
+            {},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 400
     finally:
         server.should_exit = True
         thread.join(timeout=5)

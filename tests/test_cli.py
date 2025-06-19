@@ -9,7 +9,6 @@ import subprocess
 import pytest
 
 
-
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
         "responsibilities": ["operations.dummy_cli_agent"],
@@ -22,7 +21,9 @@ def _write_team(tmp_path: Path) -> Path:
     return path
 
 
-def _start_server(team_cfg: Path, port: int) -> tuple[subprocess.Popen, int]:
+def _start_server(
+    team_cfg: Path, port: int, *, plans: Path | None = None
+) -> tuple[subprocess.Popen, int]:
     env = dict(os.environ)
     root = os.getcwd()
     env["PYTHONPATH"] = f"{root}:{env.get('PYTHONPATH', '')}"
@@ -35,6 +36,8 @@ def _start_server(team_cfg: Path, port: int) -> tuple[subprocess.Popen, int]:
         "--port",
         str(port),
     ]
+    if plans:
+        cmd.extend(["--plans", str(plans)])
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env
     )
@@ -79,6 +82,36 @@ def test_cli_start_send_status(tmp_path, monkeypatch):
     res_status = subprocess.run(status_cmd, capture_output=True, text=True, timeout=5)
     status_data = json.loads(res_status.stdout.strip())
     assert status_data.get("demo") == "handled"
+
+    server.terminate()
+    server.wait(timeout=5)
+
+
+def test_cli_goal_dry_run(tmp_path):
+    team_cfg = _write_team(tmp_path)
+    plans = {
+        "demo": [{"team": "demo", "event": {"type": "operations.dummy_cli_agent"}}]
+    }
+    plan_path = tmp_path / "plans.json"
+    plan_path.write_text(json.dumps(plans))
+
+    server, port = _start_server(team_cfg, 0, plans=plan_path)
+
+    goal_cmd = [
+        sys.executable,
+        "-m",
+        "src.cli",
+        "goal",
+        "demo",
+        "--dry-run",
+        "--port",
+        str(port),
+    ]
+    res = subprocess.run(goal_cmd, capture_output=True, text=True, timeout=5)
+    assert res.returncode == 0
+    data = json.loads(res.stdout.strip())
+    assert data["status"] == "planned"
+    assert data["sequence"] == [{"team": "demo", "event": "operations.dummy_cli_agent"}]
 
     server.terminate()
     server.wait(timeout=5)

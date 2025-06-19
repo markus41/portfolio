@@ -142,7 +142,8 @@ start the orchestrator and send events from another shell:
 
 ```bash
 # launch the orchestrator (listens on localhost:8765)
-brookside-cli start sales=src/teams/sales_team_full.json
+brookside-cli start sales=src/teams/sales_team_full.json --plans planner.json
+# planner.json maps goals to task sequences
 
 # dispatch an event
 brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
@@ -152,6 +153,7 @@ brookside-cli status
 
 # preview a goal without running agents
 brookside-cli goal demo --dry-run
+# drop --dry-run to execute the goal
 ```
 
 ### 🌐 HTTP API
