@@ -1,5 +1,5 @@
 {
-  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
   "component_type": "team",
   "version": 1,
   "component_version": 1,
@@ -41,13 +41,13 @@
       }
     ],
     "termination_condition": {
-      "provider": "autogen_agentchat.base.OrTerminationCondition",
+      "provider": "autogen.agentchat.base.OrTerminationCondition",
       "component_type": "termination",
       "label": "TerminateOnText",
       "config": {
         "conditions": [
           {
-            "provider": "autogen_agentchat.conditions.TextMentionTermination",
+            "provider": "autogen.agentchat.conditions.TextMentionTermination",
             "component_type": "termination",
             "label": "TermOnText",
             "config": {"text": "TERMINATE"}
