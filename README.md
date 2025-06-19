@@ -131,6 +131,57 @@ orch.execute_goal("demo")
 The planner dispatches each event to the appropriate team in order and returns
 their combined results.
 
+### 📝 Workflow Templates
+
+Ready-made templates under `workflows/templates` demonstrate common Planner
+Agent flows. Load a template with ``json.load`` and pass it to
+``SolutionOrchestrator`` via ``planner_plans``.
+
+```python
+import json
+from src.solution_orchestrator import SolutionOrchestrator
+
+with open("workflows/templates/blog_post.json") as fh:
+    plans = json.load(fh)
+
+orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
+                            planner_plans=plans)
+orch.execute_goal("blog_post")
+```
+
+Available templates:
+
+* **blog_post.json** – outline, draft and finalize a blog article using
+  ``WriterAgent``.
+
+  ```python
+  with open("workflows/templates/blog_post.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("blog_post")
+  ```
+
+* **document_summary.json** – summarise a file with ``AnalystAgent``.
+
+  ```python
+  with open("workflows/templates/document_summary.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"analysis": "workflows/templates/analysis_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("document_summary")
+  ```
+
+* **sales_outreach.json** – capture a lead and send outreach via the sales team.
+
+  ```python
+  with open("workflows/templates/sales_outreach.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"},
+                              planner_plans=plans)
+  orch.execute_goal("sales_outreach")
+  ```
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the

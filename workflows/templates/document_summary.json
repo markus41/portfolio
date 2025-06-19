@@ -1,0 +1,11 @@
+{
+  "document_summary": [
+    {
+      "team": "analysis",
+      "event": {
+        "type": "analyst_agent",
+        "payload": {"action": "summarize", "path": "docs/example.txt"}
+      }
+    }
+  ]
+}
