@@ -82,3 +82,33 @@ def test_cli_start_send_status(tmp_path, monkeypatch):
 
     server.terminate()
     server.wait(timeout=5)
+
+
+def test_cli_runmd(tmp_path):
+    team_cfg = _write_team(tmp_path)
+    md = tmp_path / "tasks.md"
+    md.write_text(
+        "\n".join(
+            [
+                "## Goal: demo",
+                "- {\"team\": \"demo\", \"event\": {\"type\": \"operations.dummy_cli_agent\", \"payload\": {}}}",
+            ]
+        )
+    )
+
+    env = dict(os.environ)
+    root = os.getcwd()
+    env["PYTHONPATH"] = f"{root}:{env.get('PYTHONPATH', '')}"
+    cmd = [
+        sys.executable,
+        "-m",
+        "src.cli",
+        "runmd",
+        str(md),
+        f"demo={team_cfg}",
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=5)
+    assert res.returncode == 0
+    output = res.stdout.strip().splitlines()[-1]
+    data = json.loads(output)
+    assert data["demo"]["status"] == "complete"

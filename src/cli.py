@@ -138,6 +138,21 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_runmd(args: argparse.Namespace) -> None:
+    """Execute tasks defined in a Markdown file."""
+    from .solution_orchestrator import SolutionOrchestrator
+    from .markdown_tasks import load_goals_from_markdown
+
+    teams = _parse_team_mapping(tuple(args.teams))
+    plans = load_goals_from_markdown(args.file)
+    orch = SolutionOrchestrator(teams, planner_plans=plans)
+
+    results = {}
+    for goal in plans:
+        results[goal] = orch.execute_goal(goal)
+    print(json.dumps(results))
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -168,6 +183,18 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    runmd_p = sub.add_parser(
+        "runmd",
+        help="Execute goal plans defined in a Markdown file",
+    )
+    runmd_p.add_argument("file", help="Markdown task file")
+    runmd_p.add_argument(
+        "teams",
+        nargs="+",
+        help="Team config as NAME=PATH pairs used by the orchestrator",
+    )
+    runmd_p.set_defaults(func=cmd_runmd)
 
     return parser
 
