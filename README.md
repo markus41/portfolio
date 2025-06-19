@@ -228,6 +228,8 @@ dotenv file before running the orchestrator or tests.
 | `CRM_API_URL` / `CRM_API_KEY` | Endpoint and key for your CRM integration |
 | `SENDGRID_API_KEY` | Sending transactional email |
 | `REDIS_URL` | Backend store for caching and message passing |
+| `MEMORY_BACKEND` | Selects memory service (`rest`, `file`, `redis`) |
+| `MEMORY_REDIS_URL` | Redis connection when `MEMORY_BACKEND=redis` |
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
@@ -261,6 +263,28 @@ The compose file starts two services:
 
 The orchestrator is automatically configured to talk to the memory service at
 `http://memory:8000`.
+
+To use Redis instead of the bundled FastAPI memory server, start a Redis
+container and point the orchestrator at it:
+
+```yaml
+version: '3.9'
+services:
+  orchestrator:
+    build: .
+    command: ["start", "sales=src/teams/sales_team_full.json"]
+    environment:
+      MEMORY_BACKEND: redis
+      MEMORY_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+volumes:
+  redis-data:
+```
 
 ## 📊 RevOps & Tooling
 
