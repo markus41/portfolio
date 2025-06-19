@@ -146,6 +146,10 @@ brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"e
 
 # view latest statuses
 brookside-cli status
+
+# map a natural language task to a workflow template
+brookside-cli assist "handle new inventory"
+# => {"template": "src/teams/inventory_management_team.json"}
 ```
 
 ### 🌐 HTTP API
@@ -271,6 +275,7 @@ also included:
 
 * `dev_assist.py` – generate boilerplate modules and matching tests.
 * `debugger_agent.py` – listen for `*.Error` events and propose patches.
+* `brookside-cli assist` – convert plain language tasks into workflow templates.
 * `qa_agent.py` – run scripted conversations against `SupportAgent` and emit QA
   reports.
 * `review_agent.py` – automatically approve or reject drafts published on the event bus.
