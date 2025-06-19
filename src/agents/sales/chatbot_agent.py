@@ -3,6 +3,7 @@
 from ..base_agent import BaseAgent
 import importlib
 from ...utils.logger import get_logger
+from ...utils.context import summarise_messages
 from ...events import ChatbotEvent
 
 logger = get_logger(__name__)
@@ -27,6 +28,9 @@ class ChatbotAgent(BaseAgent):
         """
 
         logger.info("Running ChatbotAgent")
+        # ensure conversation stays within reasonable bounds
+        messages = summarise_messages(payload.messages)
+
         # forward the messages to ChatTool which wraps the OpenAI call
-        response = self.chat_tool.chat(payload.messages)
+        response = self.chat_tool.chat(messages)
         return {"response": response}
