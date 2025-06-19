@@ -167,9 +167,10 @@ class Settings(BaseSettings):
     API_AUTH_KEY: Optional[str] = None
 
     # Memory Service
-    MEMORY_BACKEND: Literal["rest", "file"] = "rest"
+    MEMORY_BACKEND: Literal["rest", "file", "redis"] = "rest"
     MEMORY_ENDPOINT: str = "http://localhost:8000"
     MEMORY_FILE_PATH: str = "memory.jsonl"
+    MEMORY_REDIS_URL: str = "redis://localhost:6379/0"
 
     # Logistics & E-commerce
     TMS_API_URL: Optional[str] = None
