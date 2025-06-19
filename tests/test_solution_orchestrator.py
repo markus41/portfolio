@@ -54,3 +54,21 @@ def test_solution_orchestrator_routing(tmp_path, monkeypatch):
     assert out_b["result"]["handled_by"] == "B"
     assert orch.history[0]["team"] == "A"
     assert orch.history[1]["team"] == "B"
+
+
+def test_solution_orchestrator_logging(tmp_path, monkeypatch):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    log_path = tmp_path / "activity.jsonl"
+    orch = SolutionOrchestrator({"A": str(team)}, log_path=str(log_path))
+
+    orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {"x": 1}})
+
+    entries = orch.get_recent_activity()
+    assert len(entries) == 1
+    assert entries[0]["agent_id"] == "dummy_agent_a"
+    assert "timestamp" in entries[0]

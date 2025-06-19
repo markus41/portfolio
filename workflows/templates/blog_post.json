@@ -1,0 +1,19 @@
+{
+  "blog_post": [
+    {
+      "team": "writer",
+      "event": {
+        "type": "writer_agent",
+        "payload": {"action": "outline", "topic": "Example Topic"}
+      }
+    },
+    {
+      "team": "writer",
+      "event": {"type": "writer_agent", "payload": {"action": "draft"}}
+    },
+    {
+      "team": "writer",
+      "event": {"type": "writer_agent", "payload": {"action": "finalize"}}
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+responsibilities:
+  - analyst_agent
+config:
+  participants:
+    - provider: src.agents.analyst_agent.AnalystAgent
+      config:
+        name: analyst_agent
