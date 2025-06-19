@@ -69,6 +69,12 @@ variables documented below.
 - `KAFKA_BOOTSTRAP_SERVERS` – Kafka broker list.
 - `RABBITMQ_URL` – RabbitMQ connection string.
 
+## Memory Service
+- `MEMORY_BACKEND` – Choose the persistence layer (`rest`, `file`, `redis`).
+- `MEMORY_ENDPOINT` – URL for the REST backend when `MEMORY_BACKEND=rest`.
+- `MEMORY_FILE_PATH` – File path when `MEMORY_BACKEND=file`.
+- `MEMORY_REDIS_URL` – Redis URL when `MEMORY_BACKEND=redis`.
+
 ## Messaging & Notifications
 - `SENDGRID_API_KEY` – SendGrid API key.
 - `SLACK_WEBHOOK_URL` – Slack webhook for notifications.

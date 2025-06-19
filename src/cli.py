@@ -7,12 +7,26 @@ import asyncio
 import json
 import socket
 import sys
-from typing import Dict, Tuple
+from typing import Dict, Iterable, Tuple
 
 
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
+
+# Mapping of keywords to workflow JSON templates used by :func:`cmd_assist`.
+# Each key can be a single word or phrase. The value is the path to the
+# template under ``src/teams``. Matching is case-insensitive and performed on
+# substrings.
+TASK_WORKFLOW_MAP: Dict[Iterable[str], str] = {
+    ("lead", "prospect", "sales"): "src/teams/sales_team_full.json",
+    ("fulfillment", "ship", "order"): "src/teams/fulfillment_pipeline_team.json",
+    ("inventory", "stock"): "src/teams/inventory_management_team.json",
+    ("logistics", "operations"): "src/teams/operations_team.json",
+    ("driver", "tracking", "shipment"): "src/teams/on_the_road_team.json",
+    ("listing", "real estate"): "src/teams/real_estate_team.json",
+    ("ecommerce", "shopping", "cart"): "src/teams/ecommerce_team.json",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -138,6 +152,26 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def _match_workflow(task: str) -> str | None:
+    """Return the workflow template matching ``task`` if any."""
+
+    task_lower = task.lower()
+    for keywords, template in TASK_WORKFLOW_MAP.items():
+        if any(key in task_lower for key in keywords):
+            return template
+    return None
+
+
+def cmd_assist(args: argparse.Namespace) -> None:
+    """Map ``task`` to a workflow template and print the result as JSON."""
+
+    template = _match_workflow(args.task)
+    if template is None:
+        print(json.dumps({"template": None, "error": "no_match"}))
+    else:
+        print(json.dumps({"template": template}))
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -163,6 +197,13 @@ def build_parser() -> argparse.ArgumentParser:
     send_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     send_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     send_p.set_defaults(func=cmd_send)
+
+    assist_p = sub.add_parser(
+        "assist",
+        help="Suggest a workflow template for a natural language task",
+    )
+    assist_p.add_argument("task", help="Task description")
+    assist_p.set_defaults(func=cmd_assist)
 
     status_p = sub.add_parser("status", help="Fetch latest team statuses")
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
