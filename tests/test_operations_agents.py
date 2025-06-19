@@ -1,6 +1,6 @@
-from src.agents.inbound_agent import InboundAgent
-from src.agents.inventory_management_agent import InventoryManagementAgent
-from src.agents.tms_agent import TMSAgent
+from src.agents.operations.inbound_agent import InboundAgent
+from src.agents.operations.inventory_management_agent import InventoryManagementAgent
+from src.agents.operations.tms_agent import TMSAgent
 
 
 def test_inbound_agent(monkeypatch):

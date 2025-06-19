@@ -29,18 +29,18 @@ from agentic_core import EventBus, AsyncEventBus, run_maybe_async, run_sync
 
 from .base_orchestrator import BaseOrchestrator
 
-from .agents.lead_capture_agent import LeadCaptureAgent
-from .agents.chatbot_agent import ChatbotAgent
-from .agents.crm_pipeline_agent import CRMPipelineAgent
-from .agents.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
+from .agents.sales.lead_capture_agent import LeadCaptureAgent
+from .agents.sales.chatbot_agent import ChatbotAgent
+from .agents.sales.crm_pipeline_agent import CRMPipelineAgent
+from .agents.sales.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
 from .memory_service import RestMemoryService
 from .memory_service.file import FileMemoryService
 from .memory_service.base import BaseMemoryService
 from .config import settings
 from .utils.logger import get_logger
-from .agents.support_agent import SupportAgent
-from .agents.procurement_agent import ProcurementAgent
-from .agents.revops_agent import RevOpsAgent
+from .agents.operations.support_agent import SupportAgent
+from .agents.operations.procurement_agent import ProcurementAgent
+from .agents.sales.revops_agent import RevOpsAgent
 
 
 logger = get_logger(__name__)

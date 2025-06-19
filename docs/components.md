@@ -62,7 +62,7 @@ through Python entry points. Register your agent class under the
 ```ini
 [options.entry_points]
 brookside.agents =
-    lead_capture = src.agents.lead_capture_agent:LeadCaptureAgent
+    lead_capture = src.agents.sales.lead_capture_agent:LeadCaptureAgent
 ```
 
 With the entry point installed, :func:`src.utils.plugin_loader.load_agent` will

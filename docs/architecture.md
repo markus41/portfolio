@@ -80,8 +80,8 @@ The mapping of event types to agent classes can be supplied via a small JSON fil
 
 ```json
 {
-  "lead_capture": "src.agents.lead_capture_agent.LeadCaptureAgent",
-  "chatbot": "src.agents.chatbot_agent.ChatbotAgent"
+  "lead_capture": "src.agents.sales.lead_capture_agent.LeadCaptureAgent",
+  "chatbot": "src.agents.sales.chatbot_agent.ChatbotAgent"
 }
 ```
 

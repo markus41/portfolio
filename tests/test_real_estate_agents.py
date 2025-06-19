@@ -1,7 +1,7 @@
-from src.agents.real_estate_lead_agent import RealEstateLeadAgent
-from src.agents.mls_agent import MLSAgent
-from src.agents.listing_agent import ListingAgent
-from src.agents.listing_poster_agent import ListingPosterAgent
+from src.agents.real_estate.real_estate_lead_agent import RealEstateLeadAgent
+from src.agents.real_estate.mls_agent import MLSAgent
+from src.agents.real_estate.listing_agent import ListingAgent
+from src.agents.real_estate.listing_poster_agent import ListingPosterAgent
 
 
 def test_real_estate_lead_agent(monkeypatch):

@@ -26,7 +26,9 @@ def load_agent(name: str) -> Type[BaseAgent]:
     The loader first searches registered entry points under
     :data:`ENTRY_POINT_GROUP`. If ``name`` matches an entry point, the
     referenced class is returned. Otherwise the loader falls back to importing
-    ``src.agents.<name>`` and resolving ``<CamelCase(name)>`` within that
+    ``src.agents.<name>`` and resolving ``<CamelCase(last_segment)>`` within
+    that module. ``name`` may include package separators (e.g.
+    ``sales.lead_capture_agent``).
     module.
 
     Parameters
@@ -60,7 +62,8 @@ def load_agent(name: str) -> Type[BaseAgent]:
     except ModuleNotFoundError as exc:
         raise ImportError(f"Agent '{name}' not found") from exc
 
-    class_name = "".join(word.capitalize() for word in name.split("_"))
+    last = name.rsplit(".", 1)[-1]
+    class_name = "".join(word.capitalize() for word in last.split("_"))
     agent_cls = getattr(module, class_name, None)
     if agent_cls is None:
         raise ImportError(f"Class '{class_name}' not found in module 'src.agents.{name}'")

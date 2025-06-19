@@ -1,6 +1,6 @@
 # src/tests/test_lead_capture.py
 
-from src.agents.lead_capture_agent import LeadCaptureAgent
+from src.agents.sales.lead_capture_agent import LeadCaptureAgent
 from src.events import LeadCaptureEvent
 
 def test_lead_capture_normalization():

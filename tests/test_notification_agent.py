@@ -15,7 +15,7 @@ sys.modules.setdefault(
     ),
 )
 
-from src.agents.notification_agent import NotificationAgent
+from src.agents.operations.notification_agent import NotificationAgent
 
 
 def test_notification_agent_slack(monkeypatch):
