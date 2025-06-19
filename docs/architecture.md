@@ -23,13 +23,26 @@ This document explains how the Brookside BI agent system fits together and how A
 
 ## EventBus
 
-`EventBus` is a minimal in-memory pub/sub utility defined in `agentic_core.EventBus`.  Agents subscribe to topics and publish events synchronously.  The bus is used by the orchestrators and agents to exchange messages without tight coupling.
+`EventBus` is a minimal in-memory pub/sub utility defined in `agentic_core.EventBus`.  Agents subscribe to topics and publish events synchronously.  For asynchronous flows an `AsyncEventBus` is also available which awaits subscriber tasks using `asyncio.create_task`.
 
 ```
 from agentic_core import EventBus
 bus = EventBus()
 bus.subscribe("greet", lambda p: print(p))
 bus.publish("greet", {"msg": "hello"})
+```
+
+Async variant:
+
+```
+from agentic_core import AsyncEventBus
+bus = AsyncEventBus()
+
+async def handler(p):
+    print(p)
+
+bus.subscribe("greet", handler)
+await bus.publish("greet", {"msg": "hi"})
 ```
 
 ## MemoryService
@@ -62,7 +75,7 @@ GET /fetch?key=lead_capture:42&top_k=5
 
 ### Orchestrator
 
-`src.orchestrator.Orchestrator` wires a handful of Python agents together.  `handle_event()` stores incoming payloads via `MemoryService` and then calls the agent associated with the event `type`.
+`src.orchestrator.Orchestrator` wires a handful of Python agents together.  `handle_event()` (an async method) stores incoming payloads via `MemoryService` and then awaits the agent associated with the event `type`.
 The mapping of event types to agent classes can be supplied via a small JSON file. When the orchestrator is constructed with ``config_path`` it loads this file and imports the listed modules dynamically. An example can be found in ``src/orchestrator_config.json``:
 
 ```json
@@ -99,7 +112,7 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 ### SolutionOrchestrator
 
-`src.solution_orchestrator.SolutionOrchestrator` manages multiple `TeamOrchestrator` instances.  It routes events to a named team via `handle_event(team, event)` and records the results.
+`src.solution_orchestrator.SolutionOrchestrator` manages multiple `TeamOrchestrator` instances.  It routes events to a named team via the async `handle_event(team, event)` method and records the results.
 
 ## AutoGen Agents and Providers
 
@@ -113,7 +126,7 @@ When `TeamOrchestrator.handle_event` receives an event it forwards the payload t
 
 ## Execution Sequence
 
-1. External code calls `SolutionOrchestrator.handle_event()` with a team name and event.
+1. External code awaits `SolutionOrchestrator.handle_event()` with a team name and event.
 2. The `SolutionOrchestrator` forwards the event to the appropriate `TeamOrchestrator`.
 3. The team orchestrator dispatches the event to the matching agent using its `EventBus`.
 4. Agents may call tools, publish additional events or interact with AutoGen models.

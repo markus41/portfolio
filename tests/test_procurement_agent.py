@@ -30,7 +30,7 @@ def test_auto_order(monkeypatch):
         "requires_approval": False,
     })
 
-    result = agent.run({"item": "cement", "qty": 10, "target_days": 7})
+    result = agent.run_sync({"item": "cement", "qty": 10, "target_days": 7})
     assert result["status"] == "ordered"
     assert ordered[0]["supplier_id"] == "s1"
 
@@ -48,6 +48,6 @@ def test_needs_approval(monkeypatch):
         "requires_approval": True,
     })
 
-    result = agent.run({"item": "steel", "qty": 10, "target_days": 7})
+    result = agent.run_sync({"item": "steel", "qty": 10, "target_days": 7})
     assert result["status"] == "pending_approval"
     assert Decimal(pending[0]["price"]) > MAX_AUTO_APPROVAL

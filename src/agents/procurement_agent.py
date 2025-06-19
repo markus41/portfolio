@@ -6,7 +6,13 @@ import json
 from decimal import Decimal
 from typing import Iterable, List
 
-from agentic_core import AbstractAgent, EventBus
+from agentic_core import (
+    AbstractAgent,
+    EventBus,
+    AsyncEventBus,
+    run_maybe_async,
+    run_sync,
+)
 from ..suppliers import BaseSupplierAdapter, Quote
 from ..utils.logger import get_logger
 from ..constants import OPENAI_API_KEY
@@ -34,7 +40,7 @@ class ProcurementAgent(AbstractAgent):
 
     def __init__(
         self,
-        bus: EventBus,
+        bus: EventBus | AsyncEventBus,
         suppliers: Iterable[BaseSupplierAdapter],
     ) -> None:
         super().__init__("Procurement")
@@ -73,7 +79,7 @@ class ProcurementAgent(AbstractAgent):
         )
         return "PO-0001"
 
-    def run(self, payload: dict) -> dict:
+    async def run(self, payload: dict) -> dict:
         item = payload.get("item")
         qty = int(payload.get("qty", 0))
         target_days = int(payload.get("target_days", 0))
@@ -106,10 +112,14 @@ class ProcurementAgent(AbstractAgent):
         }
 
         if requires_approval:
-            self.bus.publish("Procurement.PendingApproval", event)
+            await run_maybe_async(self.bus.publish, "Procurement.PendingApproval", event)
             return {"status": "pending_approval", **event}
 
         order_id = self.place_order(chosen, item, qty)
         out_event = {**event, "order_id": order_id}
-        self.bus.publish("Procurement.Ordered", out_event)
+        await run_maybe_async(self.bus.publish, "Procurement.Ordered", out_event)
         return {"status": "ordered", **out_event}
+
+    def run_sync(self, payload: dict) -> dict:
+        """Compatibility wrapper running :meth:`run` synchronously."""
+        return run_sync(self.run(payload))

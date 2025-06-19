@@ -41,6 +41,6 @@ def test_load_agents_from_config(tmp_path: Path):
     assert isinstance(orch.agents["a"], DummyAgentA)
     assert isinstance(orch.agents["b"], DummyAgentB)
 
-    out = orch.handle_event({"type": "a", "payload": {}})
+    out = orch.handle_event_sync({"type": "a", "payload": {}})
     assert out["status"] == "done"
     assert out["result"] == {"handled": "A"}

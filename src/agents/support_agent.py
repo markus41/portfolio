@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict
 
-from agentic_core import AbstractAgent, EventBus, MemoryService
+from agentic_core import AbstractAgent, EventBus, MemoryService, run_maybe_async, run_sync
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -42,7 +42,7 @@ Keep answers short and helpful.
         match = re.search(r"(\d{3,})", text)
         return match.group(1) if match else None
 
-    def run(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    async def run(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         text = payload.get("text", "")
         customer_id = payload.get("customer_id")
         lowered = text.lower()
@@ -72,7 +72,8 @@ Keep answers short and helpful.
             reply_text = f"I've escalated your request. Ticket {ticket}."
             escalate = True
 
-        self.bus.publish(
+        await run_maybe_async(
+            self.bus.publish,
             "Support.Reply",
             {"customer_id": customer_id, "text": reply_text},
         )
@@ -81,6 +82,10 @@ Keep answers short and helpful.
         )
         logger.info(f"Responded to customer {customer_id}")
         return {"text": reply_text, "escalate": escalate}
+
+    def run_sync(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Compatibility wrapper running :meth:`run` synchronously."""
+        return run_sync(self.run(payload))
 
 
 def main() -> None:

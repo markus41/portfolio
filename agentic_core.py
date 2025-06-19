@@ -7,7 +7,9 @@ wide variety of small projects.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Iterable
+import asyncio
+import inspect
+from typing import Any, Callable, Dict, Iterable, List
 
 
 class EventBus:
@@ -34,6 +36,21 @@ class EventBus:
         """Synchronously notify all subscribers of ``topic``."""
         for fn in self._subs.get(topic, []):
             fn(payload)
+
+
+class AsyncEventBus(EventBus):
+    """Asynchronous variant of :class:`EventBus` using ``asyncio``."""
+
+    async def publish(self, topic: str, payload: dict) -> None:
+        """Dispatch ``payload`` to subscribers as asyncio tasks."""
+        tasks = []
+        for fn in self._subs.get(topic, []):
+            if inspect.iscoroutinefunction(fn):
+                tasks.append(asyncio.create_task(fn(payload)))
+            else:
+                tasks.append(asyncio.create_task(asyncio.to_thread(fn, payload)))
+        if tasks:
+            await asyncio.gather(*tasks)
 
 
 class MemoryService:
@@ -109,3 +126,16 @@ class AbstractAgent:
     def run(self, event: dict) -> dict:
         """Handle ``event`` and return a response. Override in subclasses."""
         raise NotImplementedError
+
+
+async def run_maybe_async(fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    """Call ``fn`` and await the result if it returns an awaitable."""
+    result = fn(*args, **kwargs)
+    if inspect.isawaitable(result):
+        return await result
+    return result
+
+
+def run_sync(awaitable: Any) -> Any:
+    """Execute ``awaitable`` synchronously using ``asyncio.run``."""
+    return asyncio.run(awaitable)

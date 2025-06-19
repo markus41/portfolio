@@ -46,8 +46,8 @@ def test_solution_orchestrator_routing(tmp_path, monkeypatch):
 
     orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
 
-    out_a = orch.handle_event("A", {"type": "dummy_agent_a", "payload": {"foo": 1}})
-    out_b = orch.handle_event("B", {"type": "dummy_agent_b", "payload": {"bar": 2}})
+    out_a = orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {"foo": 1}})
+    out_b = orch.handle_event_sync("B", {"type": "dummy_agent_b", "payload": {"bar": 2}})
 
     assert out_a["result"]["handled_by"] == "A"
     assert out_b["result"]["handled_by"] == "B"
