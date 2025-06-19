@@ -68,7 +68,9 @@ def _get(url: str, headers=None):
         return _Resp(err.code, err.read().decode())
 
 
-sys.modules["requests"] = types.SimpleNamespace(Response=_Resp, post=_post, get=_get)
+sys.modules["requests"] = types.SimpleNamespace(
+    Response=_Resp, post=_post, get=_get, RequestException=Exception
+)
 
 from web import streamlit_app
 
@@ -130,6 +132,9 @@ def test_load_team_configs(tmp_path: Path):
     cfg = {"responsibilities": ["a", "b"]}
     (team_dir / "demo.json").write_text(json.dumps(cfg))
 
+    # malformed file should be ignored
+    (team_dir / "bad.json").write_text("{invalid}")
+
     teams = streamlit_app.load_team_configs(team_dir)
     assert teams == {"demo": ["a", "b"]}
 
@@ -148,8 +153,7 @@ def test_send_event_and_status(tmp_path: Path, monkeypatch):
             streamlit_app.os.environ, "BACKEND_URL", f"http://127.0.0.1:{port}"
         )
         monkeypatch.setitem(streamlit_app.os.environ, "API_KEY", "secret")
-        streamlit_app.API_URL = os.environ["BACKEND_URL"]
-        streamlit_app.API_KEY = os.environ["API_KEY"]
+        streamlit_app.settings = streamlit_app.Settings()  # reload from env
 
         resp = streamlit_app.send_event("demo", "echo_agent", {"foo": 1})
         assert resp.status_code == 200
@@ -161,3 +165,15 @@ def test_send_event_and_status(tmp_path: Path, monkeypatch):
     finally:
         server.should_exit = True
         thread.join(timeout=5)
+
+
+def test_send_event_failure(monkeypatch):
+    """send_event should raise RuntimeError on network errors."""
+
+    def _raise(*_, **__):
+        raise streamlit_app.requests.RequestException("boom")
+
+    monkeypatch.setattr(streamlit_app.requests, "post", _raise)
+
+    with pytest.raises(RuntimeError):
+        streamlit_app.send_event("t", "e", {})

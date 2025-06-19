@@ -181,6 +181,7 @@ click **Launch** to dispatch the request.
 ```bash
 BACKEND_URL=http://localhost:8000 \
 API_KEY=mysecret \
+TEAM_DIR=src/teams \
 streamlit run web/streamlit_app.py
 ```
 
@@ -248,6 +249,9 @@ dotenv file before running the orchestrator or tests.
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
+| `BACKEND_URL` | FastAPI server base URL used by the Streamlit UI |
+| `API_KEY` | Authentication token sent with API requests |
+| `TEAM_DIR` | Directory containing team JSON configs for the UI |
 
 For an exhaustive description of all variables see
 [docs/environment.md](docs/environment.md).
