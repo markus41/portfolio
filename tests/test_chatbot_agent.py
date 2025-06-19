@@ -1,6 +1,6 @@
 # src/tests/test_chatbot_agent.py
 
-from src.agents.chatbot_agent import ChatbotAgent
+from src.agents.sales.chatbot_agent import ChatbotAgent
 from src.events import ChatbotEvent
 
 class DummyChatTool:

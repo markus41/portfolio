@@ -3,7 +3,7 @@ from decimal import Decimal
 from agentic_core import EventBus
 
 from src.suppliers import BaseSupplierAdapter, Quote
-from src.agents.procurement_agent import ProcurementAgent, MAX_AUTO_APPROVAL
+from src.agents.operations.procurement_agent import ProcurementAgent, MAX_AUTO_APPROVAL
 
 
 class DummySupplier(BaseSupplierAdapter):

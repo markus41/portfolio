@@ -1,7 +1,7 @@
 # src/tests/test_segmentation.py
 
 import pytest
-from src.agents.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
+from src.agents.sales.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
 from src.events import SegmentationEvent
 
 def test_segmentation_targeting(monkeypatch):

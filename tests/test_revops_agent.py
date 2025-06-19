@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from src.crm_connector import Deal
-from src.agents.revops_agent import RevOpsAgent
+from src.agents.sales.revops_agent import RevOpsAgent
 
 
 def test_revops_agent(monkeypatch):

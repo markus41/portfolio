@@ -11,7 +11,7 @@ import pytest
 
 
 def _write_team(tmp_path: Path) -> Path:
-    cfg = {"config": {"participants": [{"config": {"name": "dummy_cli_agent"}}]}}
+    cfg = {"config": {"participants": [{"config": {"name": "operations.dummy_cli_agent"}}]}}
     path = tmp_path / "team.json"
     path.write_text(json.dumps(cfg))
     return path
@@ -52,7 +52,7 @@ def test_cli_start_send_status(tmp_path, monkeypatch):
 
     server, port = _start_server(team_cfg, 0)
 
-    event = {"type": "dummy_cli_agent", "payload": {"foo": 1}}
+    event = {"type": "operations.dummy_cli_agent", "payload": {"foo": 1}}
     send_cmd = [
         sys.executable,
         "-m",

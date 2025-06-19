@@ -1,7 +1,7 @@
 # src/tests/test_crm_pipeline_agent.py
 
 import pytest
-from src.agents.crm_pipeline_agent import CRMPipelineAgent
+from src.agents.sales.crm_pipeline_agent import CRMPipelineAgent
 from src.events import CRMPipelineEvent
 
 class DummyCRM:

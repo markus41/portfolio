@@ -12,7 +12,7 @@ sys.modules.setdefault(
     ),
 )
 
-from src.agents.analytics_agent import AnalyticsAgent
+from src.agents.sales.analytics_agent import AnalyticsAgent
 
 
 def test_analytics_agent_push(monkeypatch, caplog):

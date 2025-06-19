@@ -1,96 +1,27 @@
-"""Convenience imports for agent classes."""
+"""Aggregate access to all agent packages.
 
-import importlib
-from types import ModuleType
-from typing import Dict
+The :mod:`src.agents` package exposes sales, operations and real estate
+subpackages. Attribute access is delegated to these subpackages so
+imports written against the legacy flat layout continue to work::
 
-__all__ = [
-    'AnalyticsAgent',
-    'BaseAgent',
-    'ChatbotAgent',
-    'ContractAgent',
-    'ContractSignMonitorAgent',
-    'CRMEntryAgent',
-    'CRMPipelineAgent',
-    'CSATCheckerAgent',
-    'CSATSchedulerAgent',
-    'EmailReplyMonitorAgent',
-    'HumanApprovalAgent',
-    'LeadCaptureAgent',
-    'LeadEnrichmentAgent',
-    'LeadScoringAgent',
-    'NegotiationAgent',
-    'NotificationAgent',
-    'OnboardingAgent',
-    'OutreachAgent',
-    'ProposalGeneratorAgent',
-    'ReferralAgent',
-    'SchedulingAgent',
-    'SegmentationAdTargetingAgent',
-    'UpsellAgent',
-    'VisitorTrackingAgent',
-    'RealEstateLeadAgent',
-    'MLSAgent',
-    'ListingAgent',
-    'ListingPosterAgent',
-    'InboundAgent',
-    'OutboundAgent',
-    'InventoryManagementAgent',
-    'TMSAgent',
-    'FulfillmentAgent',
-    'OnRoadAgent',
-    'EcommerceAgent',
-    'ProcurementAgent',
-    'SupportAgent',
-    'RevOpsAgent',
-]
+    from src.agents import LeadCaptureAgent
 
-_module_map: Dict[str, str] = {
-    'AnalyticsAgent': 'analytics_agent',
-    'BaseAgent': 'base_agent',
-    'ChatbotAgent': 'chatbot_agent',
-    'ContractAgent': 'contract_agent',
-    'ContractSignMonitorAgent': 'contract_sign_monitor_agent',
-    'CRMEntryAgent': 'crm_entry_agent',
-    'CRMPipelineAgent': 'crm_pipeline_agent',
-    'CSATCheckerAgent': 'csat_checker_agent',
-    'CSATSchedulerAgent': 'csat_scheduler_agent',
-    'EmailReplyMonitorAgent': 'email_reply_monitor_agent',
-    'HumanApprovalAgent': 'human_approval_agent',
-    'LeadCaptureAgent': 'lead_capture_agent',
-    'LeadEnrichmentAgent': 'lead_enrichment_agent',
-    'LeadScoringAgent': 'lead_scoring_agent',
-    'NegotiationAgent': 'negotiation_agent',
-    'NotificationAgent': 'notification_agent',
-    'OnboardingAgent': 'onboarding_agent',
-    'OutreachAgent': 'outreach_agent',
-    'ProposalGeneratorAgent': 'proposal_generator_agent',
-    'ReferralAgent': 'referral_agent',
-    'SchedulingAgent': 'scheduling_agent',
-    'SegmentationAdTargetingAgent': 'segmentation_ad_targeting_agent',
-    'UpsellAgent': 'upsell_agent',
-    'VisitorTrackingAgent': 'visitor_tracking_agent',
-    'RealEstateLeadAgent': 'real_estate_lead_agent',
-    'MLSAgent': 'mls_agent',
-    'ListingAgent': 'listing_agent',
-    'ListingPosterAgent': 'listing_poster_agent',
-    'InboundAgent': 'inbound_agent',
-    'OutboundAgent': 'outbound_agent',
-    'InventoryManagementAgent': 'inventory_management_agent',
-    'TMSAgent': 'tms_agent',
-    'FulfillmentAgent': 'fulfillment_agent',
-    'OnRoadAgent': 'on_road_agent',
-    'EcommerceAgent': 'ecommerce_agent',
-    'ProcurementAgent': 'procurement_agent',
-    'SupportAgent': 'support_agent',
-    'RevOpsAgent': 'revops_agent',
-}
+For clarity and to reduce import overhead, prefer importing from the
+specific subpackage going forward::
+
+    from src.agents.sales import LeadCaptureAgent
+"""
+
+from .base_agent import BaseAgent
+from . import sales, operations, real_estate
+
+__all__ = ["BaseAgent", *sales.__all__, *operations.__all__, *real_estate.__all__]
 
 
 def __getattr__(name: str):
-    if name in _module_map:
-        module: ModuleType = importlib.import_module(f'.{_module_map[name]}', __name__)
-        attr = getattr(module, name)
-        globals()[name] = attr
-        return attr
-    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
+    for pkg in (sales, operations, real_estate):
+        if hasattr(pkg, name):
+            attr = getattr(pkg, name)
+            globals()[name] = attr
+            return attr
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
