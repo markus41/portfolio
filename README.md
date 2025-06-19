@@ -150,8 +150,8 @@ brookside-cli status
 
 Task plans can also be loaded from Markdown files using the new ``runmd``
 command. Each goal is introduced by a ``## Goal:`` header followed by JSON
-bullet items describing the tasks.  See ``examples/markdown/demo_tasks.md`` for
-the format:
+bullet items (``-`` or ``*``) describing the tasks. Lines inside fenced code
+blocks are ignored.  See ``examples/markdown/demo_tasks.md`` for the format:
 
 ```bash
 brookside-cli runmd examples/markdown/demo_tasks.md sales=src/teams/sales_team_full.json

@@ -56,6 +56,38 @@ def test_load_goals_from_markdown(tmp_path):
     assert plans["demo"][0]["team"] == "A"
 
 
+def test_load_goals_star_bullets_and_ignore_code(tmp_path):
+    md = tmp_path / "tasks.md"
+    md.write_text(
+        "\n".join(
+            [
+                "## Goal: demo",
+                "```python",
+                "* {\"team\": \"A\", \"event\": {\"type\": \"dummy_a\", \"payload\": {}}}",
+                "```",
+                "* {\"team\": \"A\", \"event\": {\"type\": \"dummy_a\", \"payload\": {}}}",
+            ]
+        )
+    )
+    plans = load_goals_from_markdown(md)
+    assert len(plans["demo"]) == 1
+
+
+def test_invalid_json_skipped(tmp_path):
+    md = tmp_path / "tasks.md"
+    md.write_text(
+        "\n".join(
+            [
+                "## Goal: demo",
+                "- notjson",
+                "- {\"team\": \"A\", \"event\": {\"type\": \"dummy_a\", \"payload\": {}}}",
+            ]
+        )
+    )
+    plans = load_goals_from_markdown(md)
+    assert len(plans["demo"]) == 1
+
+
 def test_run_markdown_plan(tmp_path):
     _register_agents()
     md = tmp_path / "tasks.md"
