@@ -171,6 +171,24 @@ Fetch the latest status:
 curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
 ```
 
+#### Workflow Blueprints
+
+Two helper endpoints make it easy to store and retrieve planner blueprints:
+
+```bash
+curl -H "X-API-Key: mysecret" \
+     -X POST http://localhost:8000/workflows/save \
+     -d '{"name": "demo", "blueprint": {"steps": []}}'
+curl -H "X-API-Key: mysecret" http://localhost:8000/workflows/load/demo
+```
+
+Blueprints live under the `workflows/` folder. Launch the included Streamlit UI
+for a simple editor:
+
+```bash
+streamlit run src/workflow_ui.py
+```
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under
@@ -211,6 +229,7 @@ The optional packages listed in that file (such as `openai` and `google-api-pyth
 | `openai` | LLM backed agents and chat completions |
 | `google-api-python-client` | Google Calendar and other Google service integrations |
 | `requests` | HTTP-based memory service |
+| `streamlit` | Local blueprint management UI |
 
 ## 📐 Environment Variables
 
