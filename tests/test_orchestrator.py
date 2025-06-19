@@ -16,6 +16,12 @@ sys.modules.setdefault(
 
 from src.orchestrator import Orchestrator
 from src.base_orchestrator import BaseOrchestrator
+from src.events import (
+    LeadCaptureEvent,
+    ChatbotEvent,
+    CRMPipelineEvent,
+    SegmentationEvent,
+)
 
 
 def test_orchestrator_is_base_class():
@@ -58,11 +64,29 @@ def test_known_event_types(monkeypatch, event_type):
 
     monkeypatch.setattr(orch.agents[event_type], "run", fake_run)
 
-    payload = {"data": event_type}
+    event_classes = {
+        "lead_capture": LeadCaptureEvent,
+        "chatbot": ChatbotEvent,
+        "crm_pipeline": CRMPipelineEvent,
+        "segmentation": SegmentationEvent,
+    }
+    payloads = {
+        "lead_capture": {"form_data": {}, "source": "web"},
+        "chatbot": {"messages": []},
+        "crm_pipeline": {
+            "deal_id": "d1",
+            "calendar_id": "c1",
+            "followup_template": {"summary": "s"},
+        },
+        "segmentation": {"segments": [], "budget_per_segment": 1},
+    }
+
+    payload = payloads[event_type]
     res = orch.handle_event({"type": event_type, "payload": payload})
 
     assert store_calls == {"key": event_type, "payload": payload}
-    assert run_payload['payload'] == payload
+    expected_cls = event_classes[event_type]
+    assert run_payload['payload'] == expected_cls(**payload)
     assert res["status"] == "done"
     assert res["result"] == {"handled": event_type}
 
