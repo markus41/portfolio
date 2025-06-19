@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 import os
+from pathlib import Path
 
 from pydantic import BaseSettings, Field, validator
 
@@ -170,6 +171,7 @@ class Settings(BaseSettings):
     MEMORY_BACKEND: Literal["rest", "file"] = "rest"
     MEMORY_ENDPOINT: str = "http://localhost:8000"
     MEMORY_FILE_PATH: str = "memory.jsonl"
+    WORKFLOWS_DIR: str = str(Path(__file__).resolve().parent.parent / "workflows")
 
     # Logistics & E-commerce
     TMS_API_URL: Optional[str] = None

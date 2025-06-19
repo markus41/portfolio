@@ -159,7 +159,7 @@ def test_unknown_team(tmp_path):
 
 def test_workflow_save_and_load(tmp_path):
     port = _get_free_port()
-    api.WORKFLOWS_DIR = Path(tmp_path)
+    api.settings.WORKFLOWS_DIR = str(tmp_path)
     app = api.create_app(SolutionOrchestrator({}))
     api.settings.API_AUTH_KEY = "secret"
     server, thread = _start_server(app, port)

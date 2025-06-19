@@ -182,8 +182,9 @@ curl -H "X-API-Key: mysecret" \
 curl -H "X-API-Key: mysecret" http://localhost:8000/workflows/load/demo
 ```
 
-Blueprints live under the `workflows/` folder. Launch the included Streamlit UI
-for a simple editor:
+Blueprints live under the `workflows/` folder by default (override with the
+`WORKFLOWS_DIR` environment variable). Launch the included Streamlit UI for a
+simple editor:
 
 ```bash
 streamlit run src/workflow_ui.py
@@ -250,6 +251,7 @@ dotenv file before running the orchestrator or tests.
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
+| `WORKFLOWS_DIR` | Where workflow blueprints are stored |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
 
 For an exhaustive description of all variables see

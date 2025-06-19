@@ -10,7 +10,9 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
-WORKFLOWS_DIR = Path("workflows")
+def _workflows_dir() -> Path:
+    """Return directory where workflow blueprints are stored."""
+    return Path(settings.WORKFLOWS_DIR)
 
 
 class Event(BaseModel):
@@ -53,17 +55,18 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
 
     @app.post("/workflows/save")
     async def save_workflow(data: Blueprint, _=Depends(_auth)) -> Dict[str, str]:
-        """Persist a workflow blueprint to ``WORKFLOWS_DIR``."""
-        WORKFLOWS_DIR.mkdir(exist_ok=True)
+        """Persist ``data`` to :func:`_workflows_dir`."""
+        root = _workflows_dir()
         name = Path(data.name).stem
-        path = WORKFLOWS_DIR / f"{name}.json"
+        path = root / f"{name}.json"
         path.write_text(json.dumps(data.blueprint, indent=2))
         return {"status": "saved", "file": str(path)}
 
     @app.get("/workflows/load/{name}")
     def load_workflow(name: str, _=Depends(_auth)) -> Dict[str, Any]:
         """Return the stored blueprint for ``name`` if available."""
-        path = WORKFLOWS_DIR / f"{Path(name).stem}.json"
+        root = _workflows_dir()
+        path = root / f"{Path(name).stem}.json"
         if not path.exists():
             raise HTTPException(status_code=404, detail="unknown workflow")
         return json.loads(path.read_text())

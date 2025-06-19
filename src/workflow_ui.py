@@ -12,7 +12,9 @@ from typing import Dict, Any
 
 import streamlit as st
 
-WORKFLOWS_DIR = Path("workflows")
+from src.config import settings
+
+WORKFLOWS_DIR = Path(settings.WORKFLOWS_DIR)
 WORKFLOWS_DIR.mkdir(exist_ok=True)
 
 st.title("Workflow Manager")
