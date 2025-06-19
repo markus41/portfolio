@@ -286,6 +286,19 @@ memory services, agents, tools and the in-memory event bus with pointers on how
 to extend them.
 [docs/agents_overview.md](docs/agents_overview.md) contains a catalog of every built-in agent and the utility modules they rely on.
 
+## 🛠 Web Configuration
+
+A lightweight React page in `webui/` allows non-developers to edit team JSON files
+and environment variables without touching Python code. Start the API server and
+open the editor:
+
+```bash
+python -m src.api  # exposes /config endpoints
+```
+
+Then load `webui/index.html` in your browser. See
+[docs/config_editor.md](docs/config_editor.md) for full instructions.
+
 ## 🤝 Contributing
 
 We welcome community contributions! Install the pre-commit hooks so your changes follow our formatting and style guidelines.

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Dict
 import os
+import json
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
@@ -15,11 +17,18 @@ class Event(BaseModel):
     type: str
     payload: Dict[str, Any] = {}
 
+
 from .solution_orchestrator import SolutionOrchestrator
-from .config import settings
+from .config import settings, _DEFAULT_ENV_FILE
+
+TEAMS_DIR = Path("src/teams")
 
 
-def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
+def create_app(
+    orchestrator: SolutionOrchestrator | None = None,
+    teams_dir: str | Path = TEAMS_DIR,
+    env_file: str | Path = _DEFAULT_ENV_FILE,
+) -> FastAPI:
     """Return a configured :class:`FastAPI` app bound to ``orchestrator``.
 
     Parameters
@@ -27,10 +36,20 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     orchestrator:
         Instance of :class:`SolutionOrchestrator` to dispatch requests to. If
         omitted an orchestrator with no teams is created.
+    teams_dir:
+        Directory containing team JSON files. These can be edited via the
+        ``/config/teams`` endpoints.
+    env_file:
+        Path to the ``.env`` file for reading and updating project settings.
     """
 
-    app = FastAPI(title="Brookside API", description="SolutionOrchestrator HTTP interface")
+    app = FastAPI(
+        title="Brookside API", description="SolutionOrchestrator HTTP interface"
+    )
     orch = orchestrator or SolutionOrchestrator({})
+
+    teams_path = Path(teams_dir)
+    env_path = Path(env_file)
 
     async def _auth(x_api_key: str = Header(...)) -> None:
         required = settings.API_AUTH_KEY
@@ -53,6 +72,42 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         if status is None:
             raise HTTPException(status_code=404, detail="unknown team")
         return {"team": name, "status": status}
+
+    @app.get("/config/teams")
+    def list_team_files(_=Depends(_auth)) -> list[str]:
+        """Return available team configuration file names."""
+        return [p.stem for p in teams_path.glob("*.json")]
+
+    @app.get("/config/teams/{name}")
+    def get_team_config(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+        """Return the JSON configuration for ``name``."""
+        path = teams_path / f"{name}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="team config not found")
+        return json.loads(path.read_text())
+
+    @app.put("/config/teams/{name}")
+    def update_team_config(
+        name: str, data: Dict[str, Any], _=Depends(_auth)
+    ) -> Dict[str, str]:
+        """Persist ``data`` to the team config file."""
+        path = teams_path / f"{name}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="team config not found")
+        path.write_text(json.dumps(data, indent=2))
+        return {"status": "updated"}
+
+    @app.get("/config/settings")
+    def get_settings_route(_=Depends(_auth)) -> Dict[str, Any]:
+        """Return the current environment settings."""
+        return settings.dict()
+
+    @app.put("/config/settings")
+    def update_settings_route(data: Dict[str, Any], _=Depends(_auth)) -> Dict[str, str]:
+        """Write ``data`` to the environment file and return success."""
+        content = "\n".join(f"{k}={v}" for k, v in data.items()) + "\n"
+        env_path.write_text(content)
+        return {"status": "updated"}
 
     return app
 

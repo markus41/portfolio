@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Brookside Config Editor</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+      body { font-family: sans-serif; margin: 20px; }
+      textarea { width: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+    function App() {
+      const [apiKey, setApiKey] = React.useState('');
+      const [teams, setTeams] = React.useState([]);
+      const [currentTeam, setCurrentTeam] = React.useState('');
+      const [teamConfig, setTeamConfig] = React.useState('');
+      const [settings, setSettings] = React.useState('');
+
+      React.useEffect(() => {
+        if (!apiKey) return;
+        fetch('/config/teams', {headers: {'X-API-Key': apiKey}})
+          .then(r => r.json())
+          .then(setTeams)
+          .catch(console.error);
+        fetch('/config/settings', {headers: {'X-API-Key': apiKey}})
+          .then(r => r.json())
+          .then(s => setSettings(JSON.stringify(s, null, 2)))
+          .catch(console.error);
+      }, [apiKey]);
+
+      function loadTeam(name) {
+        setCurrentTeam(name);
+        fetch(`/config/teams/${name}`, {headers: {'X-API-Key': apiKey}})
+          .then(r => r.json())
+          .then(cfg => setTeamConfig(JSON.stringify(cfg, null, 2)))
+          .catch(console.error);
+      }
+
+      function saveTeam() {
+        fetch(`/config/teams/${currentTeam}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+          body: teamConfig
+        }).then(() => alert('Team saved'));
+      }
+
+      function saveSettings() {
+        fetch('/config/settings', {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
+          body: settings
+        }).then(() => alert('Settings saved'));
+      }
+
+      return (
+        <div>
+          <h1>Configuration Editor</h1>
+          <label>API Key: <input value={apiKey} onChange={e => setApiKey(e.target.value)} /></label>
+          <h2>Teams</h2>
+          <ul>
+            {teams.map(t => <li key={t}><button onClick={() => loadTeam(t)}>{t}</button></li>)}
+          </ul>
+          {currentTeam && (
+            <div>
+              <h3>Editing {currentTeam}</h3>
+              <textarea rows="20" value={teamConfig} onChange={e => setTeamConfig(e.target.value)} />
+              <br />
+              <button onClick={saveTeam}>Save Team</button>
+            </div>
+          )}
+          <h2>Environment Settings</h2>
+          <textarea rows="10" value={settings} onChange={e => setSettings(e.target.value)} />
+          <br />
+          <button onClick={saveSettings}>Save Settings</button>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
+    </script>
+  </body>
+</html>
