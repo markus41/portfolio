@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import EventForm from './components/EventForm';
 import StatusViewer from './components/StatusViewer';
+import StreamViewer from './components/StreamViewer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         onResult={(data) => setResult(JSON.stringify(data, null, 2))}
       />
       <StatusViewer team={team} apiKey={apiKey} />
+      <StreamViewer team={team} apiKey={apiKey} />
       {result && (
         <div className="mt-4">
           <h5>Result</h5>
