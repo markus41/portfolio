@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import wraps
+from time import sleep
 from typing import Any, Callable, Iterable, Tuple, Type
 
 from .logger import get_logger
@@ -16,6 +17,7 @@ DefExc = Tuple[Type[BaseException], ...]
 def retry_tool(
     retries: int = 3,
     *,
+    delay: float = 0.0,
     fallback: Callable[[BaseException, tuple, dict], Any] | None = None,
     exceptions: Iterable[Type[BaseException]] | None = None,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
@@ -25,9 +27,12 @@ def retry_tool(
     ----------
     retries:
         Number of attempts before giving up. A value of ``0`` disables retry.
+    delay:
+        Optional pause between attempts in seconds. Defaults to ``0`` for no
+        wait time.
     fallback:
         Optional handler invoked with ``(exception, args, kwargs)`` after the
-        final failed attempt. If omitted the original exception is re-raised.
+        final failed attempt. If omitted, the original exception is re-raised.
     exceptions:
         Iterable of exception classes that should trigger a retry. Defaults to
         ``(Exception,)``.
@@ -48,20 +53,11 @@ def retry_tool(
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            attempt = 0
-            while True:
+            for attempt in range(retries + 1):
                 try:
                     return func(*args, **kwargs)
                 except exc_types as exc:  # pragma: no cover - hit via tests
-                    attempt += 1
-                    logger.warning(
-                        "Attempt %s/%s for %s failed: %s",
-                        attempt,
-                        retries + 1,
-                        func.__name__,
-                        exc,
-                    )
-                    if attempt > retries:
+                    if attempt == retries:
                         if fallback:
                             logger.error(
                                 "Max retries exceeded for %s; invoking fallback",
@@ -69,6 +65,15 @@ def retry_tool(
                             )
                             return fallback(exc, args, kwargs)
                         raise
+                    logger.warning(
+                        "Attempt %s/%s for %s failed: %s",
+                        attempt + 1,
+                        retries + 1,
+                        func.__name__,
+                        exc,
+                    )
+                    if delay > 0:
+                        sleep(delay)
         return wrapper
 
     return decorator

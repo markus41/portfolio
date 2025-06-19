@@ -43,7 +43,7 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@
 └── README.md                  # You are here!
 ```
 
-The `tools` package contains submodules for CRM integrations, email and doc generation, ad campaign helpers and more. Each agent has a corresponding unit test under `tests/`. Methods that talk to external services can use the `retry_tool` decorator from `src.utils` to automatically retry transient failures.
+The `tools` package contains submodules for CRM integrations, email and doc generation, ad campaign helpers and more. Each agent has a corresponding unit test under `tests/`. Methods that talk to external services can use the `retry_tool` decorator from `src.utils` to automatically retry transient failures. The decorator supports configurable retry counts, optional delays between attempts and a fallback handler.
 
 ### 🏡 Real Estate Expansion
 

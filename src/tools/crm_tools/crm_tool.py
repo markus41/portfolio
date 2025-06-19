@@ -32,8 +32,6 @@ class CRMTool:
         resp = requests.get(f"{settings.CRM_API_URL}/contacts", params={"email": email}, headers=CRMTool.headers)
         resp.raise_for_status()
         return bool(resp.json().get("results"))
-# src/tools/crm_tool.py
-
 
     @staticmethod
     @retry_tool()

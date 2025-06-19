@@ -41,3 +41,21 @@ def test_retry_raises():
 
     with pytest.raises(RuntimeError):
         boom()
+
+
+def test_retry_delay(monkeypatch):
+    recorded = []
+
+    def fake_sleep(seconds):
+        recorded.append(seconds)
+
+    monkeypatch.setattr("src.utils.retry.sleep", fake_sleep)
+
+    @retry_tool(retries=1, delay=0.2)
+    def fail_once():
+        raise ValueError("nope")
+
+    with pytest.raises(ValueError):
+        fail_once()
+
+    assert recorded == [0.2]
