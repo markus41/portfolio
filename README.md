@@ -193,6 +193,23 @@ The repository contains a suite of unit tests under `tests/`. Execute them with
 pytest -q
 ```
 
+## 🐳 Container Usage
+
+Build both the orchestrator and the accompanying memory service using
+`docker-compose`:
+
+```bash
+docker-compose up
+```
+
+The compose file starts two services:
+
+* `orchestrator` – launches `brookside-cli start` with the example sales team.
+* `memory` – runs a small FastAPI server providing `/store` and `/fetch` APIs.
+
+The orchestrator is automatically configured to talk to the memory service at
+`http://memory:8000`.
+
 ## 📊 RevOps & Tooling
 
 Recent updates introduce a `RevOpsAgent` that summarizes CRM pipeline KPIs and

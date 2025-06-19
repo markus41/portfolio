@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  orchestrator:
+    build: .
+    command: ["start", "sales=src/teams/sales_team_full.json"]
+    environment:
+      MEMORY_BACKEND: rest
+      MEMORY_ENDPOINT: http://memory:8000
+    depends_on:
+      - memory
+  memory:
+    build: .
+    command: ["python", "-m", "src.tools.memory_service_server"]
+    volumes:
+      - memory-data:/app/data
+    environment:
+      MEMORY_FILE_PATH: /app/data/memory.jsonl
+    expose:
+      - "8000"
+volumes:
+  memory-data:
+
