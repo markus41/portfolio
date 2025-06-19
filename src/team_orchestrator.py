@@ -1,4 +1,22 @@
-"""Lightweight orchestrator for a single agent team."""
+"""Lightweight orchestrator for a single agent team.
+
+This class understands the AutoGen team specification format.  Team
+configuration files now use the ``autogen`` namespace instead of the old
+``autogen_core``/``autogen_agentchat`` packages.  A minimal example::
+
+    {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
+        "config": {
+            "participants": [
+                {"provider": "src.agents.roles.AssistantAgent",
+                 "config": {"name": "sales_agent"}}
+            ]
+        }
+    }
+
+``TeamOrchestrator`` only resolves the participants into local agent classes so
+tests remain lightweight even when the AutoGen package is unavailable.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +25,11 @@ from pathlib import Path
 from typing import Any, Dict
 
 from agentic_core import EventBus, AsyncEventBus
+
+try:  # pragma: no cover - optional AutoGen dependency
+    import autogen
+except Exception:  # pragma: no cover - tests still run without it
+    autogen = None
 
 from .base_orchestrator import BaseOrchestrator
 from .utils.plugin_loader import load_agent
@@ -47,6 +70,9 @@ class TeamOrchestrator(BaseOrchestrator):
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
             data = json.load(fh)
+        # Keep the raw specification for downstream AutoGen integration
+        # without forcing the dependency at test time.
+        self.team_config: Dict[str, Any] = data
 
         self.responsibilities: list[str] = data.get("responsibilities", [])
         participants = data.get("config", {}).get("participants", [])
@@ -68,3 +94,14 @@ class TeamOrchestrator(BaseOrchestrator):
                 continue
             agent_cls = load_agent(name)
             self.agents[name] = agent_cls()
+
+        # Optionally construct the AutoGen chat team when the dependency is
+        # installed.  The exact API differs across AutoGen versions so we guard
+        # the call in a try/except block and fall back to ``None`` if anything
+        # goes wrong.  Tests do not require the external package to be present.
+        self.autogen_team = None
+        if autogen is not None:
+            try:  # pragma: no cover - external dependency
+                self.autogen_team = autogen.from_dict(data)
+            except Exception:  # pragma: no cover - ignore API mismatches
+                self.autogen_team = None

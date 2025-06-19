@@ -74,7 +74,7 @@ A trimmed example from `sales_team_full.json` looks like:
 
 ```json
 {
-  "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+  "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
   "config": {
     "participants": [
       {"provider": "src.agents.roles.AssistantAgent", "config": {"name": "orchestrator_agent"}},

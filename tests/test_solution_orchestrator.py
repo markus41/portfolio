@@ -1,6 +1,7 @@
 import json
 import sys
 import types
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -72,3 +73,29 @@ def test_solution_orchestrator_logging(tmp_path, monkeypatch):
     assert len(entries) == 1
     assert entries[0]["agent_id"] == "dummy_agent_a"
     assert "timestamp" in entries[0]
+
+
+def test_solution_orchestrator_concurrent(tmp_path):
+    team_a = _write_team(tmp_path, "dummy_agent_a")
+    team_b = _write_team(tmp_path, "dummy_agent_b")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    mod_b = types.ModuleType("src.agents.dummy_agent_b")
+    mod_b.DummyAgentB = DummyAgentB
+    sys.modules["src.agents.dummy_agent_b"] = mod_b
+
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+
+    async def _run():
+        return await asyncio.gather(
+            orch.handle_event("A", {"type": "dummy_agent_a", "payload": {"v": 1}}),
+            orch.handle_event("B", {"type": "dummy_agent_b", "payload": {"v": 2}}),
+        )
+
+    res_a, res_b = asyncio.run(_run())
+
+    assert res_a["result"]["handled_by"] == "A"
+    assert res_b["result"]["handled_by"] == "B"
