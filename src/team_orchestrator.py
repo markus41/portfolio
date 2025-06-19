@@ -16,6 +16,23 @@ class TeamOrchestrator(BaseOrchestrator):
     """Load a team config and delegate events to its agents."""
 
     def __init__(self, config_path: str) -> None:
+        """Initialise the orchestrator from a team JSON file.
+
+        Parameters
+        ----------
+        config_path:
+            Path to the JSON configuration describing the team. The file must
+            include a ``config.participants`` array. Each participant item is
+            expected to define ``config.name`` pointing to an agent module under
+            :mod:`src.agents`.
+
+        Notes
+        -----
+        At construction time every participant listed in the JSON is imported
+        dynamically using :func:`importlib.import_module`. The orchestrator then
+        instantiates the corresponding agent classes and registers them on an
+        internal :class:`EventBus` for message routing.
+        """
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
             data = json.load(fh)
