@@ -166,9 +166,11 @@ The optional packages listed in that file (such as `openai` and `google-api-pyth
 
 The system relies on a number of environment variables for API keys and service
 endpoints. They are loaded via `src.config.Settings` which reads from the
-process environment or an optional `.env` file at the project root. The most
-common variables are summarised below. Any of them can be set in your shell or
-added to a `.env` file before running the orchestrator or tests.
+process environment and a dotenv file.  Set ``ENV`` to choose which file is
+loaded (`.env` for ``ENV=prod`` or `.env.<ENV>` otherwise).  You can also set
+``ENV_FILE`` to point at an explicit path.  The most common variables are
+summarised below. Any of them can be set in your shell or added to the chosen
+dotenv file before running the orchestrator or tests.
 
 | Variable | Purpose |
 |----------|---------|
