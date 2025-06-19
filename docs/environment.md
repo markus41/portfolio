@@ -35,8 +35,8 @@ variables documented below.
 - `SF_DOMAIN` – Salesforce domain, defaults to `login.salesforce.com`.
 
 ## Advertising & Social Platforms
-- `FACEBOOK_ACCESS_TOKEN` – Access token for Facebook APIs.
-- `GOOGLE_ADS_API_KEY` – Google Ads API key.
+- `FACEBOOK_ACCESS_TOKEN` – Access token for Facebook APIs used by `AdTool`.
+- `GOOGLE_ADS_API_KEY` – Google Ads API key used by `AdTool`.
 
 ## Real Estate APIs
 - `MLS_API_URL` – Base URL for the MLS data feed.

@@ -339,6 +339,8 @@ dotenv file before running the orchestrator or tests.
 | `MEMORY_REDIS_URL` | Redis connection when `MEMORY_BACKEND=redis` |
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
+| `FACEBOOK_ACCESS_TOKEN` | Used by `AdTool` to create Facebook campaigns |
+| `GOOGLE_ADS_API_KEY` | Used by `AdTool` to create Google campaigns |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
 
