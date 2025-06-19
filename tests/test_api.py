@@ -149,3 +149,32 @@ def test_unknown_team(tmp_path):
     finally:
         server.should_exit = True
         thread.join(timeout=5)
+
+
+def test_activity_endpoint(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    log_path = tmp_path / "act.jsonl"
+    orch = SolutionOrchestrator({"demo": str(team_cfg)}, log_path=str(log_path))
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"foo": 1}},
+            headers={"X-API-Key": "secret"},
+        )
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/activity?limit=1",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["activity"][0]["agent_id"] == "echo_agent"
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)

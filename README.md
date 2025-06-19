@@ -171,6 +171,19 @@ Fetch the latest status:
 curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
 ```
 
+Query recent activity:
+
+```bash
+curl -H "X-API-Key: mysecret" http://localhost:8000/activity?limit=20
+```
+
+### 📈 Activity Logs
+
+Every handled event is appended to a JSON Lines file. Each entry records the
+handling agent, a short summary and a timestamp. The `GET /activity` endpoint
+returns the most recent entries so that dashboards or monitoring tools can track
+agent behaviour.
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under
