@@ -28,6 +28,7 @@ Agents live under `src/agents/` and are simple Python classes with a `run()` met
 * `ProcurementAgent` – manages supplier quotes and approvals.
 
 When AutoGen is used, these classes provide the business logic invoked by the AutoGen participants defined in your team JSON.
+[See the agent catalog](agents_overview.md) for a complete list of available agents and tools.
 
 ## Tools
 
