@@ -14,6 +14,7 @@ from urllib import request as urllib_request
 from src.solution_orchestrator import SolutionOrchestrator
 from src import api
 
+
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
     req = urllib_request.Request(url, headers=headers or {})
     try:
@@ -23,15 +24,20 @@ def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str
         return err.code, err.read().decode()
 
 
-def _http_post(url: str, data: dict, headers: dict[str, str] | None = None) -> tuple[int, str]:
+def _http_post(
+    url: str, data: dict, headers: dict[str, str] | None = None
+) -> tuple[int, str]:
     payload = json.dumps(data).encode()
-    req = urllib_request.Request(url, data=payload, headers=headers or {}, method="POST")
+    req = urllib_request.Request(
+        url, data=payload, headers=headers or {}, method="POST"
+    )
     req.add_header("Content-Type", "application/json")
     try:
         with urllib_request.urlopen(req) as resp:  # noqa: S310 -- in tests
             return resp.getcode(), resp.read().decode()
     except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
         return err.code, err.read().decode()
+
 
 from src.agents.base_agent import BaseAgent
 
@@ -146,6 +152,70 @@ def test_unknown_team(tmp_path):
             headers={"X-API-Key": "secret"},
         )
         assert code == 404
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_activity_endpoint(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    log_path = tmp_path / "act.jsonl"
+    orch = SolutionOrchestrator({"demo": str(team_cfg)}, log_path=str(log_path))
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"foo": 1}},
+            headers={"X-API-Key": "secret"},
+        )
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/activity?limit=1",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["activity"][0]["agent_id"] == "echo_agent"
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_workflow_endpoints(tmp_path):
+    port = _get_free_port()
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app()
+    server, thread = _start_server(app, port)
+
+    try:
+        payload = {
+            "name": "demo",
+            "nodes": [
+                {"id": "a", "type": "agent", "label": "A"},
+                {"id": "b", "type": "tool", "label": "B"},
+            ],
+            "edges": [{"source": "a", "target": "b"}],
+        }
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/workflows",
+            payload,
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 201
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/workflows/demo",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["name"] == "demo"
+        assert len(data["nodes"]) == 2
     finally:
         server.should_exit = True
         thread.join(timeout=5)

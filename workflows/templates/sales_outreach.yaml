@@ -1,0 +1,13 @@
+sales_outreach:
+  - team: sales
+    event:
+      type: lead_capture
+      payload:
+        email: prospect@example.com
+  - team: sales
+    event:
+      type: outreach_agent
+      payload:
+        to: prospect@example.com
+        subject: Hello
+        body: We have an offer for you.

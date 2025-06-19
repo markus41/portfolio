@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """HTTP interface exposing :class:`SolutionOrchestrator` via FastAPI."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Literal
 import os
 import json
 from pathlib import Path
@@ -17,6 +17,32 @@ class Event(BaseModel):
 
     type: str
     payload: Dict[str, Any] = {}
+
+
+class NodeModel(BaseModel):
+    """Representation of a workflow node."""
+
+    id: str
+    type: Literal["agent", "tool"]
+    label: str
+    config: Dict[str, Any] = {}
+
+
+class EdgeModel(BaseModel):
+    """Representation of a workflow edge."""
+
+    source: str
+    target: str
+    label: str | None = None
+    id: str | None = None
+
+
+class WorkflowModel(BaseModel):
+    """Schema for graph workflows."""
+
+    name: str
+    nodes: List[NodeModel]
+    edges: List[EdgeModel]
 
 
 from .solution_orchestrator import SolutionOrchestrator
@@ -54,6 +80,7 @@ def create_app(
         allow_headers=["*"],
     )
     orch = orchestrator or SolutionOrchestrator({})
+    workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 
     teams_path = Path(teams_dir)
     env_path = Path(env_file)
@@ -114,6 +141,29 @@ def create_app(
         """Merge ``data`` with the ``.env`` file and return success."""
         update_env_file(env_path, {str(k): str(v) for k, v in data.items()})
         return {"status": "updated"}
+
+    @app.get("/activity")
+    def get_activity(limit: int = 10, _=Depends(_auth)) -> Dict[str, Any]:
+        """Return recent orchestrator activity."""
+        return {"activity": orch.get_recent_activity(limit)}
+
+    @app.post("/workflows", status_code=201)
+    def save_workflow(workflow: WorkflowModel, _=Depends(_auth)) -> Dict[str, Any]:
+        """Persist ``workflow`` to disk for later execution."""
+
+        workflow_dir.mkdir(parents=True, exist_ok=True)
+        path = workflow_dir / f"{workflow.name}.json"
+        path.write_text(workflow.json(indent=2))
+        return {"status": "saved", "path": str(path)}
+
+    @app.get("/workflows/{name}")
+    def load_workflow(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+        """Return a previously saved workflow."""
+
+        path = workflow_dir / f"{name}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="unknown workflow")
+        return json.loads(path.read_text())
 
     return app
 

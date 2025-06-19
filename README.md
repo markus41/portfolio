@@ -131,6 +131,88 @@ orch.execute_goal("demo")
 The planner dispatches each event to the appropriate team in order and returns
 their combined results.
 
+### 📝 Workflow Templates
+
+Ready-made templates under `workflows/templates` demonstrate common Planner
+Agent flows. Templates are available in JSON and YAML formats. Load a template
+with ``json.load`` or ``yaml.safe_load`` and pass it to
+``SolutionOrchestrator`` via ``planner_plans``.
+
+```python
+import json
+import yaml
+from src.solution_orchestrator import SolutionOrchestrator
+
+with open("workflows/templates/blog_post.json") as fh:
+    plans = json.load(fh)
+# or load the YAML equivalent
+# with open("workflows/templates/blog_post.yaml") as fh:
+#     plans = yaml.safe_load(fh)
+
+orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
+                            planner_plans=plans)
+# YAML team definitions are also supported
+# orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.yaml"},
+#                             planner_plans=plans)
+orch.execute_goal("blog_post")
+```
+
+Available templates:
+
+* **blog_post.json** / **blog_post.yaml** – outline, draft and finalize a blog
+  article using ``WriterAgent``.
+
+  ```python
+  with open("workflows/templates/blog_post.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("blog_post")
+  
+  # YAML
+  # with open("workflows/templates/blog_post.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("blog_post")
+  ```
+
+* **document_summary.json** / **document_summary.yaml** – summarise a file with
+  ``AnalystAgent``.
+
+  ```python
+  with open("workflows/templates/document_summary.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"analysis": "workflows/templates/analysis_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("document_summary")
+
+  # YAML
+  # with open("workflows/templates/document_summary.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"analysis": "workflows/templates/analysis_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("document_summary")
+  ```
+
+* **sales_outreach.json** / **sales_outreach.yaml** – capture a lead and send
+  outreach via the sales team.
+
+  ```python
+  with open("workflows/templates/sales_outreach.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"},
+                              planner_plans=plans)
+  orch.execute_goal("sales_outreach")
+
+  # YAML
+  # with open("workflows/templates/sales_outreach.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("sales_outreach")
+  ```
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the
@@ -146,6 +228,18 @@ brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"e
 
 # view latest statuses
 brookside-cli status
+
+# map a natural language task to a workflow template
+brookside-cli assist "handle new inventory"
+# => {"template": "src/teams/inventory_management_team.json"}
+```
+
+A helper utility ``brookside-assistant`` extracts campaign parameters from free
+text. Provide a description on the command line or via stdin and it returns a
+JSON object with any detected ``budget``, ``dates`` and ``target_audience``:
+
+```bash
+echo "Budget $300 targeting students on 01/02/2025" | brookside-assistant
 ```
 
 ### 🌐 HTTP API
@@ -170,6 +264,19 @@ Fetch the latest status:
 ```bash
 curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
 ```
+
+Query recent activity:
+
+```bash
+curl -H "X-API-Key: mysecret" http://localhost:8000/activity?limit=20
+```
+
+### 📈 Activity Logs
+
+Every handled event is appended to a JSON Lines file. Each entry records the
+handling agent, a short summary and a timestamp. The `GET /activity` endpoint
+returns the most recent entries so that dashboards or monitoring tools can track
+agent behaviour.
 
 ### 🌟 Creating Custom Teams
 
@@ -228,6 +335,8 @@ dotenv file before running the orchestrator or tests.
 | `CRM_API_URL` / `CRM_API_KEY` | Endpoint and key for your CRM integration |
 | `SENDGRID_API_KEY` | Sending transactional email |
 | `REDIS_URL` | Backend store for caching and message passing |
+| `MEMORY_BACKEND` | Selects memory service (`rest`, `file`, `redis`) |
+| `MEMORY_REDIS_URL` | Redis connection when `MEMORY_BACKEND=redis` |
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
@@ -262,6 +371,28 @@ The compose file starts two services:
 The orchestrator is automatically configured to talk to the memory service at
 `http://memory:8000`.
 
+To use Redis instead of the bundled FastAPI memory server, start a Redis
+container and point the orchestrator at it:
+
+```yaml
+version: '3.9'
+services:
+  orchestrator:
+    build: .
+    command: ["start", "sales=src/teams/sales_team_full.json"]
+    environment:
+      MEMORY_BACKEND: redis
+      MEMORY_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+volumes:
+  redis-data:
+```
+
 ## 📊 RevOps & Tooling
 
 Recent updates introduce a `RevOpsAgent` that summarizes CRM pipeline KPIs and
@@ -271,6 +402,7 @@ also included:
 
 * `dev_assist.py` – generate boilerplate modules and matching tests.
 * `debugger_agent.py` – listen for `*.Error` events and propose patches.
+* `brookside-cli assist` – convert plain language tasks into workflow templates.
 * `qa_agent.py` – run scripted conversations against `SupportAgent` and emit QA
   reports.
 * `review_agent.py` – automatically approve or reject drafts published on the event bus.
@@ -289,8 +421,8 @@ to extend them.
 ## 🛠 Web Configuration
 
 A lightweight React page in `webui/` allows non-developers to edit team JSON files
-and environment variables without touching Python code. Start the API server, which
-now enables CORS so the editor can talk to it directly, then open the page:
+and environment variables without touching Python code. Start the API server,
+which now enables CORS so the editor can talk to it directly, then open the page:
 
 ```bash
 python -m src.api  # exposes /config endpoints
@@ -298,6 +430,36 @@ python -m src.api  # exposes /config endpoints
 
 Then load `webui/index.html` in your browser. See
 [docs/config_editor.md](docs/config_editor.md) for full instructions.
+
+## ⛓️ Workflow Engine
+
+This release introduces a lightweight workflow engine implemented as a simple
+state machine. Workflows are defined as an ordered list of steps in a JSON or
+YAML file. The engine loads the file, tracks the current step and exposes helper
+methods to advance through the chain.
+
+An example definition can be found at
+`src/workflows/examples/content_creation.json`:
+
+```json
+{
+  "name": "content_creation",
+  "steps": ["Research", "Draft", "Edit", "Send"]
+}
+```
+
+Load and execute the workflow:
+
+```python
+from src.workflows.engine import WorkflowEngine
+
+engine = WorkflowEngine.from_file("src/workflows/examples/content_creation.json")
+while not engine.is_complete():
+    print(f"Currently at: {engine.current}")
+    engine.advance()
+print(f"Finished on: {engine.current}")
+```
+
 
 ## 🤝 Contributing
 
@@ -309,6 +471,13 @@ pre-commit install
 ```
 
 Running `pre-commit` will automatically format code with **black**, lint with **flake8**, and run the unit tests via **pytest** before each commit.
+
+## 🔗 Workflow Editor
+
+A minimal ReactFlow editor lives in the [`frontend/`](frontend/) directory. It lets
+you design workflows composed of agent and tool nodes. The editor persists the
+graph by POSTing it to `/workflows` where the backend stores the definition for
+execution. The JSON format is described in [`docs/workflow_schema.json`](docs/workflow_schema.json).
 
 ---
 
