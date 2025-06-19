@@ -33,7 +33,10 @@ from .agents.lead_capture_agent import LeadCaptureAgent
 from .agents.chatbot_agent import ChatbotAgent
 from .agents.crm_pipeline_agent import CRMPipelineAgent
 from .agents.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
-from .memory_service import MemoryService
+from .memory_service import RestMemoryService
+from .memory_service.file import FileMemoryService
+from .memory_service.base import BaseMemoryService
+from .config import settings
 from .utils.logger import get_logger
 from .agents.support_agent import SupportAgent
 from .agents.procurement_agent import ProcurementAgent
@@ -81,9 +84,41 @@ class Orchestrator(BaseOrchestrator):
         Optional path to a JSON file mapping event types to agent classes.
     """
 
-    def __init__(self, memory_endpoint: str, use_llm_planner: bool = False, config_path: str | None = None):
+    def __init__(
+        self,
+        memory_endpoint: str | None = None,
+        use_llm_planner: bool = False,
+        config_path: str | None = None,
+        *,
+        memory_backend: str | None = None,
+        memory_file: str | None = None,
+    ) -> None:
+        """Create a new orchestrator instance.
+
+        Parameters
+        ----------
+        memory_endpoint:
+            REST endpoint for the default :class:`RestMemoryService` backend.
+        use_llm_planner:
+            Enable GPT based planning callbacks.
+        config_path:
+            Optional path to a JSON mapping of event types to agent classes.
+        memory_backend:
+            Select the memory implementation: ``"rest"`` (default) or ``"file"``.
+        memory_file:
+            Path used by the ``file`` backend if specified.
+        """
+
         bus = AsyncEventBus()
-        memory = MemoryService(memory_endpoint)
+
+        backend = memory_backend or settings.MEMORY_BACKEND
+        if backend == "file":
+            path = memory_file or settings.MEMORY_FILE_PATH
+            memory: BaseMemoryService = FileMemoryService(path)
+        else:
+            endpoint = memory_endpoint or settings.MEMORY_ENDPOINT
+            memory = RestMemoryService(endpoint)
+
         super().__init__(bus=bus, memory=memory)
         self.use_llm_planner = use_llm_planner
 
