@@ -40,6 +40,8 @@ bus.publish("greet", {"msg": "hello"})
 * `agentic_core.MemoryService` – simple in-memory store used in tests and demos.
 
 Events handled by the orchestrators are stored via this service so that later agents can query previous context.
+For a deeper dive into the REST client and ways to swap in other backends see
+[memory_service.md](memory_service.md).
 
 Example HTTP calls when the REST variant is used:
 
