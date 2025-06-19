@@ -15,6 +15,11 @@ sys.modules.setdefault(
 )
 
 from src.orchestrator import Orchestrator
+from src.base_orchestrator import BaseOrchestrator
+
+
+def test_orchestrator_is_base_class():
+    assert issubclass(Orchestrator, BaseOrchestrator)
 
 
 @pytest.mark.parametrize("event_type", [
