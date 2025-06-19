@@ -4,16 +4,24 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vite",
+    "dev:dashboard": "vite --open /dashboard/",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "reactflow": "^11.0.0"
+    "reactflow": "^11.0.0",
+    "react-bootstrap": "^2.9.0",
+    "bootstrap": "^5.3.1",
+    "prop-types": "^15.8.1"
   },
   "devDependencies": {
     "vite": "^4.0.0",
-    "@vitejs/plugin-react": "^4.0.0"
+    "@vitejs/plugin-react": "^4.0.0",
+    "vitest": "^0.34.6",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.1.4"
   }
 }

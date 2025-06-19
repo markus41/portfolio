@@ -470,6 +470,23 @@ you design workflows composed of agent and tool nodes. The editor persists the
 graph by POSTing it to `/workflows` where the backend stores the definition for
 execution. The JSON format is described in [`docs/workflow_schema.json`](docs/workflow_schema.json).
 
+## 📊 Dashboard
+
+`frontend/dashboard` contains a small React + Bootstrap app for submitting events
+to the backend and tracking team status. It posts to `/teams/<name>/event` and
+polls `/teams/<name>/status`.
+
+### Development
+
+```bash
+cd frontend
+npm install
+npm run dev:dashboard
+```
+
+Run the tests with `npm test`. Building the project outputs both the editor and
+dashboard into `dist/` using the shared `vite.config.js`.
+
 ---
 
 This project is released under the [MIT License](LICENSE).
