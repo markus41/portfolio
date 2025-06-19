@@ -216,6 +216,17 @@ memory services, agents, tools and the in-memory event bus with pointers on how
 to extend them.
 [docs/agents_overview.md](docs/agents_overview.md) contains a catalog of every built-in agent and the utility modules they rely on.
 
+## 🤝 Contributing
+
+We welcome community contributions! Install the pre-commit hooks so your changes follow our formatting and style guidelines.
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Running `pre-commit` will automatically format code with **black**, lint with **flake8**, and run the unit tests via **pytest** before each commit.
+
 ---
 
 This project is released under the [MIT License](LICENSE).
