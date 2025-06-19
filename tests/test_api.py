@@ -188,3 +188,26 @@ def test_workflow_save_and_load(tmp_path):
     finally:
         server.should_exit = True
         thread.join(timeout=5)
+
+
+def test_save_creates_directory(tmp_path):
+    """Saving a workflow should create ``WORKFLOWS_DIR`` if missing."""
+    port = _get_free_port()
+    dir_path = tmp_path / "missing"
+    api.settings.WORKFLOWS_DIR = str(dir_path)
+    app = api.create_app(SolutionOrchestrator({}))
+    api.settings.API_AUTH_KEY = "secret"
+    server, thread = _start_server(app, port)
+
+    try:
+        payload = {"name": "demo", "blueprint": {"steps": [1]}}
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/workflows/save",
+            payload,
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        assert dir_path.exists()
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)

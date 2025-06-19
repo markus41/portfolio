@@ -11,8 +11,15 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
 def _workflows_dir() -> Path:
-    """Return directory where workflow blueprints are stored."""
-    return Path(settings.WORKFLOWS_DIR)
+    """Return directory where workflow blueprints are stored.
+
+    The directory is created on-demand to avoid errors when saving a
+    new blueprint. ``WORKFLOWS_DIR`` may point anywhere on the local
+    filesystem, so we ensure the path exists before use.
+    """
+    root = Path(settings.WORKFLOWS_DIR)
+    root.mkdir(parents=True, exist_ok=True)
+    return root
 
 
 class Event(BaseModel):
@@ -55,7 +62,12 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
 
     @app.post("/workflows/save")
     async def save_workflow(data: Blueprint, _=Depends(_auth)) -> Dict[str, str]:
-        """Persist ``data`` to :func:`_workflows_dir`."""
+        """Persist ``data`` to the configured workflows directory.
+
+        The JSON payload is written to ``<name>.json`` under ``WORKFLOWS_DIR``.
+        This endpoint returns a simple status message with the absolute file
+        location so clients can confirm where the blueprint was stored.
+        """
         root = _workflows_dir()
         name = Path(data.name).stem
         path = root / f"{name}.json"
@@ -64,7 +76,12 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
 
     @app.get("/workflows/load/{name}")
     def load_workflow(name: str, _=Depends(_auth)) -> Dict[str, Any]:
-        """Return the stored blueprint for ``name`` if available."""
+        """Return the stored blueprint for ``name`` if available.
+
+        If the file does not exist a 404 error is raised.  The returned JSON is
+        the exact contents of the saved blueprint without any additional
+        wrapping structure.
+        """
         root = _workflows_dir()
         path = root / f"{Path(name).stem}.json"
         if not path.exists():

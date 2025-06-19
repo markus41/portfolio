@@ -183,7 +183,8 @@ curl -H "X-API-Key: mysecret" http://localhost:8000/workflows/load/demo
 ```
 
 Blueprints live under the `workflows/` folder by default (override with the
-`WORKFLOWS_DIR` environment variable). Launch the included Streamlit UI for a
+`WORKFLOWS_DIR` environment variable). The API will create this directory on
+first use if it does not already exist. Launch the included Streamlit UI for a
 simple editor:
 
 ```bash
