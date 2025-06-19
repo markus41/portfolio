@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from importlib import import_module, metadata
-from typing import Type
+from typing import Type, TypeVar
 
 from ..agents.base_agent import BaseAgent
+from ..plugins.base_plugin import BaseToolPlugin
 
 
 ENTRY_POINT_GROUP = "brookside.agents"
+ENTRY_POINT_PLUGINS = "brookside.plugins"
+
+T = TypeVar("T")
 
 
 def _iter_entry_points(group: str):
@@ -18,6 +22,61 @@ def _iter_entry_points(group: str):
     except TypeError:  # pragma: no cover - fallback for Python <3.10
         eps = metadata.entry_points()
         return eps.get(group, [])
+
+
+def _load_component(name: str, group: str, package: str, base_cls: Type[T]) -> Type[T]:
+    """Return a class named ``name`` either from entry points or ``package``.
+
+    Parameters
+    ----------
+    name:
+        Entry point name or module stem.
+    group:
+        Entry point group used for discovery.
+    package:
+        Package prefix searched when the entry point lookup fails.
+    base_cls:
+        Expected base class for validation.
+
+    Returns
+    -------
+    Type[T]
+        The resolved class implementing ``base_cls``.
+
+    Raises
+    ------
+    ImportError
+        If the module or class cannot be located.
+    TypeError
+        If the resolved object is not a subclass of ``base_cls``.
+    """
+
+    for ep in _iter_entry_points(group):
+        if ep.name == name:
+            cls = ep.load()
+            if not isinstance(cls, type) or not issubclass(cls, base_cls):
+                raise TypeError(
+                    f"Entry point '{name}' does not resolve to a {base_cls.__name__} subclass"
+                )
+            return cls
+
+    try:
+        module = import_module(f"{package}.{name}")
+    except ModuleNotFoundError as exc:
+        raise ImportError(f"{base_cls.__name__} '{name}' not found") from exc
+
+    last = name.rsplit(".", 1)[-1]
+    class_name = "".join(word.capitalize() for word in last.split("_"))
+    cls = getattr(module, class_name, None)
+    if cls is None:
+        raise ImportError(
+            f"Class '{class_name}' not found in module '{package}.{name}'"
+        )
+
+    if not issubclass(cls, base_cls):
+        raise TypeError(f"Class '{class_name}' is not a {base_cls.__name__} subclass")
+
+    return cls
 
 
 def load_agent(name: str) -> Type[BaseAgent]:
@@ -48,27 +107,24 @@ def load_agent(name: str) -> Type[BaseAgent]:
     TypeError
         If the resolved object is not a :class:`BaseAgent` subclass.
     """
-    for ep in _iter_entry_points(ENTRY_POINT_GROUP):
-        if ep.name == name:
-            agent_cls = ep.load()
-            if not isinstance(agent_cls, type) or not issubclass(agent_cls, BaseAgent):
-                raise TypeError(
-                    f"Entry point '{name}' does not resolve to a BaseAgent subclass"
-                )
-            return agent_cls
+    return _load_component(
+        name,
+        ENTRY_POINT_GROUP,
+        "src.agents",
+        BaseAgent,
+    )
 
-    try:
-        module = import_module(f"src.agents.{name}")
-    except ModuleNotFoundError as exc:
-        raise ImportError(f"Agent '{name}' not found") from exc
 
-    last = name.rsplit(".", 1)[-1]
-    class_name = "".join(word.capitalize() for word in last.split("_"))
-    agent_cls = getattr(module, class_name, None)
-    if agent_cls is None:
-        raise ImportError(f"Class '{class_name}' not found in module 'src.agents.{name}'")
+def load_plugin(name: str) -> Type[BaseToolPlugin]:
+    """Load a tool plugin class by ``name``.
 
-    if not issubclass(agent_cls, BaseAgent):
-        raise TypeError(f"Class '{class_name}' is not a BaseAgent subclass")
+    The search order mirrors :func:`load_agent` but looks under the
+    ``brookside.plugins`` entry point group and ``src.plugins`` package.
+    """
 
-    return agent_cls
+    return _load_component(
+        name,
+        ENTRY_POINT_PLUGINS,
+        "src.plugins",
+        BaseToolPlugin,
+    )
