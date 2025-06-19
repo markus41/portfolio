@@ -54,6 +54,15 @@ def _load_env_file(path: str) -> dict[str, str]:
     return data
 
 
+def update_env_file(path: str, values: dict[str, str]) -> None:
+    """Merge ``values`` with existing ``path`` contents and persist."""
+    env = _load_env_file(path)
+    env.update({str(k): str(v) for k, v in values.items()})
+    with open(path, "w") as f:
+        for key, val in env.items():
+            f.write(f"{key}={val}\n")
+
+
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 

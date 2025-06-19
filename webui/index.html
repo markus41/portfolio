@@ -14,6 +14,8 @@
   <body>
     <div id="app"></div>
     <script type="text/babel">
+    // Update API_BASE if the API is hosted on a different origin
+    const API_BASE = '';
     function App() {
       const [apiKey, setApiKey] = React.useState('');
       const [teams, setTeams] = React.useState([]);
@@ -23,11 +25,11 @@
 
       React.useEffect(() => {
         if (!apiKey) return;
-        fetch('/config/teams', {headers: {'X-API-Key': apiKey}})
+        fetch(`${API_BASE}/config/teams`, {headers: {'X-API-Key': apiKey}})
           .then(r => r.json())
           .then(setTeams)
           .catch(console.error);
-        fetch('/config/settings', {headers: {'X-API-Key': apiKey}})
+        fetch(`${API_BASE}/config/settings`, {headers: {'X-API-Key': apiKey}})
           .then(r => r.json())
           .then(s => setSettings(JSON.stringify(s, null, 2)))
           .catch(console.error);
@@ -35,14 +37,14 @@
 
       function loadTeam(name) {
         setCurrentTeam(name);
-        fetch(`/config/teams/${name}`, {headers: {'X-API-Key': apiKey}})
+        fetch(`${API_BASE}/config/teams/${name}`, {headers: {'X-API-Key': apiKey}})
           .then(r => r.json())
           .then(cfg => setTeamConfig(JSON.stringify(cfg, null, 2)))
           .catch(console.error);
       }
 
       function saveTeam() {
-        fetch(`/config/teams/${currentTeam}`, {
+        fetch(`${API_BASE}/config/teams/${currentTeam}`, {
           method: 'PUT',
           headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
           body: teamConfig
@@ -50,7 +52,7 @@
       }
 
       function saveSettings() {
-        fetch('/config/settings', {
+        fetch(`${API_BASE}/config/settings`, {
           method: 'PUT',
           headers: {'Content-Type': 'application/json', 'X-API-Key': apiKey},
           body: settings

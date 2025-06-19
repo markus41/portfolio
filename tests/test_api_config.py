@@ -79,7 +79,7 @@ def test_config_endpoints(tmp_path):
     team_file = teams_dir / "demo.json"
     team_file.write_text(json.dumps(cfg))
     env_file = tmp_path / ".env"
-    env_file.write_text("MONDAY_API_URL=https://old\n")
+    env_file.write_text("MONDAY_API_URL=https://old\nOTHER=1\n")
 
     mod = types.ModuleType("src.agents.echo_agent")
     mod.EchoAgent = EchoAgent
@@ -92,6 +92,15 @@ def test_config_endpoints(tmp_path):
     server, thread = _start_server(app, port)
 
     try:
+        # CORS headers should allow requests from any origin
+        code, _ = _http_request(
+            f"http://127.0.0.1:{port}/config/teams",
+            None,
+            "OPTIONS",
+            {"Origin": "http://example.com", "Access-Control-Request-Method": "GET"},
+        )
+        assert code == 200
+
         code, body = _http_get(
             f"http://127.0.0.1:{port}/config/teams",
             headers={"X-API-Key": "secret"},
@@ -122,7 +131,9 @@ def test_config_endpoints(tmp_path):
             headers={"X-API-Key": "secret"},
         )
         assert code == 200
-        assert env_file.read_text().strip() == "MONDAY_API_URL=https://new"
+        content = env_file.read_text().strip().splitlines()
+        assert "MONDAY_API_URL=https://new" in content
+        assert "OTHER=1" in content
     finally:
         server.should_exit = True
         thread.join(timeout=5)

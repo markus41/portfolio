@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
@@ -19,7 +20,7 @@ class Event(BaseModel):
 
 
 from .solution_orchestrator import SolutionOrchestrator
-from .config import settings, _DEFAULT_ENV_FILE
+from .config import settings, _DEFAULT_ENV_FILE, update_env_file
 
 TEAMS_DIR = Path("src/teams")
 
@@ -45,6 +46,12 @@ def create_app(
 
     app = FastAPI(
         title="Brookside API", description="SolutionOrchestrator HTTP interface"
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     orch = orchestrator or SolutionOrchestrator({})
 
@@ -104,9 +111,8 @@ def create_app(
 
     @app.put("/config/settings")
     def update_settings_route(data: Dict[str, Any], _=Depends(_auth)) -> Dict[str, str]:
-        """Write ``data`` to the environment file and return success."""
-        content = "\n".join(f"{k}={v}" for k, v in data.items()) + "\n"
-        env_path.write_text(content)
+        """Merge ``data`` with the ``.env`` file and return success."""
+        update_env_file(env_path, {str(k): str(v) for k, v in data.items()})
         return {"status": "updated"}
 
     return app

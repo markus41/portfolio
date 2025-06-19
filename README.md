@@ -289,8 +289,8 @@ to extend them.
 ## 🛠 Web Configuration
 
 A lightweight React page in `webui/` allows non-developers to edit team JSON files
-and environment variables without touching Python code. Start the API server and
-open the editor:
+and environment variables without touching Python code. Start the API server, which
+now enables CORS so the editor can talk to it directly, then open the page:
 
 ```bash
 python -m src.api  # exposes /config endpoints
