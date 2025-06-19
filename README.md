@@ -134,25 +134,33 @@ their combined results.
 ### 📝 Workflow Templates
 
 Ready-made templates under `workflows/templates` demonstrate common Planner
-Agent flows. Load a template with ``json.load`` and pass it to
+Agent flows. Templates are available in JSON and YAML formats. Load a template
+with ``json.load`` or ``yaml.safe_load`` and pass it to
 ``SolutionOrchestrator`` via ``planner_plans``.
 
 ```python
 import json
+import yaml
 from src.solution_orchestrator import SolutionOrchestrator
 
 with open("workflows/templates/blog_post.json") as fh:
     plans = json.load(fh)
+# or load the YAML equivalent
+# with open("workflows/templates/blog_post.yaml") as fh:
+#     plans = yaml.safe_load(fh)
 
 orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
                             planner_plans=plans)
+# YAML team definitions are also supported
+# orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.yaml"},
+#                             planner_plans=plans)
 orch.execute_goal("blog_post")
 ```
 
 Available templates:
 
-* **blog_post.json** – outline, draft and finalize a blog article using
-  ``WriterAgent``.
+* **blog_post.json** / **blog_post.yaml** – outline, draft and finalize a blog
+  article using ``WriterAgent``.
 
   ```python
   with open("workflows/templates/blog_post.json") as fh:
@@ -160,9 +168,17 @@ Available templates:
   orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.json"},
                               planner_plans=plans)
   orch.execute_goal("blog_post")
+  
+  # YAML
+  # with open("workflows/templates/blog_post.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"writer": "workflows/templates/writer_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("blog_post")
   ```
 
-* **document_summary.json** – summarise a file with ``AnalystAgent``.
+* **document_summary.json** / **document_summary.yaml** – summarise a file with
+  ``AnalystAgent``.
 
   ```python
   with open("workflows/templates/document_summary.json") as fh:
@@ -170,9 +186,17 @@ Available templates:
   orch = SolutionOrchestrator({"analysis": "workflows/templates/analysis_team.json"},
                               planner_plans=plans)
   orch.execute_goal("document_summary")
+
+  # YAML
+  # with open("workflows/templates/document_summary.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"analysis": "workflows/templates/analysis_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("document_summary")
   ```
 
-* **sales_outreach.json** – capture a lead and send outreach via the sales team.
+* **sales_outreach.json** / **sales_outreach.yaml** – capture a lead and send
+  outreach via the sales team.
 
   ```python
   with open("workflows/templates/sales_outreach.json") as fh:
@@ -180,6 +204,13 @@ Available templates:
   orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"},
                               planner_plans=plans)
   orch.execute_goal("sales_outreach")
+
+  # YAML
+  # with open("workflows/templates/sales_outreach.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("sales_outreach")
   ```
 
 ### 🖥️ Command Line Usage
