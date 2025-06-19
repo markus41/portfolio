@@ -513,7 +513,7 @@ communicating with the backend:
 
 ```bash
 cd frontend/dashboard
-cp .env.example .env
+cp ../.env.example .env
 echo "VITE_API_KEY=mysecret" >> .env
 npm run dev:dashboard
 ```
