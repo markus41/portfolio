@@ -94,6 +94,8 @@ variables documented below.
 - `MIXPANEL_TOKEN` – Mixpanel project token.
 - `SEGMENT_WRITE_KEY` – Segment write key.
 - `AMPLITUDE_API_KEY` – Amplitude API key.
+- `VISITOR_ANALYTICS_URL` – HTTP endpoint for storing visitor events.
+- `VISITOR_ANALYTICS_KEY` – Bearer token for the analytics service.
 - `IPINFO_TOKEN` – ipinfo.io token.
 - `UA_PARSER_REGEX_PATH` – Optional path to UA parser regexes.
 

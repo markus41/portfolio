@@ -27,7 +27,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 * **SchedulingAgent** (`src/agents/sales/scheduling_agent.py`) – Handles scheduling operations.
 * **SegmentationAdTargetingAgent** (`src/agents/sales/segmentation_ad_targeting_agent.py`) – Create ad campaigns for multiple audience segments.
 * **UpsellAgent** (`src/agents/sales/upsell_agent.py`) – Handles upsell operations.
-* **VisitorTrackingAgent** (`src/agents/sales/visitor_tracking_agent.py`) – Handles visitor tracking operations.
+* **VisitorTrackingAgent** (`src/agents/sales/visitor_tracking_agent.py`) – Logs visitor activity and forwards events to your analytics service.
 * **RealEstateLeadAgent** (`src/agents/real_estate/real_estate_lead_agent.py`) – Locate potential real-estate buyers or sellers.
 * **MLSAgent** (`src/agents/real_estate/mls_agent.py`) – Agent that pulls listing data from the MLS.
 * **ListingAgent** (`src/agents/real_estate/listing_agent.py`) – Construct simple listing dictionaries for property data.
