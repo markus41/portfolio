@@ -190,6 +190,7 @@ For a deeper explanation of each module see
 [docs/components.md](docs/components.md). It walks through the orchestrators,
 memory services, agents, tools and the in-memory event bus with pointers on how
 to extend them.
+[docs/agents_overview.md](docs/agents_overview.md) contains a catalog of every built-in agent and the utility modules they rely on.
 
 ---
 
