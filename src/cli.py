@@ -7,7 +7,12 @@ import asyncio
 import json
 import socket
 import sys
+from pathlib import Path
 from typing import Dict, Iterable, Tuple
+
+if __package__ in {None, ""}:  # pragma: no cover - script execution support
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    __package__ = "src"
 
 
 
