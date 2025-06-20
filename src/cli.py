@@ -14,6 +14,8 @@ if __package__ in {None, ""}:  # pragma: no cover - script execution support
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     __package__ = "src"
 
+from . import plugin_manager
+
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
@@ -163,6 +165,22 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_list_agents(args: argparse.Namespace) -> None:
+    """Print available agent identifiers."""
+    print(json.dumps({"agents": plugin_manager.list_agents()}))
+
+
+def cmd_list_plugins(args: argparse.Namespace) -> None:
+    """Print available tool plugin identifiers."""
+    print(json.dumps({"plugins": plugin_manager.list_plugins()}))
+
+
+def cmd_show_plugin(args: argparse.Namespace) -> None:
+    """Display details about a specific plugin."""
+    info = plugin_manager.get_plugin_details(args.name)
+    print(json.dumps(info))
+
+
 def _match_workflow(task: str) -> str | None:
     """Return the workflow template matching ``task`` if any."""
 
@@ -221,6 +239,16 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    sub.add_parser("list-agents", help="List available agents").set_defaults(
+        func=cmd_list_agents
+    )
+    sub.add_parser("list-plugins", help="List available tool plugins").set_defaults(
+        func=cmd_list_plugins
+    )
+    show_p = sub.add_parser("show-plugin", help="Show details about a plugin")
+    show_p.add_argument("name", help="Plugin entry point or module name")
+    show_p.set_defaults(func=cmd_show_plugin)
 
     return parser
 
