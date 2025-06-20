@@ -273,8 +273,10 @@ curl -H "X-API-Key: mysecret" \
      -d '{"name": "marketing", "path": "src/teams/marketing_team.json"}'
 
 # reload or remove
-curl -H "X-API-Key: mysecret" -X POST http://localhost:8000/teams/marketing/reload
-curl -H "X-API-Key: mysecret" -X DELETE http://localhost:8000/teams/marketing
+curl -H "X-API-Key: mysecret" -X POST \
+     http://localhost:8000/teams/marketing/reload
+curl -H "X-API-Key: mysecret" -X DELETE \
+     http://localhost:8000/teams/marketing
 ```
 
 Fetch the latest status:
