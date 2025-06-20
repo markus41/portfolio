@@ -24,6 +24,7 @@ import asyncio
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
@@ -62,6 +63,7 @@ class WorkflowModel(BaseModel):
 
 from .solution_orchestrator import SolutionOrchestrator
 from .config import settings
+from . import db
 
 
 def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
@@ -77,7 +79,21 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     app = FastAPI(
         title="Brookside API", description="SolutionOrchestrator HTTP interface"
     )
+
+    db.init_db()
     orch = orchestrator or SolutionOrchestrator({})
+
+    origins = (
+        [o.strip() for o in settings.ALLOWED_ORIGINS.split(',')]
+        if settings.ALLOWED_ORIGINS and settings.ALLOWED_ORIGINS != '*'
+        else ['*']
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 
     async def _auth(request: Request, x_api_key: str | None = Header(None)) -> None:
@@ -134,6 +150,12 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     def get_activity(limit: int = 10, _=Depends(_auth)) -> Dict[str, Any]:
         """Return recent orchestrator activity."""
         return {"activity": orch.get_recent_activity(limit)}
+
+    @app.get("/history")
+    def get_history(limit: int = 10, offset: int = 0, _=Depends(_auth)) -> Dict[str, Any]:
+        """Return persisted event history from the database."""
+        items = db.fetch_history(limit=limit, offset=offset)
+        return {"history": items}
 
     @app.post("/workflows", status_code=201)
     def save_workflow(workflow: WorkflowModel, _=Depends(_auth)) -> Dict[str, Any]:

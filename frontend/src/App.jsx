@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactFlow, { Background, Controls, addEdge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { getApiKey } from './config';
+import HistoryViewer from './HistoryViewer.jsx';
 
 export default function App() {
   const [nodes, setNodes] = useState([]);
@@ -38,6 +39,7 @@ export default function App() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <button onClick={save}>Save</button>
+      <HistoryViewer />
       <ReactFlow nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} onConnect={onConnect}>
         <Background />
         <Controls />

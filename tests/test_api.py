@@ -39,6 +39,18 @@ def _http_post(
         return err.code, err.read().decode()
 
 
+def _http_options(url: str, headers: dict[str, str] | None = None) -> tuple[int, str, str]:
+    base_headers = {"Access-Control-Request-Method": "POST"}
+    if headers:
+        base_headers.update(headers)
+    req = urllib_request.Request(url, headers=base_headers, method="OPTIONS")
+    try:
+        with urllib_request.urlopen(req) as resp:
+            return resp.getcode(), resp.read().decode(), resp.headers.get("Access-Control-Allow-Origin", "")
+    except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
+        return err.code, err.read().decode(), err.headers.get("Access-Control-Allow-Origin", "")
+
+
 from src.agents.base_agent import BaseAgent
 
 
@@ -216,6 +228,41 @@ def test_workflow_endpoints(tmp_path):
         data = json.loads(body)
         assert data["name"] == "demo"
         assert len(data["nodes"]) == 2
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_history_and_cors(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    api.settings.API_AUTH_KEY = "secret"
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    app = api.create_app(SolutionOrchestrator({"demo": str(team_cfg)}))
+    server, thread = _start_server(app, port)
+
+    try:
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"x": 1}},
+            headers={"X-API-Key": "secret"},
+        )
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/history?limit=1",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["history"][0]["team"] == "demo"
+
+        code, _, allow_origin = _http_options(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            headers={"Origin": "http://example.com"},
+        )
+        assert code == 200
+        assert allow_origin == "*"
     finally:
         server.should_exit = True
         thread.join(timeout=5)
