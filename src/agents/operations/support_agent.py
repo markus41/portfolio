@@ -83,7 +83,9 @@ Keep answers short and helpful.
             "Support.Reply",
             {"customer_id": customer_id, "text": reply_text},
         )
-        self.memory.store(f"faq:{self.tenant_id}", [f"Q:{text}", f"A:{reply_text}"])
+        await run_maybe_async(
+            self.memory.store, f"faq:{self.tenant_id}", [f"Q:{text}", f"A:{reply_text}"]
+        )
         logger.info(f"Responded to customer {customer_id}")
         return {"text": reply_text, "escalate": escalate}
 

@@ -34,6 +34,7 @@ from .agents.sales.chatbot_agent import ChatbotAgent
 from .agents.sales.crm_pipeline_agent import CRMPipelineAgent
 from .agents.sales.segmentation_ad_targeting_agent import SegmentationAdTargetingAgent
 from .memory_service import RestMemoryService
+from .memory_service.rest_async import AsyncRestMemoryService
 from .memory_service.file import FileMemoryService
 from .memory_service.redis import RedisMemoryService
 from .memory_service.base import BaseMemoryService
@@ -109,7 +110,8 @@ class Orchestrator(BaseOrchestrator):
         config_path:
             Optional path to a JSON mapping of event types to agent classes.
         memory_backend:
-            Select the memory implementation: ``"rest"`` (default) or ``"file"``.
+            Select the memory implementation: ``"rest"`` (default), ``"rest_async"``,
+            ``"file"`` or ``"redis"``.
         memory_file:
             Path used by the ``file`` backend if specified.
         """
@@ -123,6 +125,9 @@ class Orchestrator(BaseOrchestrator):
         elif backend == "redis":
             url = settings.MEMORY_REDIS_URL
             memory = RedisMemoryService(url)
+        elif backend == "rest_async":
+            endpoint = memory_endpoint or settings.MEMORY_ENDPOINT
+            memory = AsyncRestMemoryService(endpoint)
         else:
             endpoint = memory_endpoint or settings.MEMORY_ENDPOINT
             memory = RestMemoryService(endpoint)
