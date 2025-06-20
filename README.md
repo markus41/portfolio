@@ -17,6 +17,7 @@ Install the requirements, set up pre-commit hooks and run the unit tests to veri
 pip install -r requirements.txt
 pip install pre-commit
 pre-commit install
+mypy .
 pytest -q
 ```
 
