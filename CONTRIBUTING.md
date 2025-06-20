@@ -6,16 +6,15 @@ Thank you for considering a contribution to this project! This document outlines
 
 1. **Install Dependencies**
 
-   Install the required packages and any optional development extras. The
-   `pre-commit` tool is not bundled in `requirements.txt`, so install it
-   separately:
-   
+   Install the runtime requirements alongside the development tools from
+   `requirements-dev.txt`. These include the test runner, `pre-commit`
+   hooks and documentation utilities:
+
    ```bash
    pip install -r requirements.txt
+   pip install -r requirements-dev.txt
    # If the project defines extras for development use:
    pip install -e '.[dev]'
-   # Install pre-commit for Git hooks
-   pip install pre-commit
    ```
 
 2. **Set Up Pre-commit Hooks**
