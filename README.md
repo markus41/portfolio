@@ -498,6 +498,8 @@ See [docs/workflows.md](docs/workflows.md) for a detailed overview.
 
 We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment, running the test suite, and our commit conventions.
 
+Please note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating you agree to abide by its terms.
+
 ## 🔗 Workflow Editor
 
 A minimal ReactFlow editor lives in the [`frontend/`](frontend/) directory. It lets

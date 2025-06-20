@@ -2,6 +2,8 @@
 
 Thank you for considering a contribution to this project! This document outlines how to set up a development environment and the conventions we follow for code style and commit messages.
 
+All participants are expected to uphold our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Development Environment
 
 1. **Install Dependencies**
