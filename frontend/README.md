@@ -36,3 +36,19 @@ bundle:
 ```
 
 This fallback enables dynamic key assignment without rebuilding the frontend.
+
+## Live History Streaming
+
+`HistoryViewer` now streams real-time activity using Server-Sent Events (SSE).
+It connects to the `/teams/<name>/stream` endpoint via `EventSource` and
+appends incoming `activity` messages to the list. By default the component
+listens to the `sales` team, but any team name can be provided:
+
+```jsx
+<HistoryViewer team="demo" />
+```
+
+When the page loads it fetches the latest history snapshot and then establishes
+the streaming connection. The API key configured through `VITE_API_KEY` or
+`window.APP_CONFIG.apiKey` is automatically included as the `api_key` query
+parameter.

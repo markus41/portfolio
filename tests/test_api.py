@@ -266,3 +266,33 @@ def test_history_and_cors(tmp_path):
     finally:
         server.should_exit = True
         thread.join(timeout=5)
+
+
+def test_stream_endpoint(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    orch = SolutionOrchestrator({"demo": str(team_cfg)})
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"x": 1}},
+            headers={"X-API-Key": "secret"},
+        )
+
+        req = urllib_request.Request(
+            f"http://127.0.0.1:{port}/teams/demo/stream",
+            headers={"X-API-Key": "secret"},
+        )
+        with urllib_request.urlopen(req, timeout=5) as resp:
+            first = resp.readline().decode()
+            second = resp.readline().decode()
+            assert "event: status" in first
+            assert "handled" in second
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
