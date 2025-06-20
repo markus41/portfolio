@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import ReactFlow, { Background, Controls, addEdge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { getApiKey } from './config';
+import SettingsPage from './SettingsPage';
 
 export default function App() {
+  if (window.location.pathname.includes('settings')) {
+    return <SettingsPage />;
+  }
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 

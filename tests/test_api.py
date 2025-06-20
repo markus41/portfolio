@@ -13,6 +13,8 @@ from urllib import request as urllib_request
 
 from src.solution_orchestrator import SolutionOrchestrator
 from src import api
+from src.user_settings import create_engine
+import pytest
 
 
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
@@ -216,6 +218,34 @@ def test_workflow_endpoints(tmp_path):
         data = json.loads(body)
         assert data["name"] == "demo"
         assert len(data["nodes"]) == 2
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+@pytest.mark.skipif(create_engine is None, reason="SQLAlchemy not installed")
+def test_settings_roundtrip(tmp_path):
+    port = _get_free_port()
+    db = tmp_path / "users.db"
+    api.settings.API_AUTH_KEY = "secret"
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{db}"
+    app = api.create_app(SolutionOrchestrator({}))
+    server, thread = _start_server(app, port)
+
+    try:
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/settings",
+            {"crm_api_url": "http://c", "crm_api_key": "k"},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/settings",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["crm_api_url"] == "http://c"
     finally:
         server.should_exit = True
         thread.join(timeout=5)

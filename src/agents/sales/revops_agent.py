@@ -17,6 +17,7 @@ from agentic_core import (
 from ...crm_connector import Deal, fetch_deals
 from ...utils.logger import get_logger
 from ...config import settings
+from ...user_context import get_current
 
 try:  # pragma: no cover - optional dependency
     import openai
@@ -56,6 +57,9 @@ class RevOpsAgent(AbstractAgent):
     def _ask_gpt(self, prompt: str) -> dict:
         if not openai:
             raise RuntimeError("openai package is not installed")
+        current = get_current()
+        if current and current.openai_api_key:
+            openai.api_key = current.openai_api_key
         resp = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],

@@ -6,3 +6,5 @@ uvicorn>=0.22.0
 PyYAML>=6.0
 pyautogen>=0.2.16
 
+
+SQLAlchemy>=1.4

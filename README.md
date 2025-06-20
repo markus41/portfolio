@@ -363,6 +363,23 @@ dotenv file before running the orchestrator or tests.
 For an exhaustive description of all variables see
 [docs/environment.md](docs/environment.md).
 
+### 🔑 User Configuration
+
+The HTTP API exposes a small onboarding endpoint at `/settings` so each user can
+provide their own API keys without editing environment variables. Authenticate
+using the same `X-API-Key` header and POST a JSON payload containing fields like
+`openai_api_key`, `crm_api_url`, `crm_api_key`, and `disabled_teams`:
+
+```bash
+curl -X POST http://localhost:8000/settings \
+     -H 'X-API-Key: mysecret' \
+     -d '{"openai_api_key": "sk-...", "crm_api_url": "https://crm.example.com"}'
+```
+
+Settings are stored in a SQLite database (path controlled via
+`DB_CONNECTION_STRING`) and automatically applied to requests made with that API
+key. You can retrieve the current values with `GET /settings`.
+
 ## 🔬 Testing
 
 The repository contains a suite of unit tests under `tests/`. Execute them with

@@ -7,6 +7,7 @@ except ImportError:  # pragma: no cover - optional dependency
 
 from ..config import settings
 from ..utils.logger import get_logger
+from ..user_context import get_current
 
 logger = get_logger(__name__)
 if openai:
@@ -21,5 +22,8 @@ class ChatTool:
         logger.info("Invoking OpenAI ChatCompletion")
         if not openai:
             raise RuntimeError("openai package is not installed")
+        current = get_current()
+        if current and current.openai_api_key:
+            openai.api_key = current.openai_api_key
         resp = openai.ChatCompletion.create(model=model, messages=messages)
         return resp.choices[0].message.content

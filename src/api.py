@@ -26,6 +26,14 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from .user_settings import (
+    UserSettingsData,
+    init_db,
+    get_settings,
+    upsert_settings,
+)
+from .user_context import use_settings
+
 
 class Event(BaseModel):
     """Schema for incoming events."""
@@ -60,6 +68,17 @@ class WorkflowModel(BaseModel):
     edges: List[EdgeModel]
 
 
+class SettingsModel(BaseModel):
+    """Incoming user configuration payload."""
+
+    organization: str | None = None
+    openai_api_key: str | None = None
+    crm_api_url: str | None = None
+    crm_api_key: str | None = None
+    email_service_api_key: str | None = None
+    disabled_teams: List[str] | None = None
+
+
 from .solution_orchestrator import SolutionOrchestrator
 from .config import settings
 
@@ -78,6 +97,8 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         title="Brookside API", description="SolutionOrchestrator HTTP interface"
     )
     orch = orchestrator or SolutionOrchestrator({})
+    db_url = settings.DB_CONNECTION_STRING or "sqlite:///user_settings.db"
+    init_db(db_url)
     workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 
     async def _auth(request: Request, x_api_key: str | None = Header(None)) -> None:
@@ -89,9 +110,17 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
             raise HTTPException(status_code=401, detail="invalid api key")
 
     @app.post("/teams/{name}/event")
-    async def handle_event(name: str, event: Event, _=Depends(_auth)) -> Dict[str, Any]:
+    async def handle_event(
+        name: str, event: Event, x_api_key: str | None = Header(None), _=Depends(_auth)
+    ) -> Dict[str, Any]:
         """Dispatch ``event`` to ``name`` via the orchestrator."""
-        result = await orch.handle_event(name, event.dict())
+
+        user_cfg = get_settings(x_api_key or "")
+        if user_cfg and user_cfg.disabled_teams and name in user_cfg.disabled_teams:
+            raise HTTPException(status_code=404, detail="team disabled")
+
+        with use_settings(user_cfg):
+            result = await orch.handle_event(name, event.dict())
         if result.get("status") == "unknown_team":
             raise HTTPException(status_code=404, detail="unknown team")
         orch.report_status(name, "handled")
@@ -134,6 +163,22 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     def get_activity(limit: int = 10, _=Depends(_auth)) -> Dict[str, Any]:
         """Return recent orchestrator activity."""
         return {"activity": orch.get_recent_activity(limit)}
+
+    @app.post("/settings", status_code=200)
+    def save_settings(
+        payload: SettingsModel, x_api_key: str | None = Header(None), _=Depends(_auth)
+    ) -> None:
+        """Persist configuration for the requesting user."""
+
+        data = UserSettingsData(api_key=x_api_key or "", **payload.dict())
+        upsert_settings(x_api_key or "", data)
+
+    @app.get("/settings")
+    def load_settings(x_api_key: str | None = Header(None), _=Depends(_auth)) -> Dict[str, Any]:
+        """Return stored configuration for the requesting user."""
+
+        cfg = get_settings(x_api_key or "")
+        return cfg.dict() if cfg else {}
 
     @app.post("/workflows", status_code=201)
     def save_workflow(workflow: WorkflowModel, _=Depends(_auth)) -> Dict[str, Any]:

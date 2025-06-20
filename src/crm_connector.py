@@ -10,6 +10,7 @@ except Exception:  # pragma: no cover - optional dependency
 
 from .config import settings
 from .utils.logger import get_logger
+from .user_context import get_current
 
 logger = get_logger(__name__)
 
@@ -57,8 +58,10 @@ def fetch_deals(tenant_id: str) -> List[Deal]:
         )
         return []
 
-    url = f"{settings.CRM_API_URL}/deals"
-    headers = {"Authorization": f"Bearer {settings.CRM_API_KEY}"}
+    current = get_current()
+    url = f"{(current.crm_api_url if current and current.crm_api_url else settings.CRM_API_URL)}/deals"
+    key = current.crm_api_key if current else settings.CRM_API_KEY
+    headers = {"Authorization": f"Bearer {key}"}
     params = {"tenant_id": tenant_id}
 
     logger.info(f"Fetching deals for tenant {tenant_id}")
