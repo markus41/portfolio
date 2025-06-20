@@ -12,9 +12,9 @@ from agentic_core import (
     run_maybe_async,
     run_sync,
 )
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class SupportAgent(AbstractAgent):

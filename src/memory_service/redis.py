@@ -7,7 +7,7 @@ import types
 from typing import Any, Dict, List
 
 from .base import BaseMemoryService
-from ..utils.logger import get_logger
+import logging
 
 try:  # optional dependency
     import redis  # type: ignore
@@ -22,7 +22,7 @@ except Exception:  # pragma: no cover - fallback when redis is missing
         )
     )
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RedisMemoryService(BaseMemoryService):

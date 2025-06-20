@@ -1,9 +1,9 @@
 # src/agents/negotiation_agent.py
 
 from ..base_agent import BaseAgent
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class NegotiationAgent(BaseAgent):

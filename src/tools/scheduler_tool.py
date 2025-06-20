@@ -6,9 +6,9 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     service_account = None
     build = None
-from ..utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 SERVICE_ACCOUNT_FILE = "credentials.json"

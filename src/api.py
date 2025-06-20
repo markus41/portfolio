@@ -27,6 +27,8 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from .utils.logging_config import setup_logging
+
 
 class Event(BaseModel):
     """Schema for incoming events."""
@@ -84,9 +86,9 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     orch = orchestrator or SolutionOrchestrator({})
 
     origins = (
-        [o.strip() for o in settings.ALLOWED_ORIGINS.split(',')]
-        if settings.ALLOWED_ORIGINS and settings.ALLOWED_ORIGINS != '*'
-        else ['*']
+        [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
+        if settings.ALLOWED_ORIGINS and settings.ALLOWED_ORIGINS != "*"
+        else ["*"]
     )
     app.add_middleware(
         CORSMiddleware,
@@ -152,7 +154,9 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return {"activity": orch.get_recent_activity(limit)}
 
     @app.get("/history")
-    def get_history(limit: int = 10, offset: int = 0, _=Depends(_auth)) -> Dict[str, Any]:
+    def get_history(
+        limit: int = 10, offset: int = 0, _=Depends(_auth)
+    ) -> Dict[str, Any]:
         """Return persisted event history from the database."""
         items = db.fetch_history(limit=limit, offset=offset)
         return {"history": items}
@@ -196,6 +200,7 @@ if __name__ == "__main__":  # pragma: no cover - manual execution
     teams = _parse_team_mapping(sys.argv[1:])
     orch = SolutionOrchestrator(teams)
     app = create_app(orch)
+    setup_logging()
 
     port = int(os.getenv("PORT", "8000"))
     uvicorn.run(app, host="0.0.0.0", port=port)

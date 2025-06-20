@@ -6,9 +6,9 @@ except ImportError:  # pragma: no cover - optional dependency
     openai = None
 
 from ..config import settings
-from ..utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 if openai:
     openai.api_key = settings.OPENAI_API_KEY
 

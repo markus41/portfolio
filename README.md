@@ -346,6 +346,20 @@ The optional packages listed in that file (such as `openai` and `google-api-pyth
 | `google-api-python-client` | Google Calendar and other Google service integrations |
 | `requests` | HTTP-based memory service |
 
+## 📜 Logging
+
+All command line utilities and the API log in JSON for easy parsing. Initialise
+logging early in your application using
+`src.utils.logging_config.setup_logging()`:
+
+```python
+from src.utils.logging_config import setup_logging
+
+setup_logging()
+```
+
+See [docs/logging.md](docs/logging.md) for details.
+
 ## 📐 Environment Variables
 
 The system relies on a number of environment variables for API keys and service

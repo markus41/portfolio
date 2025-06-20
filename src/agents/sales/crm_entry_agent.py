@@ -2,9 +2,9 @@
 
 from ..base_agent import BaseAgent
 from ...tools.crm_tools.crm_tool import CRMTool
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class CRMEntryAgent(BaseAgent):

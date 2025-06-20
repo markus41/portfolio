@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 import types
 
 from .base import BaseMemoryService
-from ..utils.logger import get_logger
+import logging
 
 try:  # optional dependency
     import requests  # type: ignore
@@ -16,7 +16,7 @@ except Exception:  # pragma: no cover - test environment fallback
         get=lambda *a, **k: types.SimpleNamespace(ok=True, json=lambda: {}),
     )
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RestMemoryService(BaseMemoryService):

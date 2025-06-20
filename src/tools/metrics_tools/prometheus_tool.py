@@ -2,10 +2,10 @@
 
 import time
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
-from ...utils.logger import get_logger
+import logging
 from ...config import settings
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PrometheusPusher:

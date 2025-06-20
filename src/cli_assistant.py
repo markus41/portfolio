@@ -12,6 +12,7 @@ if __package__ in {None, ""}:  # pragma: no cover - script execution support
     __package__ = "src"
 
 from .utils.nlp_params import parse_parameters
+from .utils.logging_config import setup_logging
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -30,6 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> None:
     """Entry point for the CLI assistant."""
 
+    setup_logging()
     parser = build_parser()
     args = parser.parse_args(argv)
 

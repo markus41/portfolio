@@ -1,10 +1,10 @@
 # src/agents/lead_scoring_agent.py
 
 from ..base_agent import BaseAgent
-from ...utils.logger import get_logger
+import logging
 from ...tools.scheduler_tool import SchedulerTool  # example import if needed
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LeadScoringAgent(BaseAgent):

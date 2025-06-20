@@ -2,10 +2,10 @@
 
 from ..base_agent import BaseAgent
 from ...tools.notification_tools.teams_notifier import TeamsNotifier
-from ...utils.logger import get_logger
+import logging
 import time
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class HumanApprovalAgent(BaseAgent):

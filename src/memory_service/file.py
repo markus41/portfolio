@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from .base import BaseMemoryService
-from ..utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class FileMemoryService(BaseMemoryService):

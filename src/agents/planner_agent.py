@@ -5,12 +5,12 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 
 from .base_agent import BaseAgent
-from ..utils.logger import get_logger
+import logging
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from ..solution_orchestrator import SolutionOrchestrator
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PlannerAgent(BaseAgent):

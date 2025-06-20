@@ -15,7 +15,7 @@ from agentic_core import (
 )
 
 from ...crm_connector import Deal, fetch_deals
-from ...utils.logger import get_logger
+import logging
 from ...config import settings
 
 try:  # pragma: no cover - optional dependency
@@ -23,7 +23,7 @@ try:  # pragma: no cover - optional dependency
 except Exception:  # pragma: no cover - optional dependency
     openai = None
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 STALE_DAYS = 30
 

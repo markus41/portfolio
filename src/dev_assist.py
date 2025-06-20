@@ -3,8 +3,11 @@
 import sys
 from pathlib import Path
 
+from .utils.logging_config import setup_logging
+
 
 def main() -> None:
+    setup_logging()
     if len(sys.argv) < 2:
         print("Usage: python dev_assist.py 'Describe component'")
         return

@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
 from ..memory_service.file import FileMemoryService
+from ..utils.logging_config import setup_logging
 
 app = FastAPI(title="Memory Service")
 
@@ -43,5 +44,7 @@ def fetch(key: str = Query(...), top_k: int = Query(5)) -> List[Dict[str, Any]]:
 
 if __name__ == "__main__":  # pragma: no cover - manual execution
     import uvicorn
+
+    setup_logging()
 
     uvicorn.run(app, host="0.0.0.0", port=8000)

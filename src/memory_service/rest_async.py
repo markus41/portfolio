@@ -21,9 +21,9 @@ except Exception:  # pragma: no cover - test environment fallback
     )
 
 from .base import BaseMemoryService
-from ..utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AsyncRestMemoryService(BaseMemoryService):
