@@ -23,6 +23,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any, Dict
+import types
+
+try:  # pragma: no cover - optional dependency
+    import jsonschema
+except Exception:  # pragma: no cover - optional dependency
+    from .jsonschema_stub import validate as _validate, ValidationError as _VE
+
+    jsonschema = types.SimpleNamespace(validate=_validate, ValidationError=_VE)
 
 from agentic_core import EventBus, AsyncEventBus
 
@@ -33,6 +41,20 @@ except Exception:  # pragma: no cover - tests still run without it
 
 from .base_orchestrator import BaseOrchestrator
 from .utils.plugin_loader import load_agent
+
+
+_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "docs" / "team_schema.json"
+try:
+    _TEAM_SCHEMA = json.loads(_SCHEMA_PATH.read_text())
+except FileNotFoundError:  # pragma: no cover - schema missing in some envs
+    _TEAM_SCHEMA = {}
+
+
+def validate_team_config(data: Dict[str, Any]) -> None:
+    """Validate ``data`` against :mod:`docs/team_schema.json`."""
+
+    if _TEAM_SCHEMA and jsonschema is not None:
+        jsonschema.validate(data, _TEAM_SCHEMA)
 
 
 class TeamOrchestrator(BaseOrchestrator):
@@ -70,6 +92,10 @@ class TeamOrchestrator(BaseOrchestrator):
         self.config_path = Path(config_path)
         with self.config_path.open() as fh:
             data = json.load(fh)
+        try:
+            validate_team_config(data)
+        except jsonschema.ValidationError as exc:
+            raise ValueError(f"Invalid team configuration: {exc.message}") from exc
         # Keep the raw specification for downstream AutoGen integration
         # without forcing the dependency at test time.
         self.team_config: Dict[str, Any] = data

@@ -29,6 +29,7 @@ def _register_agent() -> None:
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["echo_agent"],
         "config": {"participants": [{"config": {"name": "echo_agent"}}]},
     }

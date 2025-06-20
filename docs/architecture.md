@@ -116,7 +116,7 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 ## AutoGen Agents and Providers
 
-Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `src.agents.roles.AssistantAgent` or `autogen.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.
+Team JSON files under `src/teams/` describe `RoundRobinGroupChat` configurations.  Each agent entry specifies a `provider` such as `src.agents.roles.AssistantAgent` or `autogen.models.openai.OpenAIChatCompletionClient`.  When a team is loaded, these providers are instantiated and stitched together by AutoGen.  The full structure of a team file is defined in [`team_schema.json`](team_schema.json) and can be checked using `brookside-cli validate-team`.
 
 Each team file may optionally include a `responsibilities` array listing the
 agent names allowed to operate within that team.  When a team is loaded the

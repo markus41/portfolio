@@ -11,6 +11,7 @@ import pytest
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["operations.dummy_cli_agent"],
         "config": {
             "participants": [{"config": {"name": "operations.dummy_cli_agent"}}]
@@ -97,3 +98,20 @@ def test_cli_assist(tmp_path):
     assert res_unknown.returncode == 0
     data_unknown = json.loads(res_unknown.stdout.strip())
     assert data_unknown["template"] is None
+
+
+def test_cli_validate_team(tmp_path):
+    path = _write_team(tmp_path)
+
+    cmd = [sys.executable, "-m", "src.cli", "validate-team", str(path)]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+    assert res.returncode == 0
+    assert json.loads(res.stdout.strip())["valid"] is True
+
+    bad = tmp_path / "bad.json"
+    bad.write_text("{}")
+    cmd_bad = [sys.executable, "-m", "src.cli", "validate-team", str(bad)]
+    res_bad = subprocess.run(cmd_bad, capture_output=True, text=True, timeout=5)
+    assert res_bad.returncode == 0
+    out = json.loads(res_bad.stdout.strip())
+    assert out["valid"] is False

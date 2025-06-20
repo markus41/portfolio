@@ -163,6 +163,20 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_validate_team(args: argparse.Namespace) -> None:
+    """Validate a team JSON file against ``team_schema.json``."""
+
+    from .team_orchestrator import validate_team_config
+
+    try:
+        data = json.loads(Path(args.path).read_text())
+        validate_team_config(data)
+    except Exception as exc:
+        print(json.dumps({"valid": False, "error": str(exc)}))
+    else:
+        print(json.dumps({"valid": True}))
+
+
 def _match_workflow(task: str) -> str | None:
     """Return the workflow template matching ``task`` if any."""
 
@@ -221,6 +235,12 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    validate_p = sub.add_parser(
+        "validate-team", help="Validate a team JSON configuration file"
+    )
+    validate_p.add_argument("path", help="Path to team JSON file")
+    validate_p.set_defaults(func=cmd_validate_team)
 
     return parser
 

@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 
 from src.base_orchestrator import BaseOrchestrator
-from src.team_orchestrator import TeamOrchestrator
+from src.team_orchestrator import TeamOrchestrator, validate_team_config
 from src.agents.base_agent import BaseAgent
 
 
@@ -16,6 +16,7 @@ class DummyAgent(BaseAgent):
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["dummy_agent"],
         "config": {"participants": [{"config": {"name": "dummy_agent"}}]},
     }
@@ -51,3 +52,22 @@ def test_team_orchestrator_responsibility_check(tmp_path):
 
     with pytest.raises(ValueError):
         TeamOrchestrator(str(path))
+
+
+def test_validate_team_config(tmp_path):
+    valid = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
+        "config": {"participants": [{"config": {"name": "dummy"}}]},
+    }
+    validate_team_config(valid)
+
+    invalid = {}
+    with pytest.raises(Exception):
+        validate_team_config(invalid)
+
+
+def test_team_orchestrator_schema_failure(tmp_path):
+    bad_file = tmp_path / "bad.json"
+    bad_file.write_text("{}")
+    with pytest.raises(ValueError):
+        TeamOrchestrator(str(bad_file))
