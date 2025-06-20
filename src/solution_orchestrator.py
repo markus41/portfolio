@@ -38,6 +38,7 @@ class SolutionOrchestrator:
         log_path: str | None = None,
         persist_history: bool = True,
     ) -> None:
+        self.team_configs: Dict[str, str] = dict(team_configs)
         self.teams = {
             name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()
         }
@@ -149,3 +150,44 @@ class SolutionOrchestrator:
 
         engine = GraphWorkflowEngine(definition)
         return engine.run(self)
+
+    # ------------------------------------------------------------------
+    # Dynamic team management
+    # ------------------------------------------------------------------
+
+    def add_team(self, name: str, config_path: str) -> None:
+        """Add a new team using ``config_path``.
+
+        Parameters
+        ----------
+        name:
+            Unique team identifier.
+        config_path:
+            Path to the JSON team specification.
+        """
+
+        if name in self.teams:
+            raise ValueError(f"Team '{name}' already exists")
+
+        self.team_configs[name] = config_path
+        self.teams[name] = TeamOrchestrator(Path(config_path))
+
+    def remove_team(self, name: str) -> None:
+        """Remove ``name`` from the orchestrator registry."""
+
+        if name not in self.teams:
+            raise KeyError(f"Unknown team '{name}'")
+
+        del self.teams[name]
+        self.team_configs.pop(name, None)
+        self.status.pop(name, None)
+        self._subscribers.pop(name, None)
+
+    def reload_team(self, name: str) -> None:
+        """Reload ``name`` from its original configuration file."""
+
+        path = self.team_configs.get(name)
+        if not path:
+            raise KeyError(f"Unknown team '{name}'")
+
+        self.teams[name] = TeamOrchestrator(Path(path))

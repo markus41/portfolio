@@ -71,6 +71,27 @@ async def _handle_client(
         writer.write(json.dumps(result).encode() + b"\n")
     elif cmd == "status":
         writer.write(json.dumps(orch.status).encode() + b"\n")
+    elif cmd == "add_team":
+        try:
+            orch.add_team(message.get("name"), message.get("path"))
+            result = {"status": "added"}
+        except Exception as exc:  # pragma: no cover - defensive
+            result = {"error": str(exc)}
+        writer.write(json.dumps(result).encode() + b"\n")
+    elif cmd == "remove_team":
+        try:
+            orch.remove_team(message.get("name"))
+            result = {"status": "removed"}
+        except Exception as exc:  # pragma: no cover - defensive
+            result = {"error": str(exc)}
+        writer.write(json.dumps(result).encode() + b"\n")
+    elif cmd == "reload_team":
+        try:
+            orch.reload_team(message.get("name"))
+            result = {"status": "reloaded"}
+        except Exception as exc:  # pragma: no cover - defensive
+            result = {"error": str(exc)}
+        writer.write(json.dumps(result).encode() + b"\n")
     else:
         writer.write(b'{"error": "unknown_command"}\n')
 
@@ -163,6 +184,31 @@ def cmd_status(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_add_team(args: argparse.Namespace) -> None:
+    """Add a team to the running orchestrator."""
+
+    name, path = _parse_team_mapping((args.spec,)).popitem()
+    payload = {"cmd": "add_team", "name": name, "path": path}
+    resp = _send_payload(args.host, args.port, payload)
+    print(json.dumps(resp))
+
+
+def cmd_remove_team(args: argparse.Namespace) -> None:
+    """Remove a team from the running orchestrator."""
+
+    payload = {"cmd": "remove_team", "name": args.name}
+    resp = _send_payload(args.host, args.port, payload)
+    print(json.dumps(resp))
+
+
+def cmd_reload_team(args: argparse.Namespace) -> None:
+    """Reload a team's configuration without restarting."""
+
+    payload = {"cmd": "reload_team", "name": args.name}
+    resp = _send_payload(args.host, args.port, payload)
+    print(json.dumps(resp))
+
+
 def _match_workflow(task: str) -> str | None:
     """Return the workflow template matching ``task`` if any."""
 
@@ -221,6 +267,24 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    add_p = sub.add_parser("add-team", help="Add a team at runtime")
+    add_p.add_argument("spec", help="Team spec as NAME=PATH")
+    add_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
+    add_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    add_p.set_defaults(func=cmd_add_team)
+
+    remove_p = sub.add_parser("remove-team", help="Remove a team")
+    remove_p.add_argument("name", help="Team name")
+    remove_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
+    remove_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    remove_p.set_defaults(func=cmd_remove_team)
+
+    reload_p = sub.add_parser("reload-team", help="Reload a team's config")
+    reload_p.add_argument("name", help="Team name")
+    reload_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
+    reload_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    reload_p.set_defaults(func=cmd_reload_team)
 
     return parser
 

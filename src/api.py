@@ -61,6 +61,13 @@ class WorkflowModel(BaseModel):
     edges: List[EdgeModel]
 
 
+class TeamSpec(BaseModel):
+    """Schema describing a new team to add."""
+
+    name: str
+    path: str
+
+
 from .solution_orchestrator import SolutionOrchestrator
 from .config import settings
 from . import db
@@ -174,6 +181,36 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         if not path.exists():
             raise HTTPException(status_code=404, detail="unknown workflow")
         return json.loads(path.read_text())
+
+    @app.post("/teams", status_code=201)
+    def add_team(spec: TeamSpec, _=Depends(_auth)) -> Dict[str, Any]:
+        """Add a new team to the orchestrator."""
+
+        try:
+            orch.add_team(spec.name, spec.path)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return {"status": "added"}
+
+    @app.delete("/teams/{name}")
+    def remove_team(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+        """Remove ``name`` from the orchestrator."""
+
+        try:
+            orch.remove_team(name)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unknown team")
+        return {"status": "removed"}
+
+    @app.post("/teams/{name}/reload")
+    def reload_team(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+        """Reload ``name`` using its configuration file."""
+
+        try:
+            orch.reload_team(name)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unknown team")
+        return {"status": "reloaded"}
 
     return app
 
