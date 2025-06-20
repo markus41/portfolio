@@ -115,3 +115,41 @@ def test_cli_validate_team(tmp_path):
     assert res_bad.returncode == 0
     out = json.loads(res_bad.stdout.strip())
     assert out["valid"] is False
+
+
+@pytest.mark.parametrize(
+    "task,expected",
+    [
+        ("close more sales leads", "src/teams/sales_team_full.json"),
+        ("ship customer order asap", "src/teams/fulfillment_pipeline_team.json"),
+        (
+            "update INVENTORY counts",  # check case-insensitive matching
+            "src/teams/inventory_management_team.json",
+        ),
+        ("operations planning", "src/teams/operations_team.json"),
+        (
+            "driver tracking updates",
+            "src/teams/on_the_road_team.json",
+        ),
+        (
+            "new real estate listing published",
+            "src/teams/real_estate_team.json",
+        ),
+        (
+            "eCommerce shopping cart improvements",
+            "src/teams/ecommerce_team.json",
+        ),
+    ],
+)
+def test_match_workflow_known(task, expected):
+    """Verify that known keywords map to the correct workflow templates."""
+    from src import cli
+
+    assert cli._match_workflow(task) == expected
+
+
+def test_match_workflow_unknown():
+    """Tasks without mapped keywords should return ``None``."""
+    from src import cli
+
+    assert cli._match_workflow("unrelated gibberish task") is None
