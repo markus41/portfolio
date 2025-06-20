@@ -1,10 +1,10 @@
 # src/agents/visitor_tracking_agent.py
 
 from ..base_agent import BaseAgent
-from ...utils.logger import get_logger
+import logging
 from ...tools.visitor_tracking_tools import AnalyticsClient
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class VisitorTrackingAgent(BaseAgent):

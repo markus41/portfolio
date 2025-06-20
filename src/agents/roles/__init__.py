@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Iterable, List
 
 from ..base_agent import BaseAgent
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RoleAgent(BaseAgent):

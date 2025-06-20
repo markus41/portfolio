@@ -1,8 +1,8 @@
 from ..base_agent import BaseAgent
 import importlib
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TMSAgent(BaseAgent):

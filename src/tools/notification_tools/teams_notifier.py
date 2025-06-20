@@ -1,10 +1,10 @@
 # Tools/notification_tools/teams_notifier.py
 
 import requests
-from ...utils.logger import get_logger
+import logging
 from ...config import settings
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TeamsNotifier:

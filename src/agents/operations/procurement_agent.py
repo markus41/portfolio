@@ -14,7 +14,7 @@ from agentic_core import (
     run_sync,
 )
 from ...suppliers import BaseSupplierAdapter, Quote
-from ...utils.logger import get_logger
+import logging
 from ...config import settings
 
 try:
@@ -22,7 +22,7 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     openai = None
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 MAX_AUTO_APPROVAL = Decimal("50000")
 

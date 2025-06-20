@@ -1,8 +1,8 @@
 from ..base_agent import BaseAgent
 from ...tools.metrics_tools.prometheus_tool import PrometheusPusher
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AnalyticsAgent(BaseAgent):

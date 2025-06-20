@@ -1,11 +1,11 @@
 """Extract and normalise lead form submissions."""
 
 from ..base_agent import BaseAgent
-from ...utils.logger import get_logger
+import logging
 from ...events import LeadCaptureEvent
 import re
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LeadCaptureAgent(BaseAgent):

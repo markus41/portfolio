@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from agentic_core import AbstractAgent, EventBus
-from .utils.logger import get_logger
+import logging
 
 try:  # pragma: no cover - optional dependency
     import openai
@@ -12,7 +12,7 @@ except Exception:  # pragma: no cover - optional dependency
     openai = None
 
 GITHUB_ENABLED = False
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def open_pr(diff: str) -> None:  # pragma: no cover - placeholder

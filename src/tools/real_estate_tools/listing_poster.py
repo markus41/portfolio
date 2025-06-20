@@ -5,9 +5,9 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     requests = None
 from ...config import settings
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ListingPoster:

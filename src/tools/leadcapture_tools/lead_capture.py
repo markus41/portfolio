@@ -1,7 +1,7 @@
 import re
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def normalize_form(form_data: dict) -> dict:

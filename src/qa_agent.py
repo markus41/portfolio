@@ -11,9 +11,9 @@ from agentic_core import (
     run_sync,
 )
 from .agents.support_agent import SupportAgent
-from .utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class QAAgent(AbstractAgent):

@@ -14,10 +14,10 @@ from .events import (
 )
 
 from .memory_service.base import BaseMemoryService
-from .utils.logger import get_logger
+import logging
 
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BaseOrchestrator:

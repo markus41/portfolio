@@ -39,13 +39,13 @@ from .memory_service.file import FileMemoryService
 from .memory_service.redis import RedisMemoryService
 from .memory_service.base import BaseMemoryService
 from .config import settings
-from .utils.logger import get_logger
+import logging
 from .agents.operations.support_agent import SupportAgent
 from .agents.operations.procurement_agent import ProcurementAgent
 from .agents.sales.revops_agent import RevOpsAgent
 
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 USE_LLM_PLANNER = False
 

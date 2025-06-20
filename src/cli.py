@@ -14,6 +14,8 @@ if __package__ in {None, ""}:  # pragma: no cover - script execution support
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     __package__ = "src"
 
+from .utils.logging_config import setup_logging
+
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
@@ -227,6 +229,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> None:
     """Entry point used by ``brookside-cli`` console script."""
+    setup_logging()
     parser = build_parser()
     args = parser.parse_args(argv)
     args.func(args)

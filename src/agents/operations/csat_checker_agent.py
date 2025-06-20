@@ -2,9 +2,9 @@
 
 from ..base_agent import BaseAgent
 from ...tools.email_tool import EmailTool
-from ...utils.logger import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class CSATCheckerAgent(BaseAgent):
