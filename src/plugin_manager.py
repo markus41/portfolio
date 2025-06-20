@@ -60,4 +60,3 @@ def get_plugin_details(name: str) -> Dict[str, Any]:
         "name": getattr(cls, "name", ""),
         "doc": inspect.getdoc(cls) or "",
     }
-

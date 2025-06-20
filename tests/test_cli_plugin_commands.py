@@ -17,3 +17,11 @@ def test_cli_show_plugin():
     assert res.returncode == 0
     data = json.loads(res.stdout.strip())
     assert data["class"].endswith("EmailPlugin")
+
+
+def test_cli_list_agents():
+    cmd = [sys.executable, "-m", "src.cli", "list-agents"]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+    assert res.returncode == 0
+    data = json.loads(res.stdout.strip())
+    assert "sales.lead_capture_agent" in data["agents"]
