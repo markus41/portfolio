@@ -23,12 +23,13 @@ class BarAgent(BaseAgent):
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "config": {
             "participants": [
                 {"config": {"name": "foo_agent"}},
                 {"config": {"name": "bar_agent"}},
             ]
-        }
+        },
     }
     path = tmp_path / "team.json"
     path.write_text(json.dumps(cfg))

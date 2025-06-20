@@ -39,16 +39,26 @@ def _http_post(
         return err.code, err.read().decode()
 
 
-def _http_options(url: str, headers: dict[str, str] | None = None) -> tuple[int, str, str]:
+def _http_options(
+    url: str, headers: dict[str, str] | None = None
+) -> tuple[int, str, str]:
     base_headers = {"Access-Control-Request-Method": "POST"}
     if headers:
         base_headers.update(headers)
     req = urllib_request.Request(url, headers=base_headers, method="OPTIONS")
     try:
         with urllib_request.urlopen(req) as resp:
-            return resp.getcode(), resp.read().decode(), resp.headers.get("Access-Control-Allow-Origin", "")
+            return (
+                resp.getcode(),
+                resp.read().decode(),
+                resp.headers.get("Access-Control-Allow-Origin", ""),
+            )
     except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
-        return err.code, err.read().decode(), err.headers.get("Access-Control-Allow-Origin", "")
+        return (
+            err.code,
+            err.read().decode(),
+            err.headers.get("Access-Control-Allow-Origin", ""),
+        )
 
 
 from src.agents.base_agent import BaseAgent
@@ -61,6 +71,7 @@ class EchoAgent(BaseAgent):
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["echo_agent"],
         "config": {"participants": [{"config": {"name": "echo_agent"}}]},
     }
