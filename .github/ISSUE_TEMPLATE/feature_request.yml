@@ -1,0 +1,43 @@
+name: "\U0001F680 Feature Request"
+description: Suggest an improvement or new idea
+labels: [enhancement]
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to propose a feature!
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Use case / steps
+      description: |
+        Provide an example scenario or steps where this feature would be helpful.
+      placeholder: |
+        1. When ...
+        2. Then ...
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: How should the system behave with this feature?
+    validations:
+      required: true
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Current behavior
+      description: How does the system behave without this feature?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment details
+      description: |
+        OS, Python version, packages, or other relevant environment information.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Any other context or screenshots about the feature request.
