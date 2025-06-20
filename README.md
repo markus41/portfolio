@@ -496,14 +496,7 @@ See [docs/workflows.md](docs/workflows.md) for a detailed overview.
 
 ## 🤝 Contributing
 
-We welcome community contributions! Install the pre-commit hooks so your changes follow our formatting and style guidelines.
-
-```bash
-pip install pre-commit
-pre-commit install
-```
-
-Running `pre-commit` will automatically format code with **black**, lint with **flake8**, and run the unit tests via **pytest** before each commit.
+We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment, running the test suite, and our commit conventions.
 
 ## 🔗 Workflow Editor
 
