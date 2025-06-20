@@ -145,6 +145,8 @@ When `TeamOrchestrator.handle_event` receives an event it forwards the payload t
 3. Create a new team JSON mirroring those in `src/teams/`.  The `participants` section should reference your agent module names so that `TeamOrchestrator` can import them. Optionally include a `responsibilities` array listing the allowed agent names.
 4. Register the team with `SolutionOrchestrator` by mapping a name to the JSON file path.
 
+Once the orchestrator is running you can manage teams dynamically. Use `add_team(name, path)` to load a new team, `remove_team(name)` to unload one and `reload_team(name)` to refresh its configuration. These actions are also available via the HTTP API and `brookside-cli` commands.
+
 With these pieces in place, events sent to the solution orchestrator will automatically activate your new team alongside the existing ones.
 
 ## Advanced Customization

@@ -232,6 +232,15 @@ brookside-cli status
 # map a natural language task to a workflow template
 brookside-cli assist "handle new inventory"
 # => {"template": "src/teams/inventory_management_team.json"}
+
+# add a new team without restarting
+brookside-cli add-team marketing=src/teams/marketing_team.json
+
+# reload an updated config
+brookside-cli reload-team marketing
+
+# remove a team when no longer needed
+brookside-cli remove-team marketing
 ```
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free
@@ -257,6 +266,15 @@ Send an event using `curl`:
 curl -H "X-API-Key: mysecret" \
      -X POST http://localhost:8000/teams/sales/event \
      -d '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
+
+# add a team dynamically
+curl -H "X-API-Key: mysecret" \
+     -X POST http://localhost:8000/teams \
+     -d '{"name": "marketing", "path": "src/teams/marketing_team.json"}'
+
+# reload or remove
+curl -H "X-API-Key: mysecret" -X POST http://localhost:8000/teams/marketing/reload
+curl -H "X-API-Key: mysecret" -X DELETE http://localhost:8000/teams/marketing
 ```
 
 Fetch the latest status:
