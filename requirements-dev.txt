@@ -1,0 +1,4 @@
+# Additional packages useful for development and documentation
+pytest>=7.4
+pre-commit>=3.7
+sphinx>=7.2
