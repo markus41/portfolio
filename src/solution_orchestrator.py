@@ -8,6 +8,8 @@ from typing import Any, Dict, List, Optional
 import asyncio
 from .utils import ActivityLogger
 
+from . import db
+
 from .agents.planner_agent import PlannerAgent
 
 from .team_orchestrator import TeamOrchestrator
@@ -23,6 +25,9 @@ class SolutionOrchestrator:
     planner_plans:
         Optional mapping used by :class:`PlannerAgent` to execute goal driven
         workflows.
+    persist_history:
+        If ``True`` processed events are written to the SQLite history database
+        via :mod:`src.db`.
     """
 
     def __init__(
@@ -30,6 +35,7 @@ class SolutionOrchestrator:
         team_configs: Dict[str, str],
         planner_plans: Optional[Dict[str, List[Dict[str, Any]]]] = None,
         log_path: str | None = None,
+        persist_history: bool = True,
     ) -> None:
         self.teams = {
             name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()
@@ -39,6 +45,7 @@ class SolutionOrchestrator:
         self._subscribers: dict[str, list[asyncio.Queue]] = defaultdict(list)
         self.planner: Optional[PlannerAgent] = None
         self.activity_logger = ActivityLogger(log_path) if log_path else None
+        self.persist_history = persist_history
         if planner_plans is not None:
             self.planner = PlannerAgent(self, planner_plans)
 
@@ -71,6 +78,14 @@ class SolutionOrchestrator:
             return {"status": "unknown_team"}
         result = await orchestrator.handle_event(event)
         self.history.append({"team": team, "event": event, "result": result})
+
+        if self.persist_history:
+            db.insert_event(
+                team,
+                str(event.get("type")),
+                event.get("payload", {}),
+                result,
+            )
 
         if self.activity_logger:
             agent_id = str(event.get("type", "unknown"))

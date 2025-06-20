@@ -168,6 +168,7 @@ class Settings(BaseSettings):
     GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     CONFIG_PATH: str = "config/playbook.yaml"
     API_AUTH_KEY: Optional[str] = None
+    ALLOWED_ORIGINS: str = "*"
 
     # Memory Service
     MEMORY_BACKEND: Literal["rest", "file", "redis"] = "rest"

@@ -293,6 +293,15 @@ handling agent, a short summary and a timestamp. The `GET /activity` endpoint
 returns the most recent entries so that dashboards or monitoring tools can track
 agent behaviour.
 
+### 🗃️ Persistent History
+
+The API now ships with a lightweight SQLite database. Tables are created
+automatically on startup and the connection is controlled via
+`DB_CONNECTION_STRING` (defaults to `sqlite:///data.db`). Every processed event
+is written to the `event_history` table. Retrieve past events using the
+`GET /history` endpoint which supports simple pagination via `limit` and
+`offset` query parameters.
+
 ### 🌟 Creating Custom Teams
 
 To design your own workflow start with one of the JSON files under
