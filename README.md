@@ -398,6 +398,19 @@ The repository contains a suite of unit tests under `tests/`. Execute them with
 pytest -q
 ```
 
+## 📖 Building the Docs
+
+Sphinx configuration lives in [docs/](docs). After installing the optional
+documentation dependencies (`sphinx` and `myst-parser`) you can build the HTML
+documentation locally:
+
+```bash
+cd docs
+make html
+```
+
+The generated site will appear under `docs/_build/html/index.html`.
+
 ## 🐳 Container Usage
 
 Build both the orchestrator and the accompanying memory service using
