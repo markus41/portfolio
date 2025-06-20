@@ -2,16 +2,21 @@
 
 # 🚀 Brookside BI – Autonomous Sales & Marketing Agents
 
+[![CI](https://img.shields.io/github/actions/workflow/status/BrooksideBI/portfolio/ci.yml?branch=main&logo=github)](https://github.com/BrooksideBI/portfolio/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/BrooksideBI/portfolio.svg)](LICENSE)
+
 Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-based framework of specialized AI “expert” agents that power everything from lead capture to contract delivery, all orchestrated under a central Orchestrator agent. Whether you’re adding a new campaign agent or tweaking your CRM integration, you’ll find a clean separation of concerns that makes extending and testing your workflow a breeze. A lightweight `crm_connector` module now fetches deals directly from your CRM using `CRM_API_URL` and `CRM_API_KEY`.
 
 For a deeper explanation of the architecture—including the event bus, memory service and how AutoGen teams are loaded and how teams start running—see [docs/architecture.md](docs/architecture.md).
 
 ## ⚡ Quick Start
 
-Install the requirements and run the unit tests to make sure everything is wired correctly:
+Install the requirements, set up pre-commit hooks and run the unit tests to verify your environment:
 
 ```bash
 pip install -r requirements.txt
+pip install pre-commit
+pre-commit install
 pytest -q
 ```
 
@@ -509,7 +514,7 @@ See [docs/workflows.md](docs/workflows.md) for a detailed overview.
 
 ## 🤝 Contributing
 
-We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment, running the test suite, and our commit conventions.
+We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment and running the test suite. By participating you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## 🔗 Workflow Editor
 
