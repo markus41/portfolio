@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict, Type
 import inspect
 
-from agentic_core import EventBus, AsyncEventBus, run_sync
+from agentic_core import EventBus, AsyncEventBus, run_sync, run_maybe_async
 from .events import (
     LeadCaptureEvent,
     ChatbotEvent,
@@ -53,7 +53,7 @@ class BaseOrchestrator:
         logger.info(f"Handling event type={event_type}")
 
         if self.memory:
-            self.memory.store(event_type or "unknown", payload)
+            await run_maybe_async(self.memory.store, event_type or "unknown", payload)
 
         agent = self.agents.get(event_type)
         if not agent:

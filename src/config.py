@@ -171,7 +171,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "*"
 
     # Memory Service
-    MEMORY_BACKEND: Literal["rest", "file", "redis"] = "rest"
+    MEMORY_BACKEND: Literal["rest", "rest_async", "file", "redis"] = "rest"
     MEMORY_ENDPOINT: str = "http://localhost:8000"
     MEMORY_FILE_PATH: str = "memory.jsonl"
     MEMORY_REDIS_URL: str = "redis://localhost:6379/0"

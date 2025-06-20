@@ -78,17 +78,19 @@ sequenceDiagram
 
 ## Swapping backends
 
-Three built-in backends are provided:
+Four built-in backends are provided:
 
 1. **REST** – the original implementation used for examples. Configure the
    endpoint via ``MEMORY_ENDPOINT``.
-2. **File** – persists events to a local JSONL file. Controlled with
+2. **REST Async** – identical API but implemented with ``httpx.AsyncClient`` for
+   non-blocking I/O. Select using ``MEMORY_BACKEND=rest_async``.
+3. **File** – persists events to a local JSONL file. Controlled with
    ``MEMORY_FILE_PATH``.
-3. **Redis** – stores events in lists within a Redis instance using
+4. **Redis** – stores events in lists within a Redis instance using
    ``MEMORY_REDIS_URL``.
 
 Select the backend using the ``MEMORY_BACKEND`` environment variable (``rest``,
-``file`` or ``redis``). The orchestrator reads these settings via ``src.config.Settings``
+``rest_async``, ``file`` or ``redis``). The orchestrator reads these settings via ``src.config.Settings``
 so they can be placed in a ``.env`` file or exported in your shell.
 
 You can also provide your own implementation by subclassing
