@@ -38,9 +38,29 @@ class SegmentationEvent:
     budget_per_segment: int
 
 
+@dataclass
+class HumanApprovalRequest:
+    """Payload for :class:`HumanApprovalAgent`."""
+
+    approval_request: str
+    approvers: list[str]
+    timeout: int
+
+
+@dataclass
+class NotificationPayload:
+    """Payload for :class:`NotificationAgent`."""
+
+    channel: str
+    message: str
+    platform: str = "slack"
+
+
 __all__ = [
     "LeadCaptureEvent",
     "ChatbotEvent",
     "CRMPipelineEvent",
     "SegmentationEvent",
+    "HumanApprovalRequest",
+    "NotificationPayload",
 ]

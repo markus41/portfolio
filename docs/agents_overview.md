@@ -14,12 +14,12 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 * **CSATCheckerAgent** (`src/agents/operations/csat_checker_agent.py`) – Handles csatchecker operations.
 * **CSATSchedulerAgent** (`src/agents/operations/csat_scheduler_agent.py`) – Handles csatscheduler operations.
 * **EmailReplyMonitorAgent** (`src/agents/sales/email_reply_monitor_agent.py`) – Handles email reply monitor operations.
-* **HumanApprovalAgent** (`src/agents/sales/human_approval_agent.py`) – Handles human approval operations.
+* **HumanApprovalAgent** (`src/agents/sales/human_approval_agent.py`) – Handles human approval operations using a `HumanApprovalRequest` payload.
 * **LeadCaptureAgent** (`src/agents/sales/lead_capture_agent.py`) – Extract and normalise lead form submissions.
 * **LeadEnrichmentAgent** (`src/agents/sales/lead_enrichment_agent.py`) – Handles lead enrichment operations.
 * **LeadScoringAgent** (`src/agents/sales/lead_scoring_agent.py`) – Handles lead scoring operations.
 * **NegotiationAgent** (`src/agents/sales/negotiation_agent.py`) – Handles negotiation operations.
-* **NotificationAgent** (`src/agents/operations/notification_agent.py`) – Handles notification operations.
+* **NotificationAgent** (`src/agents/operations/notification_agent.py`) – Sends notifications via Slack or Teams using `NotificationPayload`.
 * **OnboardingAgent** (`src/agents/sales/onboarding_agent.py`) – Handles onboarding operations.
 * **OutreachAgent** (`src/agents/sales/outreach_agent.py`) – Handles outreach operations.
 * **ProposalGeneratorAgent** (`src/agents/sales/proposal_generator_agent.py`) – Handles proposal generator operations.
