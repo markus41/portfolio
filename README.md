@@ -232,6 +232,11 @@ brookside-cli status
 # map a natural language task to a workflow template
 brookside-cli assist "handle new inventory"
 # => {"template": "src/teams/inventory_management_team.json"}
+
+# inspect available integrations
+brookside-cli list-agents    # built-in and entry-point agents
+brookside-cli list-plugins   # tool plugins
+brookside-cli show-plugin email_plugin
 ```
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free
