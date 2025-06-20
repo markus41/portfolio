@@ -91,3 +91,66 @@ class GraphWorkflowDefinition:
         """Persist the workflow to ``path`` as JSON."""
 
         Path(path).write_text(json.dumps(self.to_dict(), indent=2))
+
+
+class GraphWorkflowEngine:
+    """Execute :class:`GraphWorkflowDefinition` nodes in topological order.
+
+    Each node ``config`` dictionary may specify a ``team`` and ``event`` entry.
+    During execution these are passed to
+    :meth:`~src.solution_orchestrator.SolutionOrchestrator.handle_event_sync`.
+    Nodes without either field are treated as no-ops.
+    """
+
+    def __init__(self, definition: GraphWorkflowDefinition) -> None:
+        if not definition.nodes:
+            raise ValueError("workflow must contain at least one node")
+        self.definition = definition
+        self._node_map = {n.id: n for n in definition.nodes}
+
+        # Track incoming edge counts for topological ordering
+        self._incoming: dict[str, int] = {n.id: 0 for n in definition.nodes}
+        for edge in definition.edges:
+            if edge.source not in self._node_map or edge.target not in self._node_map:
+                raise ValueError("edge references unknown node")
+            self._incoming[edge.target] += 1
+
+        self._queue: list[str] = [n for n, deg in self._incoming.items() if deg == 0]
+        if not self._queue:
+            raise ValueError("workflow has no starting node or contains a cycle")
+
+    def step(self, orchestrator: "SolutionOrchestrator") -> dict:
+        """Execute the next queued node and return the result."""
+
+        if not self._queue:
+            raise StopIteration("workflow complete")
+
+        node_id = self._queue.pop(0)
+        node = self._node_map[node_id]
+        team = node.config.get("team")
+        event = node.config.get("event")
+
+        if team and event:
+            result = orchestrator.handle_event_sync(team, event)
+        else:  # pragma: no cover - simple branch
+            result = {"status": "noop"}
+
+        for edge in self.definition.edges:
+            if edge.source == node_id:
+                tgt = edge.target
+                self._incoming[tgt] -= 1
+                if self._incoming[tgt] == 0:
+                    self._queue.append(tgt)
+
+        return {"node": node_id, "team": team, "result": result}
+
+    def run(self, orchestrator: "SolutionOrchestrator") -> dict:
+        """Execute all nodes sequentially until finished."""
+
+        results = []
+        while True:
+            try:
+                results.append(self.step(orchestrator))
+            except StopIteration:
+                break
+        return {"status": "complete", "results": results}

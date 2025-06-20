@@ -11,6 +11,7 @@ from .utils import ActivityLogger
 from . import db
 
 from .agents.planner_agent import PlannerAgent
+from .workflows.graph import GraphWorkflowDefinition, GraphWorkflowEngine
 
 from .team_orchestrator import TeamOrchestrator
 
@@ -129,3 +130,22 @@ class SolutionOrchestrator:
         if not self.planner:
             raise RuntimeError("Planner is not configured")
         return self.planner.run({"goal": goal})
+
+    def execute_workflow(
+        self, workflow: str | Path | GraphWorkflowDefinition
+    ) -> Dict[str, Any]:
+        """Execute a graph workflow definition.
+
+        ``workflow`` may be a path to a JSON file or a pre-loaded
+        :class:`GraphWorkflowDefinition` instance. Each node ``config`` must
+        include ``team`` and ``event`` fields which are forwarded to
+        :meth:`handle_event_sync`.
+        """
+
+        if isinstance(workflow, (str, Path)):
+            definition = GraphWorkflowDefinition.from_file(workflow)
+        else:
+            definition = workflow
+
+        engine = GraphWorkflowEngine(definition)
+        return engine.run(self)

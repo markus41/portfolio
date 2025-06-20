@@ -44,3 +44,22 @@ For more complex flows you can describe nodes and edges explicitly. The
 [`workflow_schema.json`](workflow_schema.json). Each node represents an `agent`
 or `tool` and edges model the execution order. Persist the file via the `/workflows`
 endpoint and load it later with `GraphWorkflowDefinition.from_file()`.
+
+### Executing Graph Workflows
+
+`GraphWorkflowEngine` walks the graph in topological order and dispatches each
+node through `SolutionOrchestrator`. A node's ``config`` must include a
+``team`` name and an ``event`` dictionary which are forwarded to
+``SolutionOrchestrator.handle_event_sync``.
+
+```python
+from src.solution_orchestrator import SolutionOrchestrator
+from src.workflows.graph import GraphWorkflowDefinition
+
+orch = SolutionOrchestrator({"A": "team_a.json"})
+wf = GraphWorkflowDefinition.from_file("workflows/my_flow.json")
+orch.execute_workflow(wf)
+```
+
+``execute_workflow`` returns a dictionary containing the orchestrator results
+for every node.
