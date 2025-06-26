@@ -12,6 +12,11 @@ repos:
     hooks:
       - id: mypy
         args: [--ignore-errors]
+  - repo: https://github.com/conventional-pre-commit/conventional-pre-commit
+    rev: v3.1.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
   - repo: local
     hooks:
       - id: pytest

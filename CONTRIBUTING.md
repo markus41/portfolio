@@ -46,6 +46,10 @@ Example messages:
 
 This style ensures a consistent and readable project history.
 
+All commits are automatically validated when you run `pre-commit`. The commit
+message hook will reject commits that do not follow the Conventional Commits
+style.
+
 ---
 
 For further details about the project architecture and workflow, see the [README](README.md).

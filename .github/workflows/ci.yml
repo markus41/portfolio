@@ -23,5 +23,9 @@ jobs:
         run: mypy .
       - name: Run pre-commit
         run: pre-commit run --all-files --show-diff-on-failure
+      - name: Lint commit message
+        run: |
+          echo "$(git log -1 --pretty=%B)" > commit_message.txt
+          pre-commit run --hook-stage commit-msg --commit-msg-filename commit_message.txt
       - name: Run tests
         run: pytest -q
