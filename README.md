@@ -11,6 +11,9 @@ For a deeper explanation of the architecture—including the event bus, memory s
 
 ## ⚡ Quick Start
 
+This project supports **Python 3.9, 3.10 and 3.11**. All three versions are
+tested automatically in CI so you can develop with confidence on any of them.
+
 Install the requirements, set up pre-commit hooks and run the unit tests to verify your environment:
 
 ```bash
