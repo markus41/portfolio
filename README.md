@@ -578,6 +578,20 @@ Run the tests with `npm test`. Building the project outputs both the editor and
 dashboard into `dist/` using the shared `vite.config.js`. The dashboard's
 "Live Stream" section showcases the `/teams/<name>/stream` endpoint in action.
 
+## 📦 Release Process
+
+Releases are automated through GitHub Actions. Pushing a tag matching
+`v*.*.*` triggers a workflow that:
+
+1. Builds the Python package using `python -m build`.
+2. Creates multi-architecture Docker images (`linux/amd64` and `linux/arm64`).
+3. Publishes the images to Docker Hub or GHCR using credentials from repository
+   secrets (`DOCKER_USERNAME` and `DOCKER_PASSWORD`).
+4. Uploads the wheel and source distribution files as assets on the GitHub
+   release.
+
+Ensure the appropriate secrets are configured before tagging a release.
+
 ---
 
 This project is released under the [MIT License](LICENSE).
