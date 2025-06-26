@@ -597,5 +597,11 @@ Ensure the appropriate secrets are configured before tagging a release.
 
 ---
 
+## Releases
+
+Our version numbers follow [Semantic Versioning](https://semver.org). See
+[RELEASE.md](RELEASE.md) for details on the release process and how to tag
+versions.
+
 This project is released under the [MIT License](LICENSE).
 

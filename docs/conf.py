@@ -6,7 +6,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 project = 'Brookside BI'
 author = 'Brookside'
-release = '0.1'
+release = '1.0.0'
+version = '1.0.0'
 
 extensions = [
     'myst_parser',
