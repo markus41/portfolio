@@ -98,7 +98,7 @@ A trimmed example from `sales_team_full.json` looks like:
 
 ### 🧩 Team & Solution Orchestrators
 
-Teams packaged as JSON in `src/teams/` can now be loaded at runtime using `TeamOrchestrator`. It creates all agents listed under `participants` and provides an `EventBus` for intra-team messaging. Multiple teams are combined with `SolutionOrchestrator` which routes events to the appropriate team and collects their results.
+Teams packaged as JSON or YAML in `src/teams/` can now be loaded at runtime using `TeamOrchestrator`. It creates all agents listed under `participants` and provides an `EventBus` for intra-team messaging. Multiple teams are combined with `SolutionOrchestrator` which routes events to the appropriate team and collects their results.
 
 To initialise:
 ```python
@@ -108,6 +108,11 @@ orch = SolutionOrchestrator({
     "sales": "src/teams/sales_team_full.json",
     "operations": "src/teams/operations_team.json",
 })
+# YAML equivalents are also accepted
+# orch = SolutionOrchestrator({
+#     "sales": "src/teams/sales_team_full.yaml",
+#     "operations": "src/teams/operations_team.yaml",
+# })
 orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
 ```
 

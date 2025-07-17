@@ -14,14 +14,20 @@ class DummyAgent(BaseAgent):
         return {"echo": payload}
 
 
-def _write_team(tmp_path: Path) -> Path:
+def _write_team(tmp_path: Path, ext: str = "json") -> Path:
+    """Write a minimal team configuration to ``tmp_path`` with *ext*."""
+
     cfg = {
         "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["dummy_agent"],
         "config": {"participants": [{"config": {"name": "dummy_agent"}}]},
     }
-    path = tmp_path / "team.json"
-    path.write_text(json.dumps(cfg))
+    path = tmp_path / f"team.{ext}"
+    if ext == "json":
+        path.write_text(json.dumps(cfg))
+    else:
+        yaml = pytest.importorskip("yaml")
+        path.write_text(yaml.safe_dump(cfg))
     return path
 
 
@@ -71,3 +77,22 @@ def test_team_orchestrator_schema_failure(tmp_path):
     bad_file.write_text("{}")
     with pytest.raises(ValueError):
         TeamOrchestrator(str(bad_file))
+
+
+def test_yaml_and_json_equivalent(tmp_path):
+    """YAML and JSON team configs should produce identical orchestrators."""
+
+    yaml = pytest.importorskip("yaml")
+
+    json_cfg = _write_team(tmp_path, "json")
+    yaml_cfg = _write_team(tmp_path, "yaml")
+
+    mod = types.ModuleType("src.agents.dummy_agent")
+    mod.DummyAgent = DummyAgent
+    sys.modules["src.agents.dummy_agent"] = mod
+
+    orch_json = TeamOrchestrator(str(json_cfg))
+    orch_yaml = TeamOrchestrator(str(yaml_cfg))
+
+    assert orch_json.team_config == orch_yaml.team_config
+    assert list(orch_json.agents.keys()) == list(orch_yaml.agents.keys())
