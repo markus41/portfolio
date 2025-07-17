@@ -15,7 +15,10 @@ configuration files now use the ``autogen`` namespace instead of the old
     }
 
 ``TeamOrchestrator`` only resolves the participants into local agent classes so
-tests remain lightweight even when the AutoGen package is unavailable.
+tests remain lightweight even when the AutoGen package is unavailable. Team
+definitions may be written in JSON or YAML; the loader automatically detects
+``.yaml``/``.yml`` extensions and parses them with :func:`yaml.safe_load` when
+PyYAML is installed.
 """
 
 from __future__ import annotations
@@ -33,6 +36,11 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = types.SimpleNamespace(validate=_validate, ValidationError=_VE)
 
 from agentic_core import EventBus, AsyncEventBus
+
+try:  # pragma: no cover - PyYAML is optional
+    import yaml  # type: ignore
+except Exception:  # pragma: no cover - not required unless YAML files are used
+    yaml = None
 
 try:  # pragma: no cover - optional AutoGen dependency
     import autogen
@@ -63,12 +71,12 @@ class TeamOrchestrator(BaseOrchestrator):
     def __init__(
         self, config_path: str, bus: EventBus | AsyncEventBus | None = None
     ) -> None:
-        """Initialise the orchestrator from a team JSON file.
+        """Initialise the orchestrator from a team configuration file.
 
         Parameters
         ----------
         config_path:
-            Path to the JSON configuration describing the team. The file must
+            Path to the JSON or YAML configuration describing the team. The file must
             include a ``config.participants`` array. Each participant item is
             expected to define ``config.name`` pointing to an agent module under
             :mod:`src.agents`.
@@ -81,7 +89,7 @@ class TeamOrchestrator(BaseOrchestrator):
 
         Notes
         -----
-        At construction time every participant listed in the JSON is resolved
+        At construction time every participant listed in the configuration file is resolved
         using :func:`~src.utils.plugin_loader.load_agent`. This function looks
         for classes registered via the ``brookside.agents`` entry point group
         before falling back to modules under :mod:`src.agents`. The orchestrator
@@ -90,8 +98,15 @@ class TeamOrchestrator(BaseOrchestrator):
         message routing.
         """
         self.config_path = Path(config_path)
-        with self.config_path.open() as fh:
-            data = json.load(fh)
+        text = self.config_path.read_text()
+        if self.config_path.suffix in {".yaml", ".yml"}:
+            if yaml is None:
+                raise ModuleNotFoundError(
+                    "PyYAML is required to load YAML team definitions"
+                )
+            data = yaml.safe_load(text)
+        else:
+            data = json.loads(text)
         try:
             validate_team_config(data)
         except jsonschema.ValidationError as exc:
