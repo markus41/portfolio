@@ -87,3 +87,13 @@ brookside.plugins =
 Plugins placed directly in ``src/plugins/`` do not require registration and are
 automatically importable by name.
 
+You can also resolve components manually using the helper in
+``src.utils.plugin_loader``:
+
+```python
+from src.utils.plugin_loader import load_agent, load_plugin
+
+agent_cls = load_agent("lead_capture")
+plugin_cls = load_plugin("email")
+```
+

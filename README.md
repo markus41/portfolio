@@ -332,6 +332,41 @@ To design your own workflow start with one of the JSON files under
 Because teams are purely declarative you can spin up experimental flows without
 editing the core Python code.
 
+## 🔌 Registering Agents and Tools
+
+The orchestrators rely on `src/utils/plugin_loader.py` to locate agent classes
+and tool plugins. Components can be distributed as separate packages and
+exposed via Python entry points so they load without modifying this
+repository.
+
+### Declaring entry points
+
+Add your agents and plugins under the `brookside.agents` and
+`brookside.plugins` groups in ``setup.cfg``:
+
+```ini
+[options.entry_points]
+brookside.agents =
+    my_agent = mypkg.agent:MyAgent
+brookside.plugins =
+    slack = mypkg.slack_tool:SlackPlugin
+```
+
+After installation you can reference ``my_agent`` or ``slack`` inside a team
+JSON file or load them programmatically:
+
+```python
+from src.utils.plugin_loader import load_agent, load_plugin
+
+AgentCls = load_agent("my_agent")
+ToolCls = load_plugin("slack")
+agent = AgentCls()
+tool = ToolCls()
+```
+
+Plugins placed directly inside ``src/agents`` or ``src/plugins`` require no
+registration and are resolved automatically by name.
+
 ## 📦 Installation
 
 Install the Python dependencies with pip using the `requirements.txt` file or
