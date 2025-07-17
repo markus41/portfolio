@@ -21,6 +21,8 @@ mypy .
 pytest -q
 ```
 
+Commit messages are checked for [Conventional Commits](https://www.conventionalcommits.org/) compliance when pre-commit hooks run.
+
 You can exercise the orchestrator with a single team using a few lines of Python:
 
 ```python
