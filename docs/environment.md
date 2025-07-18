@@ -66,6 +66,9 @@ variables documented below.
 - `GOOGLE_APPLICATION_CREDENTIALS` – Path to Google service account JSON.
 - `REDIS_URL` – Redis connection string.
 - `DB_CONNECTION_STRING` – Database URL.
+- The `GET /history` endpoint reads from this database and supports
+  `team` and `event_type` query parameters in addition to `limit` and
+  `offset` for filtering stored events.
 - `KAFKA_BOOTSTRAP_SERVERS` – Kafka broker list.
 - `RABBITMQ_URL` – RabbitMQ connection string.
 - `CLOUD_DOCS_API_URL` – Base URL for the cloud document service.
@@ -92,7 +95,8 @@ variables documented below.
 - `DISCORD_WEBHOOK_URL` – Discord webhook.
 
 ## Monitoring & Analytics
-- `PROMETHEUS_PUSHGATEWAY` – Prometheus Pushgateway URL.
+- `PROMETHEUS_PUSHGATEWAY` – Prometheus Pushgateway URL. When defined the API
+  emits request metrics as described in [metrics.md](metrics.md).
 - `GA4_MEASUREMENT_ID` – Google Analytics 4 measurement ID.
 - `GA4_API_SECRET` – Google Analytics API secret.
 - `MIXPANEL_TOKEN` – Mixpanel project token.

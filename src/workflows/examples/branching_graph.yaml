@@ -1,0 +1,33 @@
+name: branching_example
+nodes:
+  - id: start
+    type: agent
+    label: Start
+    config:
+      team: A
+      event:
+        type: dummy_agent_a
+        payload: {}
+  - id: a
+    type: agent
+    label: A
+    config:
+      team: A
+      event:
+        type: dummy_agent_a
+        payload:
+          foo: 1
+  - id: b
+    type: agent
+    label: B
+    config:
+      team: B
+      event:
+        type: dummy_agent_b
+        payload:
+          bar: 2
+edges:
+  - source: start
+    target: a
+  - source: start
+    target: b

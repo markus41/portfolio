@@ -6,6 +6,9 @@ class Response:
     def json(self):
         return self._json
 
+class BaseTransport:
+    pass
+
 
 class Request:
     def __init__(self, method, url, json=None, params=None):
@@ -44,3 +47,7 @@ class AsyncClient:
 
     def close(self):
         pass
+
+class Client(AsyncClient):
+    pass
+

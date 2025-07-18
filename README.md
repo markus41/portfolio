@@ -29,8 +29,18 @@ You can exercise the orchestrator with a single team using a few lines of Python
 ```python
 from src.solution_orchestrator import SolutionOrchestrator
 
-orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
-orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
+async def demo():
+    async with SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"}) as orch:
+        await orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
+```
+
+You can inspect the installed package version programmatically:
+
+```python
+import src
+
+print(src.get_version())  # e.g. "1.0.0"
+assert src.get_version() == src.__version__
 ```
 
 ---
@@ -239,6 +249,9 @@ Available templates:
   # orch.execute_goal("sales_outreach")
   ```
 
+For a branching graph example see
+[docs/workflows.md#branching-logic-and-error-handling](docs/workflows.md#branching-logic-and-error-handling).
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the
@@ -250,7 +263,7 @@ orchestrator and send events from another shell:
 # launch the orchestrator (listens on localhost:8765)
 brookside-cli start sales=src/teams/sales_team_full.json
 
-# dispatch an event
+# dispatch an event (5s timeout by default)
 brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
 
 # view latest statuses
@@ -266,6 +279,9 @@ brookside-cli assist "handle new inventory"
 # run an integration pipeline
 brookside-cli run-integration CRM_to_ERP_Contacts --team sales
 ```
+
+Use the optional `--timeout` flag with `send`, `status` and `run-integration`
+to override the 5 second default when connecting to the orchestrator.
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free
 text. Provide a description on the command line or via stdin and it returns a
@@ -333,7 +349,9 @@ automatically on startup and the connection is controlled via
 `DB_CONNECTION_STRING` (defaults to `sqlite:///data.db`). Every processed event
 is written to the `event_history` table. Retrieve past events using the
 `GET /history` endpoint which supports simple pagination via `limit` and
-`offset` query parameters.
+`offset` query parameters. You can also filter the results by `team` and
+`event_type` to view only the events relevant to a specific workflow or
+agent.
 
 ### 🌟 Creating Custom Teams
 
@@ -425,6 +443,13 @@ setup_logging()
 
 See [docs/logging.md](docs/logging.md) for details.
 
+## 📊 Metrics
+
+When `PROMETHEUS_PUSHGATEWAY` is set, the API records the number of requests
+and their latencies. A middleware pushes these metrics to the configured
+Prometheus Pushgateway using the lightweight `PrometheusPusher` utility. Read
+[docs/metrics.md](docs/metrics.md) for a full description.
+
 ## 📐 Environment Variables
 
 The system relies on a number of environment variables for API keys and service
@@ -433,7 +458,9 @@ process environment and a dotenv file.  Set ``ENV`` to choose which file is
 loaded (`.env` for ``ENV=prod`` or `.env.<ENV>` otherwise).  You can also set
 ``ENV_FILE`` to point at an explicit path.  The most common variables are
 summarised below. Any of them can be set in your shell or added to the chosen
-dotenv file before running the orchestrator or tests.
+dotenv file before running the orchestrator or tests. An example file named
+``.env.example`` at the repository root lists these variables—copy it to
+``.env`` and adjust the values for local development.
 
 | Variable | Purpose |
 |----------|---------|
@@ -451,6 +478,8 @@ dotenv file before running the orchestrator or tests.
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `VISITOR_ANALYTICS_URL` / `VISITOR_ANALYTICS_KEY` | Visitor tracking analytics configuration |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
+| `LOG_FILE` | Write logs to this file instead of `stdout` |
+| `LOG_PLAIN` | Emit human readable logs when set to `true` or `1` |
 | `TEAM_HOT_RELOAD` | Set to `1` to watch team files and reload on changes |
 
 For an exhaustive description of all variables see
@@ -573,6 +602,43 @@ print(f"Finished on: {engine.current}")
 ```
 
 See [docs/workflows.md](docs/workflows.md) for a detailed overview.
+
+### Executing JSON Workflows with `SolutionOrchestrator`
+
+Graph-based workflows can be driven directly by the orchestrator. The repository
+includes a small example graph at
+`src/workflows/examples/basic_graph.json`:
+
+```json
+{
+  "name": "basic_sales_flow",
+  "nodes": [
+    {"id": "capture", "type": "agent", "label": "Capture Lead",
+     "config": {"team": "sales",
+                "event": {"type": "lead_capture",
+                          "payload": {"email": "alice@example.com"}}}},
+    {"id": "followup", "type": "agent", "label": "Follow Up",
+     "config": {"team": "sales",
+                "event": {"type": "crm_pipeline",
+                          "payload": {"deal_id": "d1"}}}}
+  ],
+  "edges": [{"source": "capture", "target": "followup"}]
+}
+```
+
+Load the workflow and execute all nodes in order:
+
+```python
+from src.solution_orchestrator import SolutionOrchestrator
+from src.workflows.graph import GraphWorkflowDefinition
+
+orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
+wf = GraphWorkflowDefinition.from_file(
+    "src/workflows/examples/basic_graph.json"
+)
+result = orch.execute_workflow(wf)
+print(result["status"])
+```
 
 ## 🤝 Contributing
 
