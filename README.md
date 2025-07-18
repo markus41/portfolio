@@ -16,14 +16,12 @@ For a deeper explanation of the architecture—including the event bus, memory s
 This project supports **Python 3.9, 3.10 and 3.11**. All three versions are
 tested automatically in CI so you can develop with confidence on any of them.
 
-Install the requirements, set up pre-commit hooks and run the unit tests to verify your environment:
+Install the requirements and run the checks using the helper scripts provided in
+`scripts/`:
 
 ```bash
-pip install -r requirements.txt
-pip install pre-commit
-pre-commit install
-mypy .
-pytest -q
+./scripts/setup.sh      # installs dependencies and pre-commit hooks
+./scripts/run_tests.sh  # formatting, linting and unit tests
 ```
 
 You can exercise the orchestrator with a single team using a few lines of Python:
