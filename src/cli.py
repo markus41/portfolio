@@ -15,6 +15,7 @@ if __package__ in {None, ""}:  # pragma: no cover - script execution support
     __package__ = "src"
 
 from .utils.logging_config import setup_logging
+from .utils.team_mapping import parse_team_mapping
 
 
 DEFAULT_HOST = "127.0.0.1"
@@ -80,19 +81,6 @@ async def _handle_client(
     writer.close()
 
 
-def _parse_team_mapping(pairs: Tuple[str, ...]) -> Dict[str, str]:
-    """Convert ``NAME=PATH`` pairs into a mapping."""
-    mapping = {}
-    for pair in pairs:
-        if "=" not in pair:
-            raise argparse.ArgumentTypeError(
-                f"Invalid team spec '{pair}'. Use NAME=PATH"
-            )
-        name, path = pair.split("=", 1)
-        mapping[name] = path
-    return mapping
-
-
 # ---------------------------------------------------------------------------
 # Command implementations
 # ---------------------------------------------------------------------------
@@ -102,7 +90,10 @@ def cmd_start(args: argparse.Namespace) -> None:
     """Start the orchestrator server and block forever."""
     from .solution_orchestrator import SolutionOrchestrator
 
-    teams = _parse_team_mapping(tuple(args.teams))
+    try:
+        teams = parse_team_mapping(args.teams)
+    except ValueError as exc:
+        raise SystemExit(str(exc))
     orch = SolutionOrchestrator(teams)
 
     async def _run() -> None:
