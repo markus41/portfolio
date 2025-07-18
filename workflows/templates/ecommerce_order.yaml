@@ -1,0 +1,17 @@
+ecommerce_order:
+  - team: ecommerce
+    event:
+      type: ecommerce_agent
+      payload:
+        order:
+          item: Widget
+          qty: 1
+  - team: ecommerce
+    event:
+      type: fulfillment_agent
+      payload: {}
+  - team: ecommerce
+    event:
+      type: notification_agent
+      payload:
+        message: Order shipped

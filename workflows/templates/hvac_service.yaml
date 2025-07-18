@@ -1,0 +1,17 @@
+hvac_service:
+  - team: hvac
+    event:
+      type: hvac_agent
+      payload:
+        action: schedule_service
+        customer: ACME Industries
+  - team: hvac
+    event:
+      type: hvac_agent
+      payload:
+        action: dispatch
+  - team: hvac
+    event:
+      type: hvac_agent
+      payload:
+        action: invoice

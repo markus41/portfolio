@@ -122,3 +122,20 @@ for entry in result["results"]:
 ``StopIteration`` when no nodes remain. Exceptions from
 ``handle_event_sync`` propagate to the caller so they can be handled
 application‑side.
+
+## Workflow Templates
+
+Example plans live in `workflows/templates` and are provided in both JSON and
+YAML formats. Load a template with `json.load` or `yaml.safe_load` and pass the
+resulting dictionary to `SolutionOrchestrator` via `planner_plans`.
+
+Available templates:
+
+| Template | Description |
+| -------- | ----------- |
+| `blog_post` | Outline, draft and finalise a blog post |
+| `document_summary` | Summarise a document with `AnalystAgent` |
+| `sales_outreach` | Capture a lead and send outreach |
+| `hvac_service` | Schedule, dispatch and invoice an HVAC job |
+| `medical_practice` | Check in a patient and generate billing |
+| `ecommerce_order` | Create an order and notify the customer |

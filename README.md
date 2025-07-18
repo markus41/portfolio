@@ -237,6 +237,60 @@ Available templates:
   # orch.execute_goal("sales_outreach")
   ```
 
+* **hvac_service.json** / **hvac_service.yaml** – schedule, dispatch and invoice
+  an HVAC job.
+
+  ```python
+  with open("workflows/templates/hvac_service.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"hvac": "workflows/templates/hvac_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("hvac_service")
+
+  # YAML
+  # with open("workflows/templates/hvac_service.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"hvac": "workflows/templates/hvac_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("hvac_service")
+  ```
+
+* **medical_practice.json** / **medical_practice.yaml** – manage a patient visit
+  from check-in to billing.
+
+  ```python
+  with open("workflows/templates/medical_practice.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"medical": "workflows/templates/medical_practice_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("medical_practice")
+
+  # YAML
+  # with open("workflows/templates/medical_practice.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"medical": "workflows/templates/medical_practice_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("medical_practice")
+  ```
+
+* **ecommerce_order.json** / **ecommerce_order.yaml** – create, fulfil and
+  notify about an online order.
+
+  ```python
+  with open("workflows/templates/ecommerce_order.json") as fh:
+      plans = json.load(fh)
+  orch = SolutionOrchestrator({"ecommerce": "src/teams/ecommerce_team.json"},
+                              planner_plans=plans)
+  orch.execute_goal("ecommerce_order")
+
+  # YAML
+  # with open("workflows/templates/ecommerce_order.yaml") as fh:
+  #     plans = yaml.safe_load(fh)
+  # orch = SolutionOrchestrator({"ecommerce": "src/teams/ecommerce_team.yaml"},
+  #                             planner_plans=plans)
+  # orch.execute_goal("ecommerce_order")
+  ```
+
 For a branching graph example see
 [docs/workflows.md#branching-logic-and-error-handling](docs/workflows.md#branching-logic-and-error-handling).
 

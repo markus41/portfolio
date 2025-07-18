@@ -1,0 +1,7 @@
+responsibilities:
+  - hvac_agent
+config:
+  participants:
+    - provider: src.agents.roles.AssistantAgent
+      config:
+        name: hvac_agent

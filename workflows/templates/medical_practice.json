@@ -1,0 +1,16 @@
+{
+  "medical_practice": [
+    {
+      "team": "medical",
+      "event": {"type": "medical_agent", "payload": {"action": "check_in", "patient": "Jane Doe"}}
+    },
+    {
+      "team": "medical",
+      "event": {"type": "medical_agent", "payload": {"action": "update_records"}}
+    },
+    {
+      "team": "medical",
+      "event": {"type": "medical_agent", "payload": {"action": "generate_invoice"}}
+    }
+  ]
+}
