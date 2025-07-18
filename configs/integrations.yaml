@@ -1,0 +1,18 @@
+systems:
+  salesforce:
+    type: crm
+    subtype: salesforce
+    credentials:
+      url: https://api.example.com/sf
+  netsuite:
+    type: erp
+    subtype: netsuite
+    credentials:
+      url: https://api.example.com/erp
+integrations:
+  - name: CRM_to_ERP_Contacts
+    source: salesforce
+    target: netsuite
+    objects: [contacts]
+    sync_mode: one_way
+    field_mappings: {}

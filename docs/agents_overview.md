@@ -44,6 +44,7 @@ This page lists all of the built-in agents available in the Brookside BI framewo
 * **RevOpsAgent** (`src/agents/sales/revops_agent.py`) – Revenue operations agent producing pipeline forecasts.
 * **ReviewAgent** (`src/agents/review_agent.py`) – Validates drafts and publishes approval results.
 * **PlannerAgent** (`src/agents/planner_agent.py`) – Executes goal-based plans by sequencing events across teams.
+* **IntegrationAgent** (`src/agents/integration_agent.py`) – Executes configuration driven data pipelines.
 
 ## Key Utilities
 
@@ -55,5 +56,6 @@ Brookside BI's utilities live under `src/tools/` and provide integrations that a
 - **Real estate tools** (`real_estate_tools/`) – fetch MLS data and post property listings.
 - **Operations tools** (`operations_tools/`) – inventory management and transportation APIs.
 - **Segmentation tools** (`segmentation_tools/`) – create ad audiences from customer data.
+- **Integration tools** (`integration_tools/`) – connectors for CRMs, ERPs, payment providers and Office 365.
 - **Metrics utilities** (`metrics_tools/`) – push custom gauges to Prometheus.
 - Other modules support document generation, scheduling, e-commerce and memory services.

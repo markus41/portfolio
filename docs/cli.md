@@ -58,6 +58,17 @@ brookside-cli assist "handle new inventory"
 
 This utility performs simple keyword matching to pick an appropriate template.
 
+## run-integration
+
+Execute a configured integration pipeline via the running orchestrator.
+
+```bash
+brookside-cli run-integration CRM_to_ERP_Contacts --team sales
+```
+
+The command sends an `integration_request` task to the orchestrator and prints
+the JSON result.
+
 ## Troubleshooting
 
 - **Connection refused** – `send` or `status` may fail with `[Errno 111] Connection refused` if the server is not running or the wrong `--host`/`--port` is used.

@@ -199,6 +199,17 @@ def cmd_assist(args: argparse.Namespace) -> None:
         print(json.dumps({"template": template}))
 
 
+def cmd_run_integration(args: argparse.Namespace) -> None:
+    """Trigger an integration pipeline on the orchestrator."""
+
+    if not args.team:
+        raise SystemExit("--team is required")
+    event = {"type": "integration_request", "payload": {"name": args.name}}
+    payload = {"cmd": "send", "team": args.team, "event": event}
+    resp = _send_payload(args.host, args.port, payload)
+    print(json.dumps(resp))
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -225,6 +236,15 @@ def build_parser() -> argparse.ArgumentParser:
     send_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     send_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     send_p.set_defaults(func=cmd_send)
+
+    run_int = sub.add_parser(
+        "run-integration", help="Execute a configured integration pipeline"
+    )
+    run_int.add_argument("name", help="Integration name")
+    run_int.add_argument("--team", required=False, help="Target team name")
+    run_int.add_argument("--host", default=DEFAULT_HOST, help="Server address")
+    run_int.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    run_int.set_defaults(func=cmd_run_integration)
 
     assist_p = sub.add_parser(
         "assist",

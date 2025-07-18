@@ -11,6 +11,7 @@ from .events import (
     ChatbotEvent,
     CRMPipelineEvent,
     SegmentationEvent,
+    IntegrationRequest,
 )
 
 from .memory_service.base import BaseMemoryService
@@ -36,6 +37,7 @@ class BaseOrchestrator:
             "chatbot": ChatbotEvent,
             "crm_pipeline": CRMPipelineEvent,
             "segmentation": SegmentationEvent,
+            "integration_request": IntegrationRequest,
         }
 
     def get_agent_by_skill(self, skill: str):
