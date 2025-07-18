@@ -34,6 +34,15 @@ async def demo():
         await orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
 ```
 
+You can inspect the installed package version programmatically:
+
+```python
+import src
+
+print(src.get_version())  # e.g. "1.0.0"
+assert src.get_version() == src.__version__
+```
+
 ---
 
 ## 🔍 What’s Inside
