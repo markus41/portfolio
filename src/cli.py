@@ -106,16 +106,19 @@ def cmd_start(args: argparse.Namespace) -> None:
     orch = SolutionOrchestrator(teams)
 
     async def _run() -> None:
-        server = await asyncio.start_server(
-            lambda r, w: _handle_client(r, w, orch), host=args.host, port=args.port
-        )
-        addr = server.sockets[0].getsockname()
-        print(f"Listening on {addr[0]}:{addr[1]}", file=sys.stderr)
-        async with server:
-            try:
-                await server.serve_forever()
-            except asyncio.CancelledError:  # pragma: no cover - server shutdown
-                pass
+        async with orch:
+            server = await asyncio.start_server(
+                lambda r, w: _handle_client(r, w, orch),
+                host=args.host,
+                port=args.port,
+            )
+            addr = server.sockets[0].getsockname()
+            print(f"Listening on {addr[0]}:{addr[1]}", file=sys.stderr)
+            async with server:
+                try:
+                    await server.serve_forever()
+                except asyncio.CancelledError:  # pragma: no cover - server shutdown
+                    pass
 
     try:
         asyncio.run(_run())
