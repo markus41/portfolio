@@ -115,6 +115,8 @@ def test_cli_validate_team(tmp_path):
     assert res_bad.returncode == 0
     out = json.loads(res_bad.stdout.strip())
     assert out["valid"] is False
+    # the CLI should include a descriptive error message when validation fails
+    assert isinstance(out.get("error"), str) and out["error"]
 
 
 @pytest.mark.parametrize(
