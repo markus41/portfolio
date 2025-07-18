@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 import types
 
 try:  # pragma: no cover - optional dependency
@@ -68,8 +68,15 @@ def validate_team_config(data: Dict[str, Any]) -> None:
 class TeamOrchestrator(BaseOrchestrator):
     """Load a team config and delegate events to its agents."""
 
+    DEFAULT_POLICY_PATH = (
+        Path(__file__).resolve().parent.parent / "configs" / "model_policy.json"
+    )
+
     def __init__(
-        self, config_path: str, bus: EventBus | AsyncEventBus | None = None
+        self,
+        config_path: str,
+        bus: EventBus | AsyncEventBus | None = None,
+        policy_path: str | None = None,
     ) -> None:
         """Initialise the orchestrator from a team configuration file.
 
@@ -98,6 +105,10 @@ class TeamOrchestrator(BaseOrchestrator):
         message routing.
         """
         self.config_path = Path(config_path)
+        self.policy_path = (
+            Path(policy_path) if policy_path else self.DEFAULT_POLICY_PATH
+        )
+        self.model_policy = self._load_model_policy()
         text = self.config_path.read_text()
         if self.config_path.suffix in {".yaml", ".yml"}:
             if yaml is None:
@@ -111,6 +122,8 @@ class TeamOrchestrator(BaseOrchestrator):
             validate_team_config(data)
         except jsonschema.ValidationError as exc:
             raise ValueError(f"Invalid team configuration: {exc.message}") from exc
+
+        self._apply_model_policy(data)
         # Keep the raw specification for downstream AutoGen integration
         # without forcing the dependency at test time.
         self.team_config: Dict[str, Any] = data
@@ -146,3 +159,37 @@ class TeamOrchestrator(BaseOrchestrator):
                 self.autogen_team = autogen.from_dict(data)
             except Exception:  # pragma: no cover - ignore API mismatches
                 self.autogen_team = None
+
+    # ------------------------------------------------------------------
+    # Model policy handling
+    # ------------------------------------------------------------------
+
+    def _load_model_policy(self) -> Dict[str, str]:
+        """Return the tier mapping defined by ``policy_path`` if available."""
+
+        if not self.policy_path.exists():
+            return {}
+        try:
+            return json.loads(self.policy_path.read_text())
+        except Exception as exc:  # pragma: no cover - invalid JSON
+            raise ValueError(f"Invalid model policy file: {exc}") from exc
+
+    def _apply_model_policy(self, node: Any) -> None:
+        """Recursively replace ``"$tier.X"`` tokens within ``node``."""
+
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if (
+                    key == "model"
+                    and isinstance(value, str)
+                    and value.startswith("$tier.")
+                ):
+                    tier = value.split(".", 1)[1]
+                    if tier not in self.model_policy:
+                        raise ValueError(f"Unknown model tier: {tier}")
+                    node[key] = self.model_policy[tier]
+                else:
+                    self._apply_model_policy(value)
+        elif isinstance(node, list):
+            for item in node:
+                self._apply_model_policy(item)

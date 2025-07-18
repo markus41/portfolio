@@ -125,6 +125,12 @@ this list and raises an error otherwise.
 
 OpenAI powered components (via `OpenAIChatCompletionClient`) are created using API keys provided by `src.config.settings`.  The settings object reads values from environment variables and the relevant `.env` file.  Whenever an AutoGen agent needs a model response, the provider invokes the OpenAI API to generate the next message.
 
+Model selection can be centralised through `configs/model_policy.json`. Team files
+may specify `"model": "$tier.cheap"` and `TeamOrchestrator` will substitute the
+corresponding model name according to that policy. This allows administrators to
+upgrade or downgrade model quality across all teams by editing a single JSON
+file.
+
 ### AutoGen Invocation
 
 When `TeamOrchestrator.handle_event` receives an event it forwards the payload to the corresponding AutoGen agent. The agent's `model_client` (such as `OpenAIChatCompletionClient`) sends the message to the LLM and returns the response. AutoGen then orchestrates the conversation flow defined in the team configuration, cycling through the participants until a termination condition is met.

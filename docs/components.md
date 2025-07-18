@@ -89,6 +89,15 @@ Once installed, ``load_plugin('email')`` will return ``EmailPlugin``. Plugins
 placed directly in ``src/plugins/`` do not require registration and are
 automatically importable by name.
 
+### Model Tiers
+
+``TeamOrchestrator`` supports model tier references so teams can switch LLMs
+without editing each JSON file. The default policy is ``configs/model_policy.json``
+mapping ``cheap``, ``balanced`` and ``premium`` to specific model names. Within
+a team configuration you may write ``"model": "$tier.balanced"``. When the team
+is loaded the orchestrator replaces the placeholder with the configured model
+name. Pass ``policy_path`` to ``TeamOrchestrator`` to override the policy file.
+
 You can also resolve components manually using the helper in
 ``src.utils.plugin_loader``:
 

@@ -128,6 +128,22 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
 
 Teams can report progress upward via `orch.report_status(team, status)`.
 
+### Configurable Model Tiers
+
+`TeamOrchestrator` can replace model names using a policy file. By default
+`configs/model_policy.json` maps **cheap**, **balanced** and **premium** tiers to
+specific models. Any team JSON may reference a tier instead of an explicit model
+name:
+
+```json
+{"config": {"model_client": {"config": {"model": "$tier.premium"}}}}
+```
+
+At load time the orchestrator looks up `premium` in the policy and substitutes
+the actual model name. Adjusting one policy file lets you switch all teams
+between models without editing each JSON individually. Pass a custom path via
+`TeamOrchestrator(policy_path=...)` if needed.
+
 Agents may also advertise a list of `skills`. The orchestrator can route a task
 to the first agent declaring the requested skill:
 
