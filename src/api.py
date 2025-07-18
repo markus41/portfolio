@@ -29,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .utils.logging_config import setup_logging
+from .utils.team_mapping import parse_team_mapping
 
 try:  # pragma: no cover - optional dependency
     import jsonschema
@@ -230,16 +231,10 @@ if __name__ == "__main__":  # pragma: no cover - manual execution
     import sys
     import uvicorn
 
-    def _parse_team_mapping(pairs: list[str]) -> dict[str, str]:
-        mapping: dict[str, str] = {}
-        for pair in pairs:
-            if "=" not in pair:
-                raise SystemExit(f"Invalid team spec '{pair}'. Use NAME=PATH")
-            name, path = pair.split("=", 1)
-            mapping[name] = path
-        return mapping
-
-    teams = _parse_team_mapping(sys.argv[1:])
+    try:
+        teams = parse_team_mapping(sys.argv[1:])
+    except ValueError as exc:
+        raise SystemExit(str(exc))
     orch = SolutionOrchestrator(teams)
     app = create_app(orch)
     setup_logging()
