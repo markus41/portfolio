@@ -30,3 +30,10 @@ pytest -q
 ```
 
 Only publish the tag once all tests pass.
+
+After the workflow publishes the release you can pull the container image using
+the same version tag:
+
+```bash
+docker pull ghcr.io/brooksidebi/portfolio:vX.Y.Z
+```

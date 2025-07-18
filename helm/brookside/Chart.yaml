@@ -1,0 +1,5 @@
+apiVersion: v2
+name: brookside
+version: 0.1.0
+appVersion: "1.0.0"
+description: Lightweight chart for the Brookside BI orchestrator

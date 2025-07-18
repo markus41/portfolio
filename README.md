@@ -511,6 +511,23 @@ The compose file starts two services:
 The orchestrator is automatically configured to talk to the memory service at
 `http://memory:8000`.
 
+Prebuilt images are published for every release.  Pull the latest version from
+GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/brooksidebi/portfolio:<tag>
+```
+
+Replace `<tag>` with a version from the [releases page](https://github.com/BrooksideBI/portfolio/releases).
+
+The repository also provides a lightweight Helm chart under `helm/` which uses
+these images for Kubernetes deployments:
+
+```bash
+helm install brookside ./helm/brookside --set image.tag=<tag>
+```
+See [docs/helm.md](docs/helm.md) for additional configuration options.
+
 To use Redis instead of the bundled FastAPI memory server, start a Redis
 container and point the orchestrator at it:
 
@@ -699,8 +716,9 @@ Releases are automated through GitHub Actions. Pushing a tag matching
 
 1. Builds the Python package using `python -m build`.
 2. Creates multi-architecture Docker images (`linux/amd64` and `linux/arm64`).
-3. Publishes the images to Docker Hub or GHCR using credentials from repository
-   secrets (`DOCKER_USERNAME` and `DOCKER_PASSWORD`).
+3. Publishes the images to GitHub Container Registry using credentials from
+   repository secrets (`DOCKER_USERNAME` and `DOCKER_PASSWORD`). Images are
+   tagged with the release version and `latest`.
 4. Uploads the wheel and source distribution files as assets on the GitHub
    release.
 
