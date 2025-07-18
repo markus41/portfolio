@@ -325,7 +325,9 @@ automatically on startup and the connection is controlled via
 `DB_CONNECTION_STRING` (defaults to `sqlite:///data.db`). Every processed event
 is written to the `event_history` table. Retrieve past events using the
 `GET /history` endpoint which supports simple pagination via `limit` and
-`offset` query parameters.
+`offset` query parameters. You can also filter the results by `team` and
+`event_type` to view only the events relevant to a specific workflow or
+agent.
 
 ### 🌟 Creating Custom Teams
 
