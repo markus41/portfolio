@@ -166,15 +166,25 @@ def cmd_status(args: argparse.Namespace) -> None:
 
 
 def cmd_validate_team(args: argparse.Namespace) -> None:
-    """Validate a team JSON file against ``team_schema.json``."""
+    """Validate a team JSON file against ``team_schema.json``.
+
+    The command prints a JSON object describing the validation result. On
+    success the output is ``{"valid": true}``. When validation fails the
+    ``error`` field contains the reason extracted from the underlying
+    :class:`jsonschema.ValidationError` or raised exception.
+    """
 
     from .team_orchestrator import validate_team_config
 
     try:
         data = json.loads(Path(args.path).read_text())
         validate_team_config(data)
-    except Exception as exc:
-        print(json.dumps({"valid": False, "error": str(exc)}))
+    except Exception as exc:  # jsonschema.ValidationError or I/O errors
+        # ``exc`` may include contextual information such as the failing JSON
+        # pointer.  The ``message`` attribute is shorter and more suitable for
+        # end users when available.
+        error_msg = getattr(exc, "message", str(exc))
+        print(json.dumps({"valid": False, "error": error_msg}))
     else:
         print(json.dumps({"valid": True}))
 
