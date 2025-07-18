@@ -30,7 +30,13 @@ def _get_db_path() -> Path:
 
 
 def init_db() -> None:
-    """Create database tables if they do not yet exist."""
+    """Create database tables and indexes if they do not yet exist.
+
+    The function also performs a lightweight migration step to add indexes
+    on the ``event_history`` table for the ``timestamp`` and ``team`` columns.
+    ``PRAGMA index_list`` is used to detect existing indexes so that repeated
+    calls remain idempotent.
+    """
     path = _get_db_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(path) as conn:
@@ -66,6 +72,21 @@ def init_db() -> None:
             )
             """
         )
+
+        # ------------------------------------------------------------------
+        # Index creation / migration
+        # ------------------------------------------------------------------
+        existing_indexes = {
+            row[1] for row in conn.execute("PRAGMA index_list('event_history')")
+        }
+        if "idx_event_history_timestamp" not in existing_indexes:
+            conn.execute(
+                "CREATE INDEX idx_event_history_timestamp ON event_history(timestamp)"
+            )
+        if "idx_event_history_team" not in existing_indexes:
+            conn.execute(
+                "CREATE INDEX idx_event_history_team ON event_history(team)"
+            )
 
 
 # ---------------------------------------------------------------------------
