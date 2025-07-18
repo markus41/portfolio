@@ -74,6 +74,7 @@ def test_solution_orchestrator_logging(tmp_path, monkeypatch):
     entries = orch.get_recent_activity()
     assert len(entries) == 1
     assert entries[0]["agent_id"] == "dummy_agent_a"
+    assert "event_id" in entries[0]
     assert "timestamp" in entries[0]
 
 
@@ -119,6 +120,24 @@ class DummyMemory(BaseMemoryService):
         self.closed = True
 
 
+def test_stream_includes_event_id(tmp_path):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    orch = SolutionOrchestrator({"A": str(team)})
+
+    q = orch.subscribe("A")
+    orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {}})
+    msg = q.get_nowait()
+    orch.unsubscribe("A", q)
+
+    assert "event_id" in msg
+    assert msg["event"]["id"] == msg["event_id"]
+
+
 def test_async_context_closes_memory(tmp_path):
     team = _write_team(tmp_path, "dummy_agent_a")
 
@@ -136,3 +155,33 @@ def test_async_context_closes_memory(tmp_path):
 
     asyncio.run(_run())
     assert mem.closed is True
+
+
+def test_orchestrator_metrics(monkeypatch, tmp_path):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    calls = []
+
+    class DummyPusher:
+        def __init__(self, job="test"):
+            self.job = job
+
+        def push_metric(self, name, value, labels=None):
+            calls.append((name, value, labels))
+
+    monkeypatch.setattr("src.solution_orchestrator.PrometheusPusher", DummyPusher)
+    import src.solution_orchestrator as sol
+    monkeypatch.setattr(sol.settings, "PROMETHEUS_PUSHGATEWAY", "http://example")
+
+    orch = SolutionOrchestrator({"A": str(team)})
+    orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {}})
+
+    assert calls
+    name, value, labels = calls[0]
+    assert name == "orchestrator_events_total"
+    assert labels.get("team") == "A"
+    assert "event_id" in labels

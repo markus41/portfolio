@@ -3,6 +3,21 @@ from __future__ import annotations
 import json
 from unittest.mock import MagicMock, patch
 
+import sys
+import types
+import pytest
+
+httpx = pytest.importorskip("httpx")
+if getattr(httpx, "__name__", "").startswith("tests.httpx_stub"):
+    pytest.skip("httpx package required", allow_module_level=True)
+sys.modules.setdefault(
+    "prometheus_client",
+    types.SimpleNamespace(
+        CollectorRegistry=lambda: object(),
+        Gauge=lambda *a, **k: types.SimpleNamespace(labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)),
+        push_to_gateway=lambda *a, **k: None,
+    ),
+)
 from fastapi.testclient import TestClient
 
 import src.api as api

@@ -18,13 +18,36 @@ class ActivityLogger:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = Lock()
 
-    def log(self, agent_id: str, summary: str, *, ts: datetime | None = None) -> None:
-        """Write a single log entry with ``agent_id`` and ``summary``."""
+    def log(
+        self,
+        agent_id: str,
+        summary: str,
+        *,
+        ts: datetime | None = None,
+        event_id: str | None = None,
+    ) -> None:
+        """Write a single log entry.
+
+        Parameters
+        ----------
+        agent_id:
+            Identifier of the handling agent.
+        summary:
+            Short text describing the outcome.
+        ts:
+            Optional timestamp.  When omitted the current UTC time is used.
+        event_id:
+            Optional event identifier allowing logs to be correlated with
+            metrics and SSE streams.
+        """
+
         entry = {
             "timestamp": (ts or datetime.now(timezone.utc)).isoformat(),
             "agent_id": agent_id,
             "summary": summary,
         }
+        if event_id is not None:
+            entry["event_id"] = event_id
         line = json.dumps(entry)
         with self._lock:
             with self.path.open("a", encoding="utf-8") as fh:

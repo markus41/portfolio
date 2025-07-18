@@ -6,12 +6,15 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
 import asyncio
+import uuid
 from .utils import ActivityLogger
 
 from . import db
 
 from .agents.planner_agent import PlannerAgent
 from .workflows.graph import GraphWorkflowDefinition, GraphWorkflowEngine
+from .tools.metrics_tools.prometheus_tool import PrometheusPusher
+from .config import settings
 
 from .team_orchestrator import TeamOrchestrator
 
@@ -47,6 +50,9 @@ class SolutionOrchestrator:
         self.planner: Optional[PlannerAgent] = None
         self.activity_logger = ActivityLogger(log_path) if log_path else None
         self.persist_history = persist_history
+        self.metrics_pusher: PrometheusPusher | None = None
+        if settings.PROMETHEUS_PUSHGATEWAY:
+            self.metrics_pusher = PrometheusPusher(job="orchestrator")
         if planner_plans is not None:
             self.planner = PlannerAgent(self, planner_plans)
 
@@ -77,6 +83,9 @@ class SolutionOrchestrator:
         orchestrator = self.teams.get(team)
         if not orchestrator:
             return {"status": "unknown_team"}
+
+        event_id = event.get("id") or str(uuid.uuid4())
+        event["id"] = event_id
         result = await orchestrator.handle_event(event)
         self.history.append({"team": team, "event": event, "result": result})
 
@@ -91,9 +100,21 @@ class SolutionOrchestrator:
         if self.activity_logger:
             agent_id = str(event.get("type", "unknown"))
             summary = str(result.get("result", result))
-            self.activity_logger.log(agent_id, summary)
+            self.activity_logger.log(agent_id, summary, event_id=event_id)
 
-        self._publish(team, {"type": "activity", "event": event, "result": result})
+        if self.metrics_pusher:
+            labels = {"team": team, "event_type": str(event.get("type")), "event_id": event_id}
+            try:
+                self.metrics_pusher.push_metric("orchestrator_events_total", 1, labels)
+            except Exception:  # pragma: no cover - metrics failure must not break
+                pass
+
+        self._publish(team, {
+            "type": "activity",
+            "event_id": event_id,
+            "event": event,
+            "result": result,
+        })
 
         return result
 

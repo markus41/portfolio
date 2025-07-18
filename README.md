@@ -326,9 +326,10 @@ src.addEventListener('activity', (e) => console.log('activity', e.data));
 ### 📈 Activity Logs
 
 Every handled event is appended to a JSON Lines file. Each entry records the
-handling agent, a short summary and a timestamp. The `GET /activity` endpoint
-returns the most recent entries so that dashboards or monitoring tools can track
-agent behaviour.
+handling agent, a short summary and a timestamp. From this release an
+`event_id` is added to correlate log records with metrics and SSE messages. The
+`GET /activity` endpoint returns the most recent entries so that dashboards or
+monitoring tools can track agent behaviour.
 
 ### 🗃️ Persistent History
 
