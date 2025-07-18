@@ -421,7 +421,9 @@ process environment and a dotenv file.  Set ``ENV`` to choose which file is
 loaded (`.env` for ``ENV=prod`` or `.env.<ENV>` otherwise).  You can also set
 ``ENV_FILE`` to point at an explicit path.  The most common variables are
 summarised below. Any of them can be set in your shell or added to the chosen
-dotenv file before running the orchestrator or tests.
+dotenv file before running the orchestrator or tests. An example file named
+``.env.example`` at the repository root lists these variables—copy it to
+``.env`` and adjust the values for local development.
 
 | Variable | Purpose |
 |----------|---------|
