@@ -17,6 +17,7 @@ from .events import (
 )
 
 from .memory_service.base import BaseMemoryService
+from .memory_service.async_base import AsyncBaseMemoryService
 import logging
 
 
@@ -85,7 +86,10 @@ class BaseOrchestrator:
         logger.info(f"Handling event type={event_type}")
 
         if self.memory:
-            await run_maybe_async(self.memory.store, event_type or "unknown", payload)
+            if isinstance(self.memory, AsyncBaseMemoryService):
+                await self.memory.store(event_type or "unknown", payload)
+            else:
+                self.memory.store(event_type or "unknown", payload)
 
         agent = self.agents.get(event_type)
         if not agent:
@@ -182,3 +186,22 @@ class BaseOrchestrator:
         """Synchronous wrapper around :meth:`delegate_by_skill`."""
 
         return run_sync(self.delegate_by_skill(skill, payload))
+
+    # ------------------------------------------------------------------
+    # Async context manager hooks
+    # ------------------------------------------------------------------
+    async def __aenter__(self) -> "BaseOrchestrator":
+        """Return ``self`` for use with ``async with`` blocks."""
+
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        """Close the underlying memory service if required."""
+
+        if not self.memory:
+            return
+
+        if isinstance(self.memory, AsyncBaseMemoryService):
+            await self.memory.aclose()
+        elif hasattr(self.memory, "aclose"):
+            await run_maybe_async(self.memory.aclose)

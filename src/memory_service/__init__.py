@@ -1,6 +1,7 @@
 """Memory service backends providing persistent storage for events."""
 
 from .base import BaseMemoryService
+from .async_base import AsyncBaseMemoryService
 from .rest import RestMemoryService
 
 try:  # optional dependency
@@ -13,6 +14,7 @@ from .embedding import EmbeddingMemoryService
 
 __all__ = [
     "BaseMemoryService",
+    "AsyncBaseMemoryService",
     "RestMemoryService",
     "AsyncRestMemoryService",
     "FileMemoryService",

@@ -1,8 +1,9 @@
 # Memory Service
 
 The `MemoryService` component persists events so that agents can recall prior
-context. Implementations live under `src/memory_service/` and share a common
-`BaseMemoryService` interface.  The default backend is a thin REST client in
+context. Implementations live under `src/memory_service/` and share either the
+`BaseMemoryService` synchronous interface or the `AsyncBaseMemoryService`
+asynchronous variant. The default backend is a thin REST client in
 `src/memory_service/rest.py` expecting a server exposing `/store` and `/fetch`
 endpoints.
 
@@ -97,4 +98,6 @@ Select the backend using the ``MEMORY_BACKEND`` environment variable (``rest``,
 so they can be placed in a ``.env`` file or exported in your shell.
 
 You can also provide your own implementation by subclassing
-``BaseMemoryService`` and passing an instance to the orchestrator.
+``BaseMemoryService`` for synchronous backends or
+``AsyncBaseMemoryService`` when the operations should be awaited and run
+non-blocking. Instances of either class can be passed to the orchestrator.
