@@ -280,6 +280,16 @@ curl -H "X-API-Key: mysecret" \
      -d '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
 ```
 
+Add a team at runtime or remove one again:
+
+```bash
+curl -H "X-API-Key: mysecret" \
+     -X POST http://localhost:8000/teams \
+     -d '{"name": "marketing", "path": "src/teams/marketing_team.json"}'
+
+curl -H "X-API-Key: mysecret" -X DELETE http://localhost:8000/teams/marketing
+```
+
 Fetch the latest status:
 
 ```bash

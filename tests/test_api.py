@@ -39,6 +39,17 @@ def _http_post(
         return err.code, err.read().decode()
 
 
+def _http_delete(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
+    """Send an HTTP DELETE request and return status code and body."""
+
+    req = urllib_request.Request(url, headers=headers or {}, method="DELETE")
+    try:
+        with urllib_request.urlopen(req) as resp:  # noqa: S310 -- in tests
+            return resp.getcode(), resp.read().decode()
+    except urllib_request.HTTPError as err:  # type: ignore[attr-defined]
+        return err.code, err.read().decode()
+
+
 def _http_options(
     url: str, headers: dict[str, str] | None = None
 ) -> tuple[int, str, str]:
@@ -304,6 +315,48 @@ def test_stream_endpoint(tmp_path):
             second = resp.readline().decode()
             assert "event: status" in first
             assert "handled" in second
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_add_and_remove_team_via_api(tmp_path):
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    orch = SolutionOrchestrator({})
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    try:
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/teams",
+            {"name": "demo", "path": str(team_cfg)},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 201
+
+        code, body = _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"x": 2}},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        assert json.loads(body)["result"]["echo"]["x"] == 2
+
+        code, _ = _http_delete(
+            f"http://127.0.0.1:{port}/teams/demo",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+
+        code, _ = _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent"},
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 404
     finally:
         server.should_exit = True
         thread.join(timeout=5)

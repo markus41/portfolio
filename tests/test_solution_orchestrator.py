@@ -8,6 +8,7 @@ import pytest
 
 from src.solution_orchestrator import SolutionOrchestrator
 from src.agents.base_agent import BaseAgent
+from src import db
 
 
 class DummyAgentA(BaseAgent):
@@ -100,3 +101,32 @@ def test_solution_orchestrator_concurrent(tmp_path):
 
     assert res_a["result"]["handled_by"] == "A"
     assert res_b["result"]["handled_by"] == "B"
+
+
+def test_add_and_remove_team(tmp_path):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    db.init_db()
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    orch = SolutionOrchestrator({})
+    orch.add_team("demo", str(team))
+    assert "demo" in orch.teams
+
+    with pytest.raises(ValueError):
+        orch.add_team("demo", str(team))
+
+    out = orch.handle_event_sync("demo", {"type": "dummy_agent_a"})
+    assert out["result"]["handled_by"] == "A"
+
+    orch.remove_team("demo")
+    assert "demo" not in orch.teams
+
+    with pytest.raises(ValueError):
+        orch.remove_team("demo")
+
+    out = orch.handle_event_sync("demo", {"type": "dummy_agent_a"})
+    assert out["status"] == "unknown_team"

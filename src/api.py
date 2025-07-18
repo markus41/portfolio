@@ -37,6 +37,13 @@ class Event(BaseModel):
     payload: Dict[str, Any] = {}
 
 
+class TeamModel(BaseModel):
+    """Schema for creating a new team."""
+
+    name: str
+    path: str
+
+
 class NodeModel(BaseModel):
     """Representation of a workflow node."""
 
@@ -105,6 +112,26 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         supplied = x_api_key or request.query_params.get("api_key")
         if required and supplied != required:
             raise HTTPException(status_code=401, detail="invalid api key")
+
+    @app.post("/teams", status_code=201)
+    def add_team(team: TeamModel, _=Depends(_auth)) -> Dict[str, Any]:
+        """Register a new team configuration on the orchestrator."""
+
+        try:
+            orch.add_team(team.name, team.path)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
+        return {"status": "created", "team": team.name}
+
+    @app.delete("/teams/{name}")
+    def delete_team(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+        """Remove ``name`` from the orchestrator registry."""
+
+        try:
+            orch.remove_team(name)
+        except ValueError:
+            raise HTTPException(status_code=404, detail="unknown team")
+        return {"status": "removed", "team": name}
 
     @app.post("/teams/{name}/event")
     async def handle_event(name: str, event: Event, _=Depends(_auth)) -> Dict[str, Any]:

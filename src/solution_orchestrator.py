@@ -118,6 +118,46 @@ class SolutionOrchestrator:
             return []
         return self.activity_logger.tail(limit)
 
+    def add_team(self, name: str, path: str) -> None:
+        """Load ``path`` and register a new team named ``name``.
+
+        Parameters
+        ----------
+        name:
+            Identifier used when routing events to this team.
+        path:
+            Filesystem path to the JSON/YAML team configuration.
+
+        Raises
+        ------
+        ValueError
+            If ``name`` is already present in :attr:`teams`.
+        """
+
+        if name in self.teams:
+            raise ValueError(f"Team '{name}' already exists")
+        self.teams[name] = TeamOrchestrator(Path(path))
+
+    def remove_team(self, name: str) -> None:
+        """Remove ``name`` from the orchestrator.
+
+        Parameters
+        ----------
+        name:
+            Registered team identifier.
+
+        Raises
+        ------
+        ValueError
+            If ``name`` is not a known team.
+        """
+
+        if name not in self.teams:
+            raise ValueError(f"Team '{name}' not found")
+        self.teams.pop(name)
+        self.status.pop(name, None)
+        self._subscribers.pop(name, None)
+
     def execute_goal(self, goal: str) -> Dict[str, Any]:
         """Run the planner for the given ``goal``.
 
