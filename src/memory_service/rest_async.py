@@ -21,13 +21,13 @@ except Exception:  # pragma: no cover - test environment fallback
         MockTransport=None,
     )
 
-from .base import BaseMemoryService
+from .async_base import AsyncBaseMemoryService
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class AsyncRestMemoryService(BaseMemoryService):
+class AsyncRestMemoryService(AsyncBaseMemoryService):
     """Persist events by calling a REST API asynchronously via ``httpx``."""
 
     def __init__(
