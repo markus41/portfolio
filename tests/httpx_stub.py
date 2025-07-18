@@ -18,7 +18,14 @@ class Request:
         return self._json
 
 
-class MockTransport:
+class BaseTransport:
+    """Mimic the minimal httpx BaseTransport interface used by Starlette."""
+
+    async def handle_async_request(self, request):  # pragma: no cover - interface
+        raise NotImplementedError
+
+
+class MockTransport(BaseTransport):
     def __init__(self, handler):
         self.handler = handler
 
@@ -44,3 +51,40 @@ class AsyncClient:
 
     def close(self):
         pass
+
+
+class Client:
+    """Synchronous wrapper used by FastAPI's TestClient."""
+
+    def __init__(self, transport=None, base_url=""):
+        self._async = AsyncClient(transport=transport, base_url=base_url)
+
+    def get(self, path, params=None):
+        import asyncio
+
+        return asyncio.get_event_loop().run_until_complete(
+            self._async.get(path, params=params)
+        )
+
+    def post(self, path, json=None):
+        import asyncio
+
+        return asyncio.get_event_loop().run_until_complete(
+            self._async.post(path, json=json)
+        )
+
+    def close(self):
+        pass
+
+
+_client = type(
+    "_client",
+    (),
+    {
+        "CookieTypes": object,
+        "UseClientDefault": object(),
+        "USE_CLIENT_DEFAULT": object(),
+    },
+)
+
+_types = type("_types", (), {"URLTypes": object})

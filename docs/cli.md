@@ -49,6 +49,17 @@ brookside-cli validate-team src/teams/sales_team_full.json
 
 The output indicates whether the file is valid and prints an error message if not.
 
+## validate-event
+
+Validate an individual event payload against the built-in schemas.
+
+```bash
+brookside-cli validate-event lead_capture '{"form_data": {}, "source": "web"}'
+```
+
+The command reports whether the payload conforms to the model for the given
+event type and prints validation errors on failure.
+
 ## assist
 
 Suggest a workflow template based on a natural language task description.
@@ -78,4 +89,6 @@ the JSON result.
 - **Invalid JSON event** – If the payload passed to `--event` cannot be parsed, the command exits with `Invalid JSON event`.
 - **Invalid response** – When the server sends malformed JSON, the CLI reports `Invalid JSON response`.
 - **Schema errors** – `validate-team` prints `{"valid": false}` when the file does not match the schema. Inspect the accompanying `error` field for details.
+- **Event validation errors** – `validate-event` returns `{"valid": false}` with
+  an explanation when the payload fails model validation.
 

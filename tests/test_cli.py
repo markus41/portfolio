@@ -120,6 +120,36 @@ def test_cli_validate_team(tmp_path):
     assert isinstance(out.get("error"), str) and out["error"]
 
 
+def test_cli_validate_event():
+    """`validate-event` should report payload validation results."""
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "src.cli",
+        "validate-event",
+        "lead_capture",
+        '{"form_data": {}, "source": "web"}',
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+    assert res.returncode == 0
+    assert json.loads(res.stdout.strip())["valid"] is True
+
+    bad_cmd = [
+        sys.executable,
+        "-m",
+        "src.cli",
+        "validate-event",
+        "lead_capture",
+        '{"form_data": {}}',
+    ]
+    res_bad = subprocess.run(bad_cmd, capture_output=True, text=True, timeout=5)
+    assert res_bad.returncode == 0
+    out = json.loads(res_bad.stdout.strip())
+    assert out["valid"] is False
+    assert "source" in str(out.get("error"))
+
+
 @pytest.mark.parametrize(
     "task,expected",
     [

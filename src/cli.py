@@ -232,6 +232,43 @@ def cmd_validate_team(args: argparse.Namespace) -> None:
         print(json.dumps({"valid": True}))
 
 
+def cmd_validate_event(args: argparse.Namespace) -> None:
+    """Validate an event payload against the built-in schemas.
+
+    Parameters
+    ----------
+    args.type:
+        Name of the event type. Must correspond to a key in
+        :attr:`~src.base_orchestrator.BaseOrchestrator.event_schemas`.
+    args.payload:
+        JSON string containing the payload to validate.
+    """
+
+    from .base_orchestrator import BaseOrchestrator
+
+    orch = BaseOrchestrator()
+    schema = orch.event_schemas.get(args.type)
+    if schema is None:
+        print(json.dumps({"valid": False, "error": "unknown_event_type"}))
+        return
+    try:
+        data = json.loads(args.payload)
+    except json.JSONDecodeError as exc:
+        print(json.dumps({"valid": False, "error": f"invalid_json: {exc}"}))
+        return
+    try:
+        schema.parse_obj(data)
+    except Exception as exc:
+        # ``ValidationError`` exposes ``errors()`` with structured details
+        if hasattr(exc, "errors"):
+            error_msg = exc.errors()
+        else:
+            error_msg = str(exc)
+        print(json.dumps({"valid": False, "error": error_msg}))
+    else:
+        print(json.dumps({"valid": True}))
+
+
 def _match_workflow(task: str) -> str | None:
     """Return the workflow template matching ``task`` if any."""
 
@@ -334,6 +371,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_p.add_argument("path", help="Path to team JSON file")
     validate_p.set_defaults(func=cmd_validate_team)
+
+    validate_event_p = sub.add_parser(
+        "validate-event", help="Validate an event payload"
+    )
+    validate_event_p.add_argument("type", help="Event type")
+    validate_event_p.add_argument("payload", help="Event payload JSON string")
+    validate_event_p.set_defaults(func=cmd_validate_event)
 
     return parser
 

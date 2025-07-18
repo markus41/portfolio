@@ -135,3 +135,24 @@ def test_unknown_event_type(monkeypatch):
     assert res == {"status": "ignored"}
     assert store_calls == {"key": "unknown", "payload": payload}
     assert called == []
+
+
+def test_invalid_event_payload(monkeypatch):
+    """Invalid payloads should result in an ``invalid`` status."""
+
+    class DummyScheduler:
+        def create_event(self, cid, ev):
+            return {"id": "evt"}
+
+    monkeypatch.setattr(
+        "src.tools.scheduler_tool.SchedulerTool",
+        lambda: DummyScheduler(),
+    )
+
+    orch = Orchestrator("http://memory")
+
+    # missing required field 'source' for LeadCaptureEvent
+    payload = {"form_data": {}}
+    res = orch.handle_event_sync({"type": "lead_capture", "payload": payload})
+
+    assert res["status"] == "invalid"

@@ -1,28 +1,33 @@
 from __future__ import annotations
 
-"""Event dataclasses used across orchestrators and agents."""
+"""Pydantic models used as event payload schemas.
 
-from dataclasses import dataclass
+The project originally stored event data in simple ``dataclasses``.  In order
+to benefit from input validation and rich error messages we now define these
+payloads as :class:`pydantic.BaseModel` subclasses.  The models remain lightweight
+and are only concerned with structure validation; they do not implement any
+behaviour.
+"""
+
 from typing import Any, Dict, List
 
+from pydantic import BaseModel
 
-@dataclass
-class LeadCaptureEvent:
+
+class LeadCaptureEvent(BaseModel):
     """Event payload for :class:`LeadCaptureAgent`."""
 
     form_data: Dict[str, Any]
     source: str
 
 
-@dataclass
-class ChatbotEvent:
+class ChatbotEvent(BaseModel):
     """Event payload for :class:`ChatbotAgent`."""
 
     messages: List[Dict[str, Any]]
 
 
-@dataclass
-class CRMPipelineEvent:
+class CRMPipelineEvent(BaseModel):
     """Event payload for :class:`CRMPipelineAgent`."""
 
     deal_id: str
@@ -30,16 +35,14 @@ class CRMPipelineEvent:
     followup_template: Dict[str, Any]
 
 
-@dataclass
-class SegmentationEvent:
+class SegmentationEvent(BaseModel):
     """Event payload for :class:`SegmentationAdTargetingAgent`."""
 
     segments: List[Dict[str, Any]]
     budget_per_segment: int
 
 
-@dataclass
-class IntegrationRequest:
+class IntegrationRequest(BaseModel):
     """Event payload for :class:`IntegrationAgent`."""
 
     name: str

@@ -13,6 +13,7 @@ from .events import (
     SegmentationEvent,
     IntegrationRequest,
 )
+from pydantic import ValidationError
 
 from .memory_service.base import BaseMemoryService
 import logging
@@ -65,8 +66,8 @@ class BaseOrchestrator:
         schema = self.event_schemas.get(event_type)
         if schema:
             try:
-                payload_obj = schema(**payload)
-            except TypeError as exc:
+                payload_obj = schema.parse_obj(payload)
+            except (TypeError, ValidationError) as exc:
                 logger.warning(f"Invalid payload for {event_type}: {exc}")
                 return {"status": "invalid"}
         else:
