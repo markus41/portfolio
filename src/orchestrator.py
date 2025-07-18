@@ -37,6 +37,7 @@ from .memory_service import RestMemoryService
 from .memory_service.rest_async import AsyncRestMemoryService
 from .memory_service.file import FileMemoryService
 from .memory_service.redis import RedisMemoryService
+from .memory_service.embedding import EmbeddingMemoryService
 from .memory_service.base import BaseMemoryService
 from .config import settings
 import logging
@@ -111,7 +112,8 @@ class Orchestrator(BaseOrchestrator):
             Optional path to a JSON mapping of event types to agent classes.
         memory_backend:
             Select the memory implementation: ``"rest"`` (default), ``"rest_async"``,
-            ``"file"`` or ``"redis"``.
+            ``"file"``, ``"redis"`` or ``"embedding"`` for in-memory similarity
+            search.
         memory_file:
             Path used by the ``file`` backend if specified.
         """
@@ -125,6 +127,9 @@ class Orchestrator(BaseOrchestrator):
         elif backend == "redis":
             url = settings.MEMORY_REDIS_URL
             memory = RedisMemoryService(url)
+        elif backend == "embedding":
+            field = settings.MEMORY_EMBED_FIELD
+            memory = EmbeddingMemoryService(text_key=field)
         elif backend == "rest_async":
             endpoint = memory_endpoint or settings.MEMORY_ENDPOINT
             memory = AsyncRestMemoryService(endpoint)

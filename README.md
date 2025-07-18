@@ -425,8 +425,9 @@ dotenv file before running the orchestrator or tests.
 | `CRM_API_URL` / `CRM_API_KEY` | Endpoint and key for your CRM integration used by `crm_connector.fetch_deals` |
 | `SENDGRID_API_KEY` | Sending transactional email |
 | `REDIS_URL` | Backend store for caching and message passing |
-| `MEMORY_BACKEND` | Selects memory service (`rest`, `file`, `redis`) |
+| `MEMORY_BACKEND` | Selects memory service (`rest`, `rest_async`, `file`, `redis`, `embedding`) |
 | `MEMORY_REDIS_URL` | Redis connection when `MEMORY_BACKEND=redis` |
+| `MEMORY_EMBED_FIELD` | Payload field containing text when `MEMORY_BACKEND=embedding` |
 | `SLACK_WEBHOOK_URL` | Post notifications to Slack channels |
 | `TEAMS_WEBHOOK_URL` | Microsoft Teams notifications |
 | `FACEBOOK_ACCESS_TOKEN` | Used by `AdTool` to create Facebook campaigns |
