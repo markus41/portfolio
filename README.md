@@ -7,6 +7,8 @@
 
 Welcome to the Brookside BI Agentic System! This repo contains a modular, turn-based framework of specialized AI “expert” agents that power everything from lead capture to contract delivery, all orchestrated under a central Orchestrator agent. Whether you’re adding a new campaign agent or tweaking your CRM integration, you’ll find a clean separation of concerns that makes extending and testing your workflow a breeze. A lightweight `crm_connector` module now fetches deals directly from your CRM using `CRM_API_URL` and `CRM_API_KEY`.
 
+Full documentation is available at [https://brooksidebi.github.io/portfolio/](https://brooksidebi.github.io/portfolio/).
+
 For a deeper explanation of the architecture—including the event bus, memory service and how AutoGen teams are loaded and how teams start running—see [docs/architecture.md](docs/architecture.md).
 
 ## ⚡ Quick Start

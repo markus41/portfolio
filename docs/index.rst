@@ -15,4 +15,6 @@ Welcome to the documentation for the Brookside BI agentic system.
    metrics
    agents_overview
    workflows
+   cli
+   api_examples
 
