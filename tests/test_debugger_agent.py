@@ -53,7 +53,9 @@ def test_run_handles_exception(monkeypatch):
         def create(*args, **kwargs):
             raise RuntimeError("bad")
 
-    monkeypatch.setattr(dbg, "openai", types.SimpleNamespace(ChatCompletion=FailingChatCompletion()))
+    monkeypatch.setattr(
+        dbg, "openai", types.SimpleNamespace(ChatCompletion=FailingChatCompletion())
+    )
 
     seen = []
     orig = agent._ask_gpt

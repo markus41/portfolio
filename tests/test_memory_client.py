@@ -28,12 +28,14 @@ class DummyResponse:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _patch_post(monkeypatch, capture):
     def fake_post(url, json=None, headers=None):
-        capture.append({'url': url, 'json': json, 'headers': headers})
-        return DummyResponse({'ok': True})
+        capture.append({"url": url, "json": json, "headers": headers})
+        return DummyResponse({"ok": True})
+
     monkeypatch.setattr(
-        'src.tools.memory_tools.memory_client.requests.post',
+        "src.tools.memory_tools.memory_client.requests.post",
         fake_post,
         raising=False,
     )
@@ -41,10 +43,11 @@ def _patch_post(monkeypatch, capture):
 
 def _patch_get(monkeypatch, capture):
     def fake_get(url, params=None, headers=None):
-        capture.append({'url': url, 'params': params, 'headers': headers})
-        return DummyResponse({'result': True})
+        capture.append({"url": url, "params": params, "headers": headers})
+        return DummyResponse({"result": True})
+
     monkeypatch.setattr(
-        'src.tools.memory_tools.memory_client.requests.get',
+        "src.tools.memory_tools.memory_client.requests.get",
         fake_get,
         raising=False,
     )
@@ -54,19 +57,20 @@ def _patch_get(monkeypatch, capture):
 # Tests
 # ---------------------------------------------------------------------------
 
+
 def test_store(monkeypatch):
     calls = []
     _patch_post(monkeypatch, calls)
-    client = MemoryClient('http://api', 'tok')
+    client = MemoryClient("http://api", "tok")
 
-    resp = client.store('s3://x', {'a': 1})
+    resp = client.store("s3://x", {"a": 1})
 
     assert isinstance(resp, DummyResponse)
     assert calls == [
         {
-            'url': 'http://api/store',
-            'json': {'blob_uri': 's3://x', 'metadata': {'a': 1}},
-            'headers': {'Authorization': 'Bearer tok'},
+            "url": "http://api/store",
+            "json": {"blob_uri": "s3://x", "metadata": {"a": 1}},
+            "headers": {"Authorization": "Bearer tok"},
         }
     ]
 
@@ -74,16 +78,16 @@ def test_store(monkeypatch):
 def test_retrieve(monkeypatch):
     calls = []
     _patch_get(monkeypatch, calls)
-    client = MemoryClient('http://api', 'tok')
+    client = MemoryClient("http://api", "tok")
 
-    result = client.retrieve('cats', k=3, filters={'tag': 't'})
+    result = client.retrieve("cats", k=3, filters={"tag": "t"})
 
-    assert result == {'result': True}
+    assert result == {"result": True}
     assert calls == [
         {
-            'url': 'http://api/retrieve',
-            'params': {'query': 'cats', 'k': 3, 'filters': {'tag': 't'}},
-            'headers': {'Authorization': 'Bearer tok'},
+            "url": "http://api/retrieve",
+            "params": {"query": "cats", "k": 3, "filters": {"tag": "t"}},
+            "headers": {"Authorization": "Bearer tok"},
         }
     ]
 
@@ -91,15 +95,15 @@ def test_retrieve(monkeypatch):
 def test_forget(monkeypatch):
     calls = []
     _patch_post(monkeypatch, calls)
-    client = MemoryClient('http://api', 'tok')
+    client = MemoryClient("http://api", "tok")
 
-    client.forget('id123')
+    client.forget("id123")
 
     assert calls == [
         {
-            'url': 'http://api/forget',
-            'json': {'doc_id': 'id123'},
-            'headers': {'Authorization': 'Bearer tok'},
+            "url": "http://api/forget",
+            "json": {"doc_id": "id123"},
+            "headers": {"Authorization": "Bearer tok"},
         }
     ]
 
@@ -107,16 +111,15 @@ def test_forget(monkeypatch):
 def test_push_fact(monkeypatch):
     calls = []
     _patch_post(monkeypatch, calls)
-    client = MemoryClient('http://api', 'tok')
+    client = MemoryClient("http://api", "tok")
 
-    fact = {'foo': 'bar'}
+    fact = {"foo": "bar"}
     client.push_fact(fact)
 
     assert calls == [
         {
-            'url': 'http://api/push_fact',
-            'json': fact,
-            'headers': {'Authorization': 'Bearer tok'},
+            "url": "http://api/push_fact",
+            "json": fact,
+            "headers": {"Authorization": "Bearer tok"},
         }
     ]
-

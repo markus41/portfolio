@@ -70,7 +70,9 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = types.SimpleNamespace(validate=_validate, ValidationError=_VE)
 
 
-_WF_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "docs" / "workflow_schema.json"
+_WF_SCHEMA_PATH = (
+    Path(__file__).resolve().parent.parent / "docs" / "workflow_schema.json"
+)
 try:  # pragma: no cover - schema may be missing
     _WORKFLOW_SCHEMA = json.loads(_WF_SCHEMA_PATH.read_text())
 except FileNotFoundError:  # pragma: no cover - schema missing

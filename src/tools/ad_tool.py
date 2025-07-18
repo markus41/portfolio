@@ -35,9 +35,7 @@ class AdTool:
             ``{"platform": "facebook", "campaign_id": str | None, "status": str, "message": str | None}``
         """
 
-        logger.info(
-            "Creating FB campaign %s for audiences %s", name, audience_ids
-        )
+        logger.info("Creating FB campaign %s for audiences %s", name, audience_ids)
         payload = {
             "name": name,
             "audience_ids": audience_ids,
@@ -87,9 +85,7 @@ class AdTool:
             ``{"platform": "google", "campaign_id": str | None, "status": str, "message": str | None}``
         """
 
-        logger.info(
-            "Creating Google Ads campaign %s on keywords %s", name, keywords
-        )
+        logger.info("Creating Google Ads campaign %s on keywords %s", name, keywords)
         payload = {"name": name, "keywords": keywords, "daily_budget": budget}
         params = {"key": self.google_key}
         url = "https://googleads.googleapis.com/v14/campaigns"

@@ -80,9 +80,7 @@ def test_ecommerce_agent(monkeypatch):
             orders.append(order)
             return {"id": "order123"}
 
-    monkeypatch.setattr(
-        "src.tools.ecommerce_tool.EcommerceTool", DummyEcommerce
-    )
+    monkeypatch.setattr("src.tools.ecommerce_tool.EcommerceTool", DummyEcommerce)
 
     agent = EcommerceAgent()
     result = agent.run({"order": {"sku": "A", "qty": 1}})

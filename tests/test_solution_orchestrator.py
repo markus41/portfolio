@@ -57,7 +57,9 @@ def test_solution_orchestrator_routing(tmp_path, monkeypatch):
     mod_b.DummyAgentB = DummyAgentB
     sys.modules["src.agents.dummy_agent_b"] = mod_b
 
-    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, persist_history=False)
+    orch = SolutionOrchestrator(
+        {"A": str(team_a), "B": str(team_b)}, persist_history=False
+    )
 
     out_a = orch.handle_event_sync(
         "A", {"type": "dummy_agent_a", "payload": {"foo": 1}}
@@ -80,7 +82,9 @@ def test_solution_orchestrator_logging(tmp_path, monkeypatch):
     sys.modules["src.agents.dummy_agent_a"] = mod_a
 
     log_path = tmp_path / "activity.jsonl"
-    orch = SolutionOrchestrator({"A": str(team)}, log_path=str(log_path), persist_history=False)
+    orch = SolutionOrchestrator(
+        {"A": str(team)}, log_path=str(log_path), persist_history=False
+    )
 
     orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {"x": 1}})
 
@@ -102,7 +106,9 @@ def test_solution_orchestrator_concurrent(tmp_path):
     mod_b.DummyAgentB = DummyAgentB
     sys.modules["src.agents.dummy_agent_b"] = mod_b
 
-    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, persist_history=False)
+    orch = SolutionOrchestrator(
+        {"A": str(team_a), "B": str(team_b)}, persist_history=False
+    )
 
     async def _run():
         return await asyncio.gather(
@@ -125,7 +131,9 @@ class DummyMemory(BaseMemoryService):
     def store(self, key: str, payload: dict) -> bool:  # pragma: no cover - unused
         return True
 
-    def fetch(self, key: str, top_k: int = 5) -> list[dict]:  # pragma: no cover - unused
+    def fetch(
+        self, key: str, top_k: int = 5
+    ) -> list[dict]:  # pragma: no cover - unused
         return []
 
     async def aclose(self) -> None:
