@@ -1,0 +1,25 @@
+{
+  "name": "basic_sales_flow",
+  "nodes": [
+    {
+      "id": "capture",
+      "type": "agent",
+      "label": "Capture Lead",
+      "config": {
+        "team": "sales",
+        "event": {"type": "lead_capture", "payload": {"email": "alice@example.com"}}
+      }
+    },
+    {
+      "id": "followup",
+      "type": "agent",
+      "label": "Follow Up",
+      "config": {
+        "team": "sales",
+        "event": {"type": "crm_pipeline", "payload": {"deal_id": "d1"}}
+      }
+    }
+  ],
+  "edges": [{"source": "capture", "target": "followup"}]
+}
+
