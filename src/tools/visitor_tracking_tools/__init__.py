@@ -1,4 +1,3 @@
-
 from .session_stitcher import SessionStitcher
 from .analytics_client import AnalyticsClient
 

@@ -43,4 +43,5 @@ class EmbeddingMemoryService(BaseMemoryService):
         )
         return [payload for _, payload in ranked[:top_k]]
 
+
 __all__ = ["EmbeddingMemoryService"]

@@ -20,6 +20,7 @@ from .config import settings
 # Database initialisation
 # ---------------------------------------------------------------------------
 
+
 def _get_db_path() -> Path:
     """Return the path to the SQLite database file based on settings."""
     url = settings.DB_CONNECTION_STRING
@@ -144,4 +145,3 @@ def fetch_history(
             }
         )
     return history
-

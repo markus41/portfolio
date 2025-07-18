@@ -16,7 +16,9 @@ def test_dev_assist_creates_files(tmp_path: Path) -> None:
     cmd = [sys.executable, "-m", "src.dev_assist", "Demo Module"]
 
     # Act
-    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True, env=env, timeout=5)
+    result = subprocess.run(
+        cmd, cwd=tmp_path, capture_output=True, text=True, env=env, timeout=5
+    )
 
     # Assert
     assert result.returncode == 0
@@ -27,7 +29,6 @@ def test_dev_assist_creates_files(tmp_path: Path) -> None:
 
     assert code_file.read_text() == '"""TODO: Demo Module."""\n'
     expected_test = (
-        '"""Tests for {name}"""\n\n\n'
-        "def test_placeholder():\n    assert True\n"
+        '"""Tests for {name}"""\n\n\n' "def test_placeholder():\n    assert True\n"
     )
     assert test_file.read_text() == expected_test

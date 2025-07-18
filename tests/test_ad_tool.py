@@ -15,12 +15,15 @@ sys.modules.setdefault(
 import requests
 from src.tools.ad_tool import AdTool
 
+
 class DummyResponse:
     def __init__(self, data, exc=None):
         self._data = data
         self._exc = exc
+
     def json(self):
         return self._data
+
     def raise_for_status(self):
         if self._exc:
             raise self._exc
@@ -80,4 +83,3 @@ def test_create_google_campaign_error(monkeypatch):
     assert result["campaign_id"] is None
     assert result["status"] == "error"
     assert "fail" in result["message"]
-

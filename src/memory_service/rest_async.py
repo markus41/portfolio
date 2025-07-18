@@ -8,6 +8,7 @@ import types
 try:  # optional dependency
     import httpx  # type: ignore
 except Exception:  # pragma: no cover - test environment fallback
+
     async def _ok(*args, **kwargs):
         return types.SimpleNamespace(status_code=200, json=lambda: [])
 
@@ -29,7 +30,9 @@ logger = logging.getLogger(__name__)
 class AsyncRestMemoryService(BaseMemoryService):
     """Persist events by calling a REST API asynchronously via ``httpx``."""
 
-    def __init__(self, endpoint: str, *, client: Optional[httpx.AsyncClient] = None) -> None:
+    def __init__(
+        self, endpoint: str, *, client: Optional[httpx.AsyncClient] = None
+    ) -> None:
         self.endpoint = endpoint.rstrip("/")
         self._client = client or httpx.AsyncClient(base_url=self.endpoint)
 

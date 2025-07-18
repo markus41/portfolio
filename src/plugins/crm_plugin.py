@@ -34,9 +34,7 @@ class CRMPlugin(BaseToolPlugin):
         """Send ``payload`` to the CRM API and return the JSON response."""
 
         if not getattr(requests, "post", None):  # pragma: no cover - optional dep
-            logger.warning(
-                "requests package is unavailable; returning empty response"
-            )
+            logger.warning("requests package is unavailable; returning empty response")
             return {}
 
         action = payload.get("action", "record")

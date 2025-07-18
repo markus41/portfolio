@@ -17,6 +17,7 @@ sys.modules.setdefault(
 from src.base_orchestrator import BaseOrchestrator
 from src.agents.base_agent import BaseAgent
 
+
 class BudgetAgent(BaseAgent):
     token_budget = 10
     loop_budget = 1
@@ -53,12 +54,15 @@ def test_usage_metrics(monkeypatch):
     class DummyPusher:
         def __init__(self, job="test"):
             pass
+
         def push_metric(self, name, value, labels=None):
             pushed.append((name, value, labels))
 
     monkeypatch.setattr("src.base_orchestrator.PrometheusPusher", DummyPusher)
     # Force metrics even without environment variable
-    monkeypatch.setattr("src.base_orchestrator.settings.PROMETHEUS_PUSHGATEWAY", "http://gw")
+    monkeypatch.setattr(
+        "src.base_orchestrator.settings.PROMETHEUS_PUSHGATEWAY", "http://gw"
+    )
 
     orch = BaseOrchestrator()
     orch.agents = {"budget": BudgetAgent()}

@@ -59,12 +59,8 @@ def _write_config(tmp_path: Path) -> Path:
 
 def test_plan_and_execute(monkeypatch, tmp_path):
     path = _write_config(tmp_path)
-    monkeypatch.setattr(
-        "src.agents.integration_agent.CRMConnector", StubConnector
-    )
-    monkeypatch.setattr(
-        "src.agents.integration_agent.ERPConnector", StubConnector
-    )
+    monkeypatch.setattr("src.agents.integration_agent.CRMConnector", StubConnector)
+    monkeypatch.setattr("src.agents.integration_agent.ERPConnector", StubConnector)
     agent = IntegrationAgent(str(path))
     plan = agent.plan_integrations()[0]
     agent.execute_integration(plan)
@@ -75,12 +71,8 @@ def test_plan_and_execute(monkeypatch, tmp_path):
 
 def test_retry_logic(monkeypatch, tmp_path):
     path = _write_config(tmp_path)
-    monkeypatch.setattr(
-        "src.agents.integration_agent.CRMConnector", FailingConnector
-    )
-    monkeypatch.setattr(
-        "src.agents.integration_agent.ERPConnector", StubConnector
-    )
+    monkeypatch.setattr("src.agents.integration_agent.CRMConnector", FailingConnector)
+    monkeypatch.setattr("src.agents.integration_agent.ERPConnector", StubConnector)
     monkeypatch.setattr("time.sleep", lambda x: None)
     agent = IntegrationAgent(str(path))
     plan = agent.plan_integrations()[0]

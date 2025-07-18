@@ -11,4 +11,3 @@ def test_version_matches_setup_cfg():
     expected = parser["metadata"]["version"]
     assert src.__version__ == expected
     assert src.get_version() == expected
-

@@ -29,4 +29,3 @@ def test_orchestrator_embedding_backend(monkeypatch):
     payload = {"form_data": {}, "source": "web"}
     res = orch.handle_event_sync({"type": "lead_capture", "payload": payload})
     assert res["status"] == "done"
-

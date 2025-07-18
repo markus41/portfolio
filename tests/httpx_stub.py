@@ -10,7 +10,7 @@ class Response:
 class Request:
     def __init__(self, method, url, json=None, params=None):
         self.method = method
-        self.url = type('URL', (), {'path': url})()
+        self.url = type("URL", (), {"path": url})()
         self._json = json
         self._params = params
 
@@ -49,6 +49,7 @@ class AsyncClient:
 # Compat with httpx.BaseTransport used by Starlette's test client
 class BaseTransport:
     pass
+
 
 # Starlette also expects a synchronous httpx.Client. Reuse AsyncClient for tests.
 Client = AsyncClient

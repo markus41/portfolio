@@ -42,17 +42,15 @@ class AnalyticsClient:
             logger.warning("VISITOR_ANALYTICS_URL not configured; skipping send")
             return False
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}"
-        } if self.api_key else {}
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
 
         for attempt in range(1, retries + 1):
             try:
-                resp = requests.post(self.endpoint, json=data, headers=headers, timeout=5)
-                resp.raise_for_status()
-                logger.info(
-                    "Visitor analytics sent successfully (attempt %s)", attempt
+                resp = requests.post(
+                    self.endpoint, json=data, headers=headers, timeout=5
                 )
+                resp.raise_for_status()
+                logger.info("Visitor analytics sent successfully (attempt %s)", attempt)
                 return True
             except Exception as exc:  # pragma: no cover - network failures
                 logger.error("Analytics send failed on attempt %s: %s", attempt, exc)

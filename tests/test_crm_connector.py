@@ -35,7 +35,9 @@ def test_fetch_deals_success(monkeypatch):
         calls["headers"] = headers
         return types.SimpleNamespace(json=lambda: data, raise_for_status=lambda: None)
 
-    monkeypatch.setattr("src.crm_connector.requests", types.SimpleNamespace(get=fake_get))
+    monkeypatch.setattr(
+        "src.crm_connector.requests", types.SimpleNamespace(get=fake_get)
+    )
     monkeypatch.setattr(settings, "CRM_API_URL", "http://crm.example.com")
     monkeypatch.setattr(settings, "CRM_API_KEY", "abc")
 
