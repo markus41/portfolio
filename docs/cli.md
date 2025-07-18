@@ -20,12 +20,14 @@ The command prints the address on `stderr` and blocks until interrupted.
 ## send
 
 Dispatch an event to the running orchestrator. Provide the target team name with `--team` and the event payload as JSON via `--event` or standard input.
+Use `--timeout` to adjust the network timeout (default 5 seconds).
 
 ```bash
 brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
 ```
 
 Use `--host` and `--port` if the server is running on another address.
+The `--timeout` flag is also honoured by `status` and `run-integration`.
 
 ## status
 
@@ -71,7 +73,9 @@ the JSON result.
 
 ## Troubleshooting
 
-- **Connection refused** – `send` or `status` may fail with `[Errno 111] Connection refused` if the server is not running or the wrong `--host`/`--port` is used.
+- **Connection refused** – If the server is not running or the wrong address is used, commands print `Failed to connect to HOST:PORT`.
+- **Timeouts** – Operations abort with `Timed out waiting for server response` when the orchestrator does not reply within the configured `--timeout` value.
 - **Invalid JSON event** – If the payload passed to `--event` cannot be parsed, the command exits with `Invalid JSON event`.
+- **Invalid response** – When the server sends malformed JSON, the CLI reports `Invalid JSON response`.
 - **Schema errors** – `validate-team` prints `{"valid": false}` when the file does not match the schema. Inspect the accompanying `error` field for details.
 

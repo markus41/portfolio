@@ -126,18 +126,67 @@ def cmd_start(args: argparse.Namespace) -> None:
         pass
 
 
-def _send_payload(host: str, port: int, payload: dict) -> dict:
-    """Send ``payload`` to the orchestrator server and return the JSON reply."""
+def _send_payload(host: str, port: int, payload: dict, timeout: float = 5.0) -> dict:
+    """Send ``payload`` to the orchestrator and return the JSON reply.
+
+    Parameters
+    ----------
+    host:
+        Server host name or IP address.
+    port:
+        Server port number.
+    payload:
+        JSON-serialisable object describing the command to execute.
+    timeout:
+        Optional timeout in seconds for both connecting and reading.  Defaults
+        to ``5`` seconds.
+
+    Returns
+    -------
+    dict
+        Parsed JSON response from the server.
+
+    Raises
+    ------
+    SystemExit
+        If the connection fails, times out or the response cannot be decoded
+        as JSON.  The exit message is a user friendly error description.
+    """
+
     data = json.dumps(payload).encode() + b"\n"
-    with socket.create_connection((host, port)) as sock:
-        sock.sendall(data)
-        resp = b""
-        while not resp.endswith(b"\n"):
-            chunk = sock.recv(4096)
-            if not chunk:
-                break
-            resp += chunk
-    return json.loads(resp.decode())
+
+    try:
+        # ``create_connection`` also accepts a timeout which covers DNS lookup
+        # and the initial TCP handshake.  ``sock.settimeout`` below applies to
+        # subsequent send/recv operations.
+        with socket.create_connection((host, port), timeout=timeout) as sock:
+            sock.settimeout(timeout)
+            try:
+                sock.sendall(data)
+                resp = b""
+                while not resp.endswith(b"\n"):
+                    chunk = sock.recv(4096)
+                    if not chunk:
+                        break
+                    resp += chunk
+            except socket.timeout as exc:
+                raise SystemExit(
+                    f"Timed out waiting for server response after {timeout}s"
+                ) from exc
+    except ConnectionRefusedError as exc:
+        raise SystemExit(f"Failed to connect to {host}:{port}") from exc
+    except socket.timeout as exc:
+        raise SystemExit(
+            f"Connection to {host}:{port} timed out after {timeout}s"
+        ) from exc
+    except OSError as exc:
+        # Other networking errors (e.g. unreachable network)
+        raise SystemExit(str(exc)) from exc
+
+    try:
+        return json.loads(resp.decode())
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Invalid JSON response: {exc}") from exc
 
 
 def cmd_send(args: argparse.Namespace) -> None:
@@ -157,14 +206,14 @@ def cmd_send(args: argparse.Namespace) -> None:
         raise SystemExit("--team is required")
 
     payload = {"cmd": "send", "team": args.team, "event": event}
-    resp = _send_payload(args.host, args.port, payload)
+    resp = _send_payload(args.host, args.port, payload, timeout=args.timeout)
     print(json.dumps(resp))
 
 
 def cmd_status(args: argparse.Namespace) -> None:
     """Retrieve team statuses from the orchestrator."""
     payload = {"cmd": "status"}
-    resp = _send_payload(args.host, args.port, payload)
+    resp = _send_payload(args.host, args.port, payload, timeout=args.timeout)
     print(json.dumps(resp))
 
 
@@ -219,7 +268,7 @@ def cmd_run_integration(args: argparse.Namespace) -> None:
         raise SystemExit("--team is required")
     event = {"type": "integration_request", "payload": {"name": args.name}}
     payload = {"cmd": "send", "team": args.team, "event": event}
-    resp = _send_payload(args.host, args.port, payload)
+    resp = _send_payload(args.host, args.port, payload, timeout=args.timeout)
     print(json.dumps(resp))
 
 
@@ -248,6 +297,12 @@ def build_parser() -> argparse.ArgumentParser:
     send_p.add_argument("--event", required=False, help="Event JSON string")
     send_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     send_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    send_p.add_argument(
+        "--timeout",
+        type=float,
+        default=5.0,
+        help="Connection timeout in seconds (default: 5)",
+    )
     send_p.set_defaults(func=cmd_send)
 
     run_int = sub.add_parser(
@@ -257,6 +312,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_int.add_argument("--team", required=False, help="Target team name")
     run_int.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     run_int.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    run_int.add_argument(
+        "--timeout",
+        type=float,
+        default=5.0,
+        help="Connection timeout in seconds (default: 5)",
+    )
     run_int.set_defaults(func=cmd_run_integration)
 
     assist_p = sub.add_parser(
@@ -269,6 +330,12 @@ def build_parser() -> argparse.ArgumentParser:
     status_p = sub.add_parser("status", help="Fetch latest team statuses")
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
+    status_p.add_argument(
+        "--timeout",
+        type=float,
+        default=5.0,
+        help="Connection timeout in seconds (default: 5)",
+    )
     status_p.set_defaults(func=cmd_status)
 
     validate_p = sub.add_parser(
