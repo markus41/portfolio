@@ -228,6 +228,9 @@ Available templates:
   # orch.execute_goal("sales_outreach")
   ```
 
+For a branching graph example see
+[docs/workflows.md#branching-logic-and-error-handling](docs/workflows.md#branching-logic-and-error-handling).
+
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the
