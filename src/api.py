@@ -184,9 +184,21 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
 
 app = create_app()
 
-if __name__ == "__main__":  # pragma: no cover - manual execution
-    import sys
+def main(argv: list[str] | None = None) -> None:
+    """Start the API server using ``uvicorn``.
+
+    Parameters
+    ----------
+    argv:
+        Optional list of ``TEAM=PATH`` pairs mapping team names to workflow
+        configuration files. When ``None`` the arguments from ``sys.argv[1:]``
+        are used.
+    """
+
     import uvicorn
+
+    if argv is None:
+        argv = sys.argv[1:]
 
     def _parse_team_mapping(pairs: list[str]) -> dict[str, str]:
         mapping: dict[str, str] = {}
@@ -197,10 +209,14 @@ if __name__ == "__main__":  # pragma: no cover - manual execution
             mapping[name] = path
         return mapping
 
-    teams = _parse_team_mapping(sys.argv[1:])
+    teams = _parse_team_mapping(argv)
     orch = SolutionOrchestrator(teams)
     app = create_app(orch)
     setup_logging()
 
     port = int(os.getenv("PORT", "8000"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host=settings.API_HOST, port=port)
+
+
+if __name__ == "__main__":  # pragma: no cover - manual execution
+    main()

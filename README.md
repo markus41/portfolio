@@ -269,8 +269,14 @@ An HTTP interface is available for programmatic access to the
 `SolutionOrchestrator`. Start the server with your team mapping and an API key:
 
 ```bash
-API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+API_AUTH_KEY=mysecret \ 
+API_HOST=127.0.0.1 python -m src.api sales=src/teams/sales_team_full.json
 ```
+Here as well, `API_HOST` can be changed if you don't want to listen on every
+interface.
+The `API_HOST` variable lets you control which interface uvicorn binds to.
+`API_HOST` overrides the default bind address `0.0.0.0` if you want the server
+accessible on a specific interface.
 
 Send an event using `curl`:
 
@@ -592,8 +598,10 @@ npm run dev:dashboard
 Start the HTTP API with an authentication key and at least one team configuration:
 
 ```bash
-API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+API_AUTH_KEY=mysecret \
+API_HOST=127.0.0.1 python -m src.api sales=src/teams/sales_team_full.json
 ```
+As before, adjust `API_HOST` if the server should listen on a specific address.
 
 Create a `.env` file inside `frontend/dashboard` so the React app can use the same key when
 communicating with the backend:

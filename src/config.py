@@ -172,6 +172,7 @@ class Settings(BaseSettings):
     GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     CONFIG_PATH: str = "config/playbook.yaml"
     API_AUTH_KEY: Optional[str] = None
+    API_HOST: str = "0.0.0.0"
     ALLOWED_ORIGINS: str = "*"
     SCRAPER_USER_AGENT: str = "BrooksideBot/1.0"
 
