@@ -12,6 +12,7 @@ Welcome to the documentation for the Brookside BI agentic system.
    memory_service
    environment
    logging
+   metrics
    agents_overview
    workflows
 
