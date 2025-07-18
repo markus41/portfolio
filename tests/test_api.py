@@ -231,6 +231,16 @@ def test_workflow_endpoints(tmp_path):
         )
         assert code == 201
 
+        bad = {"name": "bad", "nodes": [{}], "edges": []}
+        code, body = _http_post(
+            f"http://127.0.0.1:{port}/workflows",
+            bad,
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 400
+        err = json.loads(body)
+        assert "invalid workflow" in err.get("detail", "")
+
         code, body = _http_get(
             f"http://127.0.0.1:{port}/workflows/demo",
             headers={"X-API-Key": "secret"},

@@ -21,6 +21,7 @@ if __package__ in {None, ""}:  # pragma: no cover - safe for direct execution
 from typing import Any, Dict, List, Literal
 import json
 import asyncio
+import types
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -28,6 +29,27 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .utils.logging_config import setup_logging
+
+try:  # pragma: no cover - optional dependency
+    import jsonschema
+except Exception:  # pragma: no cover - optional dependency
+    from .jsonschema_stub import validate as _validate, ValidationError as _VE
+
+    jsonschema = types.SimpleNamespace(validate=_validate, ValidationError=_VE)
+
+
+_WF_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "docs" / "workflow_schema.json"
+try:  # pragma: no cover - schema may be missing
+    _WORKFLOW_SCHEMA = json.loads(_WF_SCHEMA_PATH.read_text())
+except FileNotFoundError:  # pragma: no cover - schema missing
+    _WORKFLOW_SCHEMA = {}
+
+
+def validate_workflow(data: Dict[str, Any]) -> None:
+    """Validate ``data`` against :mod:`docs/workflow_schema.json`."""
+
+    if _WORKFLOW_SCHEMA and jsonschema is not None:
+        jsonschema.validate(data, _WORKFLOW_SCHEMA)
 
 
 class Event(BaseModel):
@@ -162,12 +184,24 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return {"history": items}
 
     @app.post("/workflows", status_code=201)
-    def save_workflow(workflow: WorkflowModel, _=Depends(_auth)) -> Dict[str, Any]:
-        """Persist ``workflow`` to disk for later execution."""
+    def save_workflow(workflow: Dict[str, Any], _=Depends(_auth)) -> Dict[str, Any]:
+        """Persist ``workflow`` to disk for later execution.
+
+        The payload is validated against :mod:`docs/workflow_schema.json`.
+        """
+
+        data = workflow
+        try:
+            validate_workflow(data)
+        except jsonschema.ValidationError as exc:
+            raise HTTPException(
+                status_code=400, detail=f"invalid workflow: {exc.message}"
+            ) from exc
 
         workflow_dir.mkdir(parents=True, exist_ok=True)
-        path = workflow_dir / f"{workflow.name}.json"
-        path.write_text(workflow.json(indent=2))
+        name = data.get("name", "")
+        path = workflow_dir / f"{name}.json"
+        path.write_text(json.dumps(data, indent=2))
         return {"status": "saved", "path": str(path)}
 
     @app.get("/workflows/{name}")

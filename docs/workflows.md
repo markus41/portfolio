@@ -43,7 +43,9 @@ For more complex flows you can describe nodes and edges explicitly. The
 [`frontend`](../frontend) editor exports a graph conforming to the JSON schema in
 [`workflow_schema.json`](workflow_schema.json). Each node represents an `agent`
 or `tool` and edges model the execution order. Persist the file via the `/workflows`
-endpoint and load it later with `GraphWorkflowDefinition.from_file()`.
+endpoint and load it later with `GraphWorkflowDefinition.from_file()`. Incoming
+definitions are validated against the schema using ``jsonschema`` and an HTTP
+``400`` error is returned when validation fails.
 
 ### Executing Graph Workflows
 
