@@ -145,6 +145,6 @@ variables documented below.
 ## Utility Services
 - `GOOGLE_TRANSLATE_API_KEY` – Google Translate API key.
 - `CONFIG_PATH` – Path to the orchestrator configuration, defaults to `config/playbook.yaml`.
-- `API_AUTH_KEY` – Token required by the FastAPI server for requests.
+- `API_AUTH_KEY` – Optional fallback token when no API keys exist in the database. Manage keys via `src.key_admin`.
 - `ALLOWED_ORIGINS` – Comma separated list of domains allowed for CORS requests.
 - `SCRAPER_USER_AGENT` – HTTP User-Agent string used by `ScrapingPlugin`.

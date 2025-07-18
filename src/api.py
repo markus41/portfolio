@@ -117,6 +117,13 @@ class WorkflowModel(BaseModel):
     edges: List[EdgeModel]
 
 
+class KeyCreate(BaseModel):
+    """Payload model for admin API key creation requests."""
+
+    tenant: str
+    scopes: list[str] = ["read", "write"]
+
+
 from .solution_orchestrator import SolutionOrchestrator
 from .config import settings
 from . import db
@@ -162,16 +169,35 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         app.add_middleware(MetricsMiddleware, job="api")
     workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 
-    async def _auth(request: Request, x_api_key: str | None = Header(None)) -> None:
-        """Validate API key from header or ``api_key`` query parameter."""
+    async def _auth(
+        request: Request,
+        x_api_key: str | None = Header(None),
+        *,
+        scope: str | None = None,
+    ) -> None:
+        """Validate the supplied API key against the database or fallback key."""
 
-        required = settings.API_AUTH_KEY
         supplied = x_api_key or request.query_params.get("api_key")
-        if required and supplied != required:
-            raise HTTPException(status_code=401, detail="invalid api key")
+        required_scope = scope or (
+            "write" if request.method in {"POST", "PUT", "DELETE"} else "read"
+        )
+
+        if db.has_api_keys():
+            if not supplied or not db.validate_api_key(supplied, required_scope):
+                raise HTTPException(status_code=401, detail="invalid api key")
+        else:
+            required = settings.API_AUTH_KEY
+            if required and supplied != required:
+                raise HTTPException(status_code=401, detail="invalid api key")
+
+    def require_auth(scope: str | None = None):
+        async def dep(request: Request, x_api_key: str | None = Header(None)) -> None:
+            await _auth(request, x_api_key, scope=scope)
+
+        return Depends(dep)
 
     @app.post("/teams/{name}/event")
-    async def handle_event(name: str, event: Event, _=Depends(_auth)) -> Dict[str, Any]:
+    async def handle_event(name: str, event: Event, _=require_auth()) -> Dict[str, Any]:
         """Dispatch ``event`` to ``name`` via the orchestrator."""
         result = await orch.handle_event(name, event.dict())
         if result.get("status") == "unknown_team":
@@ -180,7 +206,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return result
 
     @app.get("/teams/{name}/status")
-    def get_status(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+    def get_status(name: str, _=require_auth()) -> Dict[str, Any]:
         """Return the last reported status for ``name``."""
         status = orch.get_status(name)
         if status is None:
@@ -188,7 +214,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return {"team": name, "status": status}
 
     @app.get("/teams/{name}/stream")
-    async def stream(name: str, request: Request, _=Depends(_auth)):
+    async def stream(name: str, request: Request, _=require_auth()):
         """Server-Sent Events stream of status and activity messages."""
 
         queue = orch.subscribe(name)
@@ -213,7 +239,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
     @app.get("/activity")
-    def get_activity(limit: int = 10, _=Depends(_auth)) -> Dict[str, Any]:
+    def get_activity(limit: int = 10, _=require_auth()) -> Dict[str, Any]:
         """Return recent orchestrator activity."""
         return {"activity": orch.get_recent_activity(limit)}
 
@@ -223,7 +249,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         offset: int = 0,
         team: str | None = None,
         event_type: str | None = None,
-        _=Depends(_auth),
+        _=require_auth(),
     ) -> Dict[str, Any]:
         """Return persisted event history from the database.
 
@@ -239,7 +265,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return {"history": items}
 
     @app.post("/workflows", status_code=201)
-    def save_workflow(workflow: Dict[str, Any], _=Depends(_auth)) -> Dict[str, Any]:
+    def save_workflow(workflow: Dict[str, Any], _=require_auth()) -> Dict[str, Any]:
         """Persist ``workflow`` to disk for later execution.
 
         The payload is validated against :mod:`docs/workflow_schema.json`.
@@ -260,13 +286,30 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         return {"status": "saved", "path": str(path)}
 
     @app.get("/workflows/{name}")
-    def load_workflow(name: str, _=Depends(_auth)) -> Dict[str, Any]:
+    def load_workflow(name: str, _=require_auth()) -> Dict[str, Any]:
         """Return a previously saved workflow."""
 
         path = workflow_dir / f"{name}.json"
         if not path.exists():
             raise HTTPException(status_code=404, detail="unknown workflow")
         return json.loads(path.read_text())
+
+    @app.post("/admin/keys", status_code=201)
+    def admin_create_key(data: KeyCreate, _=require_auth("admin")) -> Dict[str, str]:
+        """Create a new API key with the provided tenant and scopes."""
+
+        key = db.create_api_key(data.tenant, data.scopes)
+        return {"key": key}
+
+    @app.post("/admin/keys/{key}/rotate")
+    def admin_rotate_key(key: str, _=require_auth("admin")) -> Dict[str, str]:
+        """Rotate an existing key and return the new value."""
+
+        try:
+            new_key = db.rotate_api_key(key)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unknown key")
+        return {"key": new_key}
 
     return app
 

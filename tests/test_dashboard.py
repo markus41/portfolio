@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from urllib import request as urllib_request
 
-from src import api
+from src import api, db
 from src.solution_orchestrator import SolutionOrchestrator
 from src.agents.base_agent import BaseAgent
 
@@ -79,7 +79,10 @@ def test_dashboard_event_submission(tmp_path: Path) -> None:
     team_cfg = _write_team(tmp_path)
     port = _get_free_port()
     orch = SolutionOrchestrator({"demo": str(team_cfg)})
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
@@ -87,7 +90,7 @@ def test_dashboard_event_submission(tmp_path: Path) -> None:
         code, body = _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"foo": 1}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         result = json.loads(body)
@@ -105,11 +108,14 @@ def test_stream_endpoint(tmp_path: Path) -> None:
     team_cfg = _write_team(tmp_path)
     port = _get_free_port()
     orch = SolutionOrchestrator({"demo": str(team_cfg)})
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
-    stream_url = f"http://127.0.0.1:{port}/teams/demo/stream?api_key=secret"
+    stream_url = f"http://127.0.0.1:{port}/teams/demo/stream?api_key={key}"
     req = urllib_request.Request(stream_url)
     try:
         resp = urllib_request.urlopen(req, timeout=5)
@@ -129,7 +135,7 @@ def test_stream_endpoint(tmp_path: Path) -> None:
         _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"foo": 2}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         t.join(timeout=5)
 

@@ -282,16 +282,25 @@ echo "Budget $300 targeting students on 01/02/2025" | brookside-assistant
 ### 🌐 HTTP API
 
 An HTTP interface is available for programmatic access to the
-`SolutionOrchestrator`. Start the server with your team mapping and an API key:
+`SolutionOrchestrator`.
+
+First create an API key using the ``key_admin`` helper:
 
 ```bash
-API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+python -m src.key_admin create tenant1 --scopes read,write
+```
+
+Start the server with your team mapping. When at least one key exists in the
+database, requests must include it via the ``X-API-Key`` header:
+
+```bash
+python -m src.api sales=src/teams/sales_team_full.json
 ```
 
 Send an event using `curl`:
 
 ```bash
-curl -H "X-API-Key: mysecret" \
+curl -H "X-API-Key: <your-key>" \
      -X POST http://localhost:8000/teams/sales/event \
      -d '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
 ```
@@ -299,26 +308,26 @@ curl -H "X-API-Key: mysecret" \
 Fetch the latest status:
 
 ```bash
-curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/status
+curl -H "X-API-Key: <your-key>" http://localhost:8000/teams/sales/status
 ```
 
 Query recent activity:
 
 ```bash
-curl -H "X-API-Key: mysecret" http://localhost:8000/activity?limit=20
+curl -H "X-API-Key: <your-key>" http://localhost:8000/activity?limit=20
 ```
 
 Stream live updates using Server-Sent Events:
 
 ```bash
-curl -H "X-API-Key: mysecret" http://localhost:8000/teams/sales/stream --no-buffer
+curl -H "X-API-Key: <your-key>" http://localhost:8000/teams/sales/stream --no-buffer
 ```
 
 Clients receive ``status`` and ``activity`` events in real time. The dashboard
 subscribes via ``EventSource``:
 
 ```javascript
-const src = new EventSource('/teams/sales/stream?api_key=mysecret');
+const src = new EventSource('/teams/sales/stream?api_key=<your-key>');
 src.addEventListener('status', (e) => console.log('status', e.data));
 src.addEventListener('activity', (e) => console.log('activity', e.data));
 ```
@@ -655,19 +664,16 @@ npm run dev:dashboard
 
 ### Running the Dashboard
 
-Start the HTTP API with an authentication key and at least one team configuration:
+Start the HTTP API as before and configure the dashboard with your generated key:
 
 ```bash
-API_AUTH_KEY=mysecret python -m src.api sales=src/teams/sales_team_full.json
+python -m src.api sales=src/teams/sales_team_full.json
 ```
-
-Create a `.env` file inside `frontend/dashboard` so the React app can use the same key when
-communicating with the backend:
 
 ```bash
 cd frontend/dashboard
 cp .env.example .env
-echo "VITE_API_KEY=mysecret" >> .env
+echo "VITE_API_KEY=<your-key>" >> .env
 npm run dev:dashboard
 ```
 

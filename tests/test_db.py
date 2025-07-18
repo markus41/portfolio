@@ -18,3 +18,10 @@ def test_db_write_and_read(tmp_path):
     rows = db.fetch_history(event_type="y")
     assert len(rows) == 1
     assert rows[0]["team"] == "other"
+
+    key = db.create_api_key("tenant", ["read"])
+    assert db.has_api_keys() is True
+    assert db.validate_api_key(key, "read")
+    new_key = db.rotate_api_key(key)
+    assert not db.validate_api_key(key, "read")
+    assert db.validate_api_key(new_key, "read")

@@ -12,7 +12,7 @@ from pathlib import Path
 from urllib import request as urllib_request
 
 from src.solution_orchestrator import SolutionOrchestrator
-from src import api
+from src import api, db
 
 
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, str]:
@@ -117,7 +117,10 @@ def test_event_and_status(tmp_path):
     team_cfg = _write_team(tmp_path)
     port = _get_free_port()
     orch = SolutionOrchestrator({"demo": str(team_cfg)})
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
@@ -125,14 +128,14 @@ def test_event_and_status(tmp_path):
         code, body = _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"foo": 1}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         assert json.loads(body)["result"]["echo"]["foo"] == 1
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/teams/demo/status",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         assert json.loads(body)["status"] == "handled"
@@ -146,7 +149,10 @@ def test_auth_failure(tmp_path):
     team_cfg = _write_team(tmp_path)
     port = _get_free_port()
     orch = SolutionOrchestrator({"demo": str(team_cfg)})
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
@@ -165,14 +171,17 @@ def test_auth_failure(tmp_path):
 def test_unknown_team(tmp_path):
     port = _get_free_port()
     app = api.create_app(SolutionOrchestrator({}))
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("x", ["read", "write"])
     server, thread = _start_server(app, port)
 
     try:
         code, _ = _http_post(
             f"http://127.0.0.1:{port}/teams/missing/event",
             {"type": "x"},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 404
     finally:
@@ -186,7 +195,10 @@ def test_activity_endpoint(tmp_path):
     port = _get_free_port()
     log_path = tmp_path / "act.jsonl"
     orch = SolutionOrchestrator({"demo": str(team_cfg)}, log_path=str(log_path))
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
@@ -194,12 +206,12 @@ def test_activity_endpoint(tmp_path):
         _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"foo": 1}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/activity?limit=1",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         data = json.loads(body)
@@ -211,7 +223,10 @@ def test_activity_endpoint(tmp_path):
 
 def test_workflow_endpoints(tmp_path):
     port = _get_free_port()
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app()
     server, thread = _start_server(app, port)
 
@@ -227,7 +242,7 @@ def test_workflow_endpoints(tmp_path):
         code, _ = _http_post(
             f"http://127.0.0.1:{port}/workflows",
             payload,
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 201
 
@@ -235,7 +250,7 @@ def test_workflow_endpoints(tmp_path):
         code, body = _http_post(
             f"http://127.0.0.1:{port}/workflows",
             bad,
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 400
         err = json.loads(body)
@@ -243,7 +258,7 @@ def test_workflow_endpoints(tmp_path):
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/workflows/demo",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         data = json.loads(body)
@@ -259,8 +274,10 @@ def test_history_and_cors(tmp_path):
     team_cfg = _write_team(tmp_path, "team1")
     other_cfg = _write_team(tmp_path, "team2")
     port = _get_free_port()
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
     api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(
         SolutionOrchestrator({"demo": str(team_cfg), "alpha": str(other_cfg)})
     )
@@ -270,24 +287,24 @@ def test_history_and_cors(tmp_path):
         _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"x": 1}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
 
         _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "other", "payload": {"y": 2}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
 
         _http_post(
             f"http://127.0.0.1:{port}/teams/alpha/event",
             {"type": "echo_agent", "payload": {"z": 3}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/history?limit=3",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         data = json.loads(body)
@@ -296,7 +313,7 @@ def test_history_and_cors(tmp_path):
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/history?team=demo&event_type=echo_agent",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         data = json.loads(body)
@@ -305,7 +322,7 @@ def test_history_and_cors(tmp_path):
 
         code, body = _http_get(
             f"http://127.0.0.1:{port}/history?event_type=other",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         assert code == 200
         data = json.loads(body)
@@ -327,7 +344,10 @@ def test_stream_endpoint(tmp_path):
     team_cfg = _write_team(tmp_path)
     port = _get_free_port()
     orch = SolutionOrchestrator({"demo": str(team_cfg)})
-    api.settings.API_AUTH_KEY = "secret"
+    api.settings.API_AUTH_KEY = None
+    api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
+    db.init_db()
+    key = db.create_api_key("demo", ["read", "write"])
     app = api.create_app(orch)
     server, thread = _start_server(app, port)
 
@@ -335,12 +355,12 @@ def test_stream_endpoint(tmp_path):
         _http_post(
             f"http://127.0.0.1:{port}/teams/demo/event",
             {"type": "echo_agent", "payload": {"x": 1}},
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
 
         req = urllib_request.Request(
             f"http://127.0.0.1:{port}/teams/demo/stream",
-            headers={"X-API-Key": "secret"},
+            headers={"X-API-Key": key},
         )
         with urllib_request.urlopen(req, timeout=5) as resp:
             first = resp.readline().decode()

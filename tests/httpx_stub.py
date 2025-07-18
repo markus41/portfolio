@@ -26,6 +26,14 @@ class MockTransport:
         return await self.handler(request)
 
 
+class BaseTransport:
+    pass
+
+
+class _client:
+    CookieTypes = dict
+
+
 class AsyncClient:
     def __init__(self, transport=None, base_url=""):
         self.transport = transport or MockTransport(lambda req: Response())
@@ -41,6 +49,20 @@ class AsyncClient:
 
     async def aclose(self):
         pass
+
+    def close(self):
+        pass
+
+
+class Client:
+    def __init__(self, *a, **kw):
+        pass
+
+    def get(self, *a, **kw):
+        return Response()
+
+    def post(self, *a, **kw):
+        return Response()
 
     def close(self):
         pass
