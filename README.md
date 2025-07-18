@@ -431,6 +431,13 @@ setup_logging()
 
 See [docs/logging.md](docs/logging.md) for details.
 
+## 📊 Metrics
+
+When `PROMETHEUS_PUSHGATEWAY` is set, the API records the number of requests
+and their latencies. A middleware pushes these metrics to the configured
+Prometheus Pushgateway using the lightweight `PrometheusPusher` utility. Read
+[docs/metrics.md](docs/metrics.md) for a full description.
+
 ## 📐 Environment Variables
 
 The system relies on a number of environment variables for API keys and service

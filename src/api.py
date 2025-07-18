@@ -13,6 +13,8 @@ execution as well.
 from pathlib import Path
 import os
 import sys
+import time
+import logging
 
 if __package__ in {None, ""}:  # pragma: no cover - safe for direct execution
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -27,6 +29,35 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from starlette.middleware.base import BaseHTTPMiddleware
+
+
+logger = logging.getLogger(__name__)
+
+from .tools.metrics_tools.prometheus_tool import PrometheusPusher
+
+
+class MetricsMiddleware(BaseHTTPMiddleware):
+    """Record request metrics via ``PrometheusPusher``."""
+
+    def __init__(self, app: FastAPI, job: str = "api") -> None:  # type: ignore[override]
+        super().__init__(app)
+        self.pusher = PrometheusPusher(job=job)
+
+    async def dispatch(self, request: Request, call_next):  # type: ignore[override]
+        start = time.perf_counter()
+        response = await call_next(request)
+        duration = time.perf_counter() - start
+        labels = {"path": request.url.path, "method": request.method}
+        try:
+            self.pusher.push_metric("api_request_count", 1, labels)
+            self.pusher.push_metric("api_request_latency_seconds", duration, labels)
+        except (
+            Exception
+        ):  # pragma: no cover - pushing metrics should not break requests
+            logger.exception("Failed to push Prometheus metrics")
+        return response
+
 
 from .utils.logging_config import setup_logging
 from .utils.team_mapping import parse_team_mapping
@@ -127,6 +158,8 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    if settings.PROMETHEUS_PUSHGATEWAY:
+        app.add_middleware(MetricsMiddleware, job="api")
     workflow_dir = Path(__file__).resolve().parent / "workflows" / "saved"
 
     async def _auth(request: Request, x_api_key: str | None = Header(None)) -> None:
