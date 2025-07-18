@@ -29,8 +29,9 @@ You can exercise the orchestrator with a single team using a few lines of Python
 ```python
 from src.solution_orchestrator import SolutionOrchestrator
 
-orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
-orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
+async def demo():
+    async with SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"}) as orch:
+        await orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
 ```
 
 ---

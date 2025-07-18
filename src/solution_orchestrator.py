@@ -149,3 +149,19 @@ class SolutionOrchestrator:
 
         engine = GraphWorkflowEngine(definition)
         return engine.run(self)
+
+    # ------------------------------------------------------------------
+    # Async context manager implementation
+    # ------------------------------------------------------------------
+    async def __aenter__(self) -> "SolutionOrchestrator":
+        """Return ``self`` so the orchestrator can be used with ``async with``."""
+
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        """Release resources such as async memory services on shutdown."""
+
+        for team in self.teams.values():
+            mem = getattr(team, "memory", None)
+            if hasattr(mem, "aclose"):
+                await mem.aclose()

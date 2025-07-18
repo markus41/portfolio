@@ -8,6 +8,7 @@ import pytest
 
 from src.solution_orchestrator import SolutionOrchestrator
 from src.agents.base_agent import BaseAgent
+from src.memory_service.base import BaseMemoryService
 
 
 class DummyAgentA(BaseAgent):
@@ -100,3 +101,38 @@ def test_solution_orchestrator_concurrent(tmp_path):
 
     assert res_a["result"]["handled_by"] == "A"
     assert res_b["result"]["handled_by"] == "B"
+
+
+class DummyMemory(BaseMemoryService):
+    """Minimal async memory service used for context manager tests."""
+
+    def __init__(self) -> None:
+        self.closed = False
+
+    def store(self, key: str, payload: dict) -> bool:  # pragma: no cover - unused
+        return True
+
+    def fetch(self, key: str, top_k: int = 5) -> list[dict]:  # pragma: no cover - unused
+        return []
+
+    async def aclose(self) -> None:
+        self.closed = True
+
+
+def test_async_context_closes_memory(tmp_path):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    orch = SolutionOrchestrator({"A": str(team)})
+    mem = DummyMemory()
+    orch.teams["A"].memory = mem
+
+    async def _run():
+        async with orch:
+            pass
+
+    asyncio.run(_run())
+    assert mem.closed is True

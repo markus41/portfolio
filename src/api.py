@@ -85,6 +85,14 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     db.init_db()
     orch = orchestrator or SolutionOrchestrator({})
 
+    @app.on_event("startup")
+    async def _startup() -> None:
+        await orch.__aenter__()
+
+    @app.on_event("shutdown")
+    async def _shutdown() -> None:
+        await orch.__aexit__(None, None, None)
+
     origins = (
         [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
         if settings.ALLOWED_ORIGINS and settings.ALLOWED_ORIGINS != "*"
