@@ -6,6 +6,8 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
 import asyncio
+
+from agentic_core import run_sync
 from .utils import ActivityLogger
 
 from . import db
@@ -149,3 +151,51 @@ class SolutionOrchestrator:
 
         engine = GraphWorkflowEngine(definition)
         return engine.run(self)
+
+    # ------------------------------------------------------------------
+    # Context manager helpers
+    # ------------------------------------------------------------------
+
+    def close(self) -> None:
+        """Release resources held by child orchestrators if any."""
+        for team in self.teams.values():
+            if hasattr(team, "aclose"):
+                try:
+                    run_sync(team.aclose())
+                except Exception:  # pragma: no cover - defensive
+                    pass
+            elif hasattr(team, "close"):
+                try:
+                    team.close()
+                except Exception:  # pragma: no cover - defensive
+                    pass
+
+    async def aclose(self) -> None:
+        """Asynchronously release child orchestrators."""
+        for team in self.teams.values():
+            if hasattr(team, "aclose"):
+                try:
+                    await team.aclose()
+                except Exception:  # pragma: no cover - defensive
+                    pass
+            elif hasattr(team, "close"):
+                try:
+                    await asyncio.to_thread(team.close)
+                except Exception:  # pragma: no cover - defensive
+                    pass
+
+    def __enter__(self) -> "SolutionOrchestrator":
+        """Return ``self`` when used in a ``with`` block."""
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        """Synchronously clean up child orchestrators."""
+        self.close()
+
+    async def __aenter__(self) -> "SolutionOrchestrator":
+        """Return ``self`` when used in an ``async with`` block."""
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        """Asynchronously clean up child orchestrators."""
+        await self.aclose()

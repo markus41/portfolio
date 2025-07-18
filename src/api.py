@@ -198,9 +198,9 @@ if __name__ == "__main__":  # pragma: no cover - manual execution
         return mapping
 
     teams = _parse_team_mapping(sys.argv[1:])
-    orch = SolutionOrchestrator(teams)
-    app = create_app(orch)
-    setup_logging()
+    with SolutionOrchestrator(teams) as orch:
+        app = create_app(orch)
+        setup_logging()
 
-    port = int(os.getenv("PORT", "8000"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+        port = int(os.getenv("PORT", "8000"))
+        uvicorn.run(app, host="0.0.0.0", port=port)

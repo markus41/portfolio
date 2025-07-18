@@ -200,3 +200,53 @@ class Orchestrator(BaseOrchestrator):
     async def monthly_tick(self) -> None:
         """Emit the RevOps analysis cron event."""
         await run_maybe_async(self.bus.publish, "RevOps.Analyze", {"tenant_id": "demo"})
+
+    # ------------------------------------------------------------------
+    # Context manager helpers
+    # ------------------------------------------------------------------
+
+    def close(self) -> None:
+        """Release any resources held by the orchestrator."""
+        if not self.memory:
+            return
+        if hasattr(self.memory, "aclose"):
+            try:
+                run_sync(self.memory.aclose())
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.warning(f"Memory aclose failed: {exc}")
+        elif hasattr(self.memory, "close"):
+            try:
+                self.memory.close()
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.warning(f"Memory close failed: {exc}")
+
+    async def aclose(self) -> None:
+        """Asynchronously release resources held by the orchestrator."""
+        if not self.memory:
+            return
+        if hasattr(self.memory, "aclose"):
+            try:
+                await self.memory.aclose()
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.warning(f"Memory aclose failed: {exc}")
+        elif hasattr(self.memory, "close"):
+            try:
+                await run_maybe_async(self.memory.close)
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.warning(f"Memory close failed: {exc}")
+
+    def __enter__(self) -> "Orchestrator":
+        """Return ``self`` for ``with`` statements."""
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        """Synchronously close resources on context exit."""
+        self.close()
+
+    async def __aenter__(self) -> "Orchestrator":
+        """Return ``self`` for ``async with`` statements."""
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        """Asynchronously close resources on context exit."""
+        await self.aclose()
