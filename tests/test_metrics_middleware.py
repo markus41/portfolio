@@ -3,6 +3,11 @@ from __future__ import annotations
 import json
 from unittest.mock import MagicMock, patch
 
+import importlib
+import pytest
+httpx = importlib.import_module("httpx")
+if httpx.__name__.startswith("tests."):
+    pytest.skip("httpx stub lacks TestClient support", allow_module_level=True)
 from fastapi.testclient import TestClient
 
 import src.api as api

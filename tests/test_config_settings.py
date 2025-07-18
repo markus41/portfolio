@@ -2,6 +2,7 @@ import importlib
 
 import pytest
 from pydantic import ValidationError
+import warnings
 
 import src.config as config
 
@@ -75,3 +76,14 @@ def test_new_plugin_settings(monkeypatch):
         CLOUD_DOCS_API_KEY=None,
         SCRAPER_USER_AGENT=None,
     )
+
+
+def test_required_secret_warning(monkeypatch):
+    """Missing required secrets should trigger runtime warnings."""
+
+    with warnings.catch_warnings(record=True) as rec:
+        warnings.simplefilter("always")
+        _reload_settings(monkeypatch, OPENAI_API_KEY=None, API_AUTH_KEY=None)
+        messages = "".join(str(w.message) for w in rec)
+        assert "OPENAI_API_KEY" in messages
+        assert "API_AUTH_KEY" in messages

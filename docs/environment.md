@@ -4,7 +4,9 @@ This document describes every environment variable consumed in the project. The
 values live in [src/config.py](../src/config.py) and are provided by a Pydantic
 `BaseSettings` class. They can be loaded from environment variables or a local
 `.env` file.  Which file is used depends on the ``ENV`` and ``ENV_FILE``
-variables documented below.
+variables documented below. Certain secrets are **required** for the
+application to operate correctly. If they are missing the system logs a
+warning at startup.
 
 ## Environment Selection
 
@@ -12,7 +14,15 @@ variables documented below.
   other value loads ``.env.<ENV>`` (for example ``ENV=dev`` loads ``.env.dev``).
   Defaults to ``dev``.
 - `ENV_FILE` – Explicit path to a dotenv file. When set this overrides the
-  ``ENV`` based behaviour.
+``ENV`` based behaviour.
+
+## Required Secrets
+
+The following environment variables must be provided for a fully functional
+installation:
+
+- `OPENAI_API_KEY` – API key for OpenAI models.
+- `API_AUTH_KEY` – Token required by the FastAPI server for requests.
 
 ## AI Providers
 - `OPENAI_API_KEY` – API key for OpenAI models.

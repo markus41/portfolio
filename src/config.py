@@ -22,6 +22,7 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 import os
+import warnings
 
 from pydantic import BaseSettings, Field, validator
 
@@ -59,7 +60,9 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # AI Providers
-    OPENAI_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = Field(
+        None, env="OPENAI_API_KEY", required=True
+    )
 
     # CRM & Marketing Platforms
     CRM_API_URL: Optional[str] = None
@@ -171,7 +174,9 @@ class Settings(BaseSettings):
     # Utility Services
     GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     CONFIG_PATH: str = "config/playbook.yaml"
-    API_AUTH_KEY: Optional[str] = None
+    API_AUTH_KEY: Optional[str] = Field(
+        None, env="API_AUTH_KEY", required=True
+    )
     ALLOWED_ORIGINS: str = "*"
     SCRAPER_USER_AGENT: str = "BrooksideBot/1.0"
 
@@ -221,3 +226,9 @@ class Settings(BaseSettings):
 
 # Instantiate a single global settings object used across the project
 settings = Settings()
+
+# Emit runtime warnings for missing required environment variables
+for _name, _field in Settings.__fields__.items():
+    if _field.field_info.extra.get("required") and not getattr(settings, _name):
+        env_name = _field.field_info.extra.get("env", _name)
+        warnings.warn(f"Required secret '{env_name}' is not set", RuntimeWarning)

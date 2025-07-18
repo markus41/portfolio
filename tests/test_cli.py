@@ -40,6 +40,8 @@ def _start_server(team_cfg: Path, port: int) -> tuple[subprocess.Popen, int]:
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env
     )
     line = proc.stderr.readline().strip()
+    while line and not line.startswith("Listening on"):
+        line = proc.stderr.readline().strip()
     assert line.startswith("Listening on")
     _, _, addr = line.partition("on ")
     host, p = addr.split(":")
