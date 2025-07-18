@@ -230,8 +230,9 @@ Available templates:
 ### 🖥️ Command Line Usage
 
 The project exposes a small CLI for running and interacting with the
-`SolutionOrchestrator`.  After installing the package in editable mode you can
-start the orchestrator and send events from another shell:
+`SolutionOrchestrator`. See [docs/cli.md](docs/cli.md) for a complete
+reference. After installing the package in editable mode you can start the
+orchestrator and send events from another shell:
 
 ```bash
 # launch the orchestrator (listens on localhost:8765)
