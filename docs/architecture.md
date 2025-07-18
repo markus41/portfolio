@@ -21,6 +21,8 @@ This document explains how the Brookside BI agent system fits together and how A
     MemoryService
 ```
 
+![Component architecture](images/component_architecture.svg)
+
 ## EventBus
 
 `EventBus` is a minimal in-memory pub/sub utility defined in `agentic_core.EventBus`.  Agents subscribe to topics and publish events synchronously.  For asynchronous flows an `AsyncEventBus` is also available which awaits subscriber tasks using `asyncio.create_task`.
