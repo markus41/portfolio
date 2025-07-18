@@ -129,6 +129,10 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: Optional[str] = None
     TWILIO_FROM_PHONE: Optional[str] = None
 
+    # Orchestration policies
+    ORCHESTRATOR_CONFIDENCE_THRESHOLD: float = 0.7
+    ORCHESTRATOR_MAX_RETRIES: int = 3
+
     # Monitoring & Analytics
     PROMETHEUS_PUSHGATEWAY: Optional[str] = None
     GA4_MEASUREMENT_ID: Optional[str] = None

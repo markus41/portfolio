@@ -89,6 +89,8 @@ variables documented below.
 - `TWILIO_ACCOUNT_SID` – Twilio account SID.
 - `TWILIO_AUTH_TOKEN` – Twilio auth token.
 - `TWILIO_FROM_PHONE` – Twilio sender phone number.
+- `ORCHESTRATOR_CONFIDENCE_THRESHOLD` – Minimum confidence before auto actions are accepted. Default `0.7`.
+- `ORCHESTRATOR_MAX_RETRIES` – How many times the orchestrator retries a failed step before escalation. Default `3`.
 - `FCM_SERVER_KEY` – Firebase Cloud Messaging server key.
 - `PUSHOVER_USER_KEY` – Pushover user key.
 - `PUSHOVER_API_TOKEN` – Pushover API token.

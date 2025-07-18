@@ -97,7 +97,7 @@
                   "config": {
                     "name": "notify_human",
                     "description": "Escalate an issue or decision to a human operator.",
-                    "source_code": "def notify_human(severity: str, message: str):\\n    print(f\\\"[{severity.upper()}] {message}\\\")\\n    return {\\\"status\\\": \\\"sent\\\", \\\"severity\\\": severity}",
+                    "source_code": "from src.tools.notification_tools.human_notifier import notify_human as _nh\\n\\ndef notify_human(severity: str, message: str):\\n    return _nh(severity, message)",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }

@@ -26,6 +26,16 @@ class MockTransport:
         return await self.handler(request)
 
 
+class BaseTransport:
+    pass
+
+
+class _client:
+    CookieTypes = object
+    UseClientDefault = object
+    USE_CLIENT_DEFAULT = object
+
+
 class AsyncClient:
     def __init__(self, transport=None, base_url=""):
         self.transport = transport or MockTransport(lambda req: Response())
@@ -43,4 +53,14 @@ class AsyncClient:
         pass
 
     def close(self):
+        pass
+
+
+class Client(AsyncClient):
+    """Synchronous API placeholder used by Starlette TestClient."""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
         pass
