@@ -238,7 +238,7 @@ orchestrator and send events from another shell:
 # launch the orchestrator (listens on localhost:8765)
 brookside-cli start sales=src/teams/sales_team_full.json
 
-# dispatch an event
+# dispatch an event (5s timeout by default)
 brookside-cli send --team sales --event '{"type": "lead_capture", "payload": {"email": "alice@example.com"}}'
 
 # view latest statuses
@@ -254,6 +254,9 @@ brookside-cli assist "handle new inventory"
 # run an integration pipeline
 brookside-cli run-integration CRM_to_ERP_Contacts --team sales
 ```
+
+Use the optional `--timeout` flag with `send`, `status` and `run-integration`
+to override the 5 second default when connecting to the orchestrator.
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free
 text. Provide a description on the command line or via stdin and it returns a

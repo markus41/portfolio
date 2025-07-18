@@ -5,6 +5,7 @@ import types
 import time
 from pathlib import Path
 import subprocess
+import socket
 
 import pytest
 
@@ -153,3 +154,79 @@ def test_match_workflow_unknown():
     from src import cli
 
     assert cli._match_workflow("unrelated gibberish task") is None
+
+
+class _FakeSock:
+    """Simple socket stand-in used for ``_send_payload`` tests."""
+
+    def __init__(self, resp: bytes | Exception):
+        self._resp = resp
+        self.sent: bytes = b""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+    def settimeout(self, _timeout: float) -> None:
+        pass
+
+    def sendall(self, data: bytes) -> None:
+        self.sent += data
+
+    def recv(self, _size: int) -> bytes:
+        if isinstance(self._resp, Exception):
+            raise self._resp
+        if self._resp is None:
+            return b""
+        data = self._resp
+        self._resp = None
+        return data
+
+
+def test_send_payload_success(monkeypatch):
+    from src import cli
+
+    def fake_conn(addr, timeout=None):
+        return _FakeSock(b'{"ok": true}\n')
+
+    monkeypatch.setattr(cli.socket, "create_connection", fake_conn)
+    out = cli._send_payload("h", 1, {"cmd": "x"}, timeout=1)
+    assert out == {"ok": True}
+
+
+def test_send_payload_connection_refused(monkeypatch):
+    from src import cli
+
+    def fake_conn(addr, timeout=None):
+        raise ConnectionRefusedError
+
+    monkeypatch.setattr(cli.socket, "create_connection", fake_conn)
+    with pytest.raises(SystemExit) as exc:
+        cli._send_payload("h", 1, {"cmd": "x"})
+    assert "Failed to connect" in str(exc.value)
+
+
+def test_send_payload_timeout(monkeypatch):
+    from src import cli
+
+    def fake_conn(addr, timeout=None):
+        return _FakeSock(socket.timeout())
+
+    monkeypatch.setattr(cli.socket, "create_connection", fake_conn)
+    with pytest.raises(SystemExit) as exc:
+        cli._send_payload("h", 1, {"cmd": "x"}, timeout=0.1)
+    assert "Timed out" in str(exc.value)
+
+
+def test_send_payload_bad_json(monkeypatch):
+    from src import cli
+
+    def fake_conn(addr, timeout=None):
+        return _FakeSock(b"not-json\n")
+
+    monkeypatch.setattr(cli.socket, "create_connection", fake_conn)
+    with pytest.raises(SystemExit) as exc:
+        cli._send_payload("h", 1, {"cmd": "x"})
+    assert "Invalid JSON response" in str(exc.value)
