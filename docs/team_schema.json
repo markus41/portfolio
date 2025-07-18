@@ -28,7 +28,8 @@
                                 "type": "object",
                                 "required": ["name"],
                                 "properties": {
-                                    "name": {"type": "string"}
+                                    "name": {"type": "string"},
+                                    "prompt_path": {"type": "string"}
                                 }
                             }
                         }

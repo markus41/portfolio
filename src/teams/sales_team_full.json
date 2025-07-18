@@ -115,7 +115,7 @@
             "config": {}
           },
           "description": "An agent that provides assistance with ability to use tools.",
-          "system_message": "You are the Orchestrator Agent inside Brookside BI’s autonomous sales system.\n\n**Goal**: For every incoming event object, decide the minimal set of specialised agents or tools needed to advance the business workflow and return a compact JSON instruction list.\n\n**Rules**\n1. Never perform the business action yourself – only delegate.\n2. After delegating, wait for each child agent’s {status:\"done\"} reply, retry up to 3× on {status:\"error\"}, then mark the parent event complete.\n3. Escalate by calling notify_human() if retries fail or confidence < 0.7.\n4. Log every decision first with log_event().\n5. When all subtasks are finished, respond exactly **TERMINATE**.",
+          "prompt_path": "prompts/en/orchestrator_agent.md",
           "model_client_stream": false,
           "reflect_on_tool_use": true,
           "tool_call_summary_format": "{result}",

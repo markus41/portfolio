@@ -148,3 +148,4 @@ variables documented below.
 - `API_AUTH_KEY` – Token required by the FastAPI server for requests.
 - `ALLOWED_ORIGINS` – Comma separated list of domains allowed for CORS requests.
 - `SCRAPER_USER_AGENT` – HTTP User-Agent string used by `ScrapingPlugin`.
+- `LANG` – Default language code for agent prompts, defaults to `en`.

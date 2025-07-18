@@ -106,6 +106,10 @@ A trimmed example from `sales_team_full.json` looks like:
 }
 ```
 
+Agent prompts are stored under `prompts/<lang>/` and referenced with a
+`prompt_path` in the participant config. The `<lang>` placeholder resolves from
+`settings.LANG`, defaulting to `en`.
+
 ### 🧩 Team & Solution Orchestrators
 
 Teams packaged as JSON or YAML in `src/teams/` can now be loaded at runtime using `TeamOrchestrator`. It creates all agents listed under `participants` and provides an `EventBus` for intra-team messaging. Multiple teams are combined with `SolutionOrchestrator` which routes events to the appropriate team and collects their results.

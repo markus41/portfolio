@@ -174,6 +174,7 @@ class Settings(BaseSettings):
     API_AUTH_KEY: Optional[str] = None
     ALLOWED_ORIGINS: str = "*"
     SCRAPER_USER_AGENT: str = "BrooksideBot/1.0"
+    LANG: str = "en"
 
     # Memory Service
     MEMORY_BACKEND: Literal["rest", "rest_async", "file", "redis", "embedding"] = "rest"

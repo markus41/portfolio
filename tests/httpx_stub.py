@@ -10,7 +10,7 @@ class Response:
 class Request:
     def __init__(self, method, url, json=None, params=None):
         self.method = method
-        self.url = type('URL', (), {'path': url})()
+        self.url = type("URL", (), {"path": url})()
         self._json = json
         self._params = params
 
@@ -24,6 +24,27 @@ class MockTransport:
 
     async def handle_async_request(self, request):
         return await self.handler(request)
+
+
+class BaseTransport:
+    """Minimal stub matching :class:`httpx.BaseTransport`."""
+
+    async def handle_async_request(self, request):
+        raise NotImplementedError
+
+
+class Client:
+    def __init__(self, base_url="", transport=None):
+        self.base_url = base_url
+        self.transport = transport or MockTransport(lambda req: Response())
+
+    def get(self, path, params=None):
+        req = Request("GET", path, params=params)
+        return self.transport.handle_async_request(req)
+
+    def post(self, path, json=None):
+        req = Request("POST", path, json=json)
+        return self.transport.handle_async_request(req)
 
 
 class AsyncClient:

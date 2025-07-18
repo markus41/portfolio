@@ -49,6 +49,7 @@ except Exception:  # pragma: no cover - tests still run without it
 
 from .base_orchestrator import BaseOrchestrator
 from .utils.plugin_loader import load_agent
+from .config import settings
 
 
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "docs" / "team_schema.json"
@@ -117,6 +118,26 @@ class TeamOrchestrator(BaseOrchestrator):
 
         self.responsibilities: list[str] = data.get("responsibilities", [])
         participants = data.get("config", {}).get("participants", [])
+
+        # ------------------------------------------------------------------
+        # Resolve prompt files for any participants specifying ``prompt_path``.
+        # ``<lang>`` within the path is replaced with ``settings.LANG`` to
+        # enable localisation.  The resulting file contents are stored under
+        # ``system_message`` for use by AutoGen at runtime.
+        # ------------------------------------------------------------------
+        lang = getattr(settings, "LANG", "en")
+        for part in participants:
+            cfg = part.get("config", {})
+            prompt_path = cfg.get("prompt_path")
+            if not prompt_path:
+                continue
+            path = Path(str(prompt_path).replace("<lang>", lang))
+            if not path.is_absolute():
+                path = self.config_path.parent / path
+            try:
+                cfg["system_message"] = path.read_text()
+            except OSError:
+                cfg["system_message"] = ""
 
         if self.responsibilities:
             for part in participants:

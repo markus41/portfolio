@@ -4,6 +4,8 @@ import types
 import pytest
 from pathlib import Path
 
+from src.config import settings
+
 from src.base_orchestrator import BaseOrchestrator
 from src.team_orchestrator import TeamOrchestrator, validate_team_config
 from src.agents.base_agent import BaseAgent
@@ -96,3 +98,38 @@ def test_yaml_and_json_equivalent(tmp_path):
 
     assert orch_json.team_config == orch_yaml.team_config
     assert list(orch_json.agents.keys()) == list(orch_yaml.agents.keys())
+
+
+def test_prompt_path_loading(tmp_path, monkeypatch):
+    """prompt_path should load system_message from the given file."""
+
+    prompt_dir = tmp_path / "prompts" / "en"
+    prompt_dir.mkdir(parents=True)
+    prompt_file = prompt_dir / "dummy_agent.md"
+    prompt_file.write_text("dummy prompt")
+
+    cfg = {
+        "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
+        "config": {
+            "participants": [
+                {
+                    "config": {
+                        "name": "dummy_agent",
+                        "prompt_path": "prompts/<lang>/dummy_agent.md",
+                    }
+                }
+            ]
+        },
+    }
+
+    team_file = tmp_path / "team.json"
+    team_file.write_text(json.dumps(cfg))
+
+    mod = types.ModuleType("src.agents.dummy_agent")
+    mod.DummyAgent = DummyAgent
+    sys.modules["src.agents.dummy_agent"] = mod
+
+    monkeypatch.setattr(settings, "LANG", "en")
+    orch = TeamOrchestrator(str(team_file))
+    part_cfg = orch.team_config["config"]["participants"][0]["config"]
+    assert part_cfg["system_message"] == "dummy prompt"
