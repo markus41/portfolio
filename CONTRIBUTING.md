@@ -29,7 +29,28 @@ Thank you for considering a contribution to this project! This document outlines
    ```bash
    pytest -q
    ```
-   Ensure all tests pass before opening a pull request.
+Ensure all tests pass before opening a pull request.
+
+## Offline Workflow
+
+If you are contributing from an offline environment, fetch the project
+dependencies on a machine with internet access first:
+
+```bash
+mkdir wheelhouse
+pip download -r requirements.txt -r requirements-dev.txt -d wheelhouse
+```
+
+Transfer the `wheelhouse` directory to your offline machine and run the setup
+script using the cache:
+
+```bash
+PIP_FIND_LINKS=/path/to/wheelhouse PIP_NO_INDEX=1 ./scripts/setup.sh
+```
+
+You can also pre-build the Docker image while online, export it via
+`docker save`, then import it offline with `docker load` and run
+`./scripts/setup.sh` inside the container.
 
 ## Code Style
 

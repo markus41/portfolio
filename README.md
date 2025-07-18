@@ -24,6 +24,37 @@ Install the requirements and run the checks using the helper scripts provided in
 ./scripts/run_tests.sh  # formatting, linting and unit tests
 ```
 
+### Offline Setup
+
+If your development environment has no direct internet connectivity, you can
+still run `scripts/setup.sh` by pre-fetching all Python wheels ahead of time.
+
+1. On a machine with internet access download the dependencies:
+
+   ```bash
+   mkdir wheelhouse
+   pip download -r requirements.txt -r requirements-dev.txt -d wheelhouse
+   ```
+
+   Copy the resulting `wheelhouse` directory to the offline machine and mount it
+   during setup. Using `PIP_FIND_LINKS` instructs `pip` to install from this
+   cache without contacting PyPI:
+
+   ```bash
+   PIP_FIND_LINKS=/path/to/wheelhouse PIP_NO_INDEX=1 ./scripts/setup.sh
+   ```
+
+2. Alternatively, build the Docker image while online and move it to the offline
+   host using `docker save` / `docker load`:
+
+   ```bash
+   docker build -t brookside-bi .
+   docker save brookside-bi > brookside-bi.tar
+   # copy brookside-bi.tar to the offline machine
+   docker load < brookside-bi.tar
+   docker run --rm -v "$(pwd)":/app brookside-bi ./scripts/setup.sh
+   ```
+
 You can exercise the orchestrator with a single team using a few lines of Python:
 
 ```python
