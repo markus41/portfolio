@@ -21,3 +21,17 @@ message:
 ```json
 {"timestamp": "2024-01-01T00:00:00Z", "level": "INFO", "name": "demo", "message": "Started"}
 ```
+
+Additional environment variables allow customising the output location and
+format:
+
+* ``LOG_FILE`` – path to a file where logs should be written. When set,
+  ``setup_logging`` writes to this file instead of ``stdout``.
+* ``LOG_PLAIN`` – when set to ``true`` or ``1`` the logger emits human readable
+  text rather than JSON.
+
+These can also be specified via parameters:
+
+```python
+setup_logging(file_path="/tmp/app.log", plain_text=True)
+```
