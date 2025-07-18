@@ -91,6 +91,8 @@ example below starts with a ``start`` node that triggers two independent agents
 }
 ```
 
+![Branching workflow execution](images/branching_workflow.svg)
+
 The same definition is available in YAML form at
 ``src/workflows/examples/branching_graph.yaml``. Load the YAML with
 ``yaml.safe_load`` and pass the resulting dictionary to
