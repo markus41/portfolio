@@ -7,6 +7,8 @@ Pushgateway:
 
 - `api_request_count` – incremented for every request
 - `api_request_latency_seconds` – time taken to handle the request
+- `agent_tokens_used` – tokens consumed by an agent execution
+- `agent_loop_count` – number of times an agent was invoked
 
 The middleware is automatically enabled when `PROMETHEUS_PUSHGATEWAY` is a non
 -empty value. When unset, no metrics are pushed and the overhead is zero.

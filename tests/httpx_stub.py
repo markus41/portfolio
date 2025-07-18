@@ -44,3 +44,23 @@ class AsyncClient:
 
     def close(self):
         pass
+
+
+# Compat with httpx.BaseTransport used by Starlette's test client
+class BaseTransport:
+    pass
+
+# Starlette also expects a synchronous httpx.Client. Reuse AsyncClient for tests.
+Client = AsyncClient
+
+
+class _client:
+    CookieTypes = dict
+    UseClientDefault = object
+    USE_CLIENT_DEFAULT = object
+
+
+class _types:
+    URLTypes = str
+    AuthTypes = object
+    TimeoutTypes = object

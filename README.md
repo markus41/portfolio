@@ -489,8 +489,9 @@ See [docs/logging.md](docs/logging.md) for details.
 
 When `PROMETHEUS_PUSHGATEWAY` is set, the API records the number of requests
 and their latencies. A middleware pushes these metrics to the configured
-Prometheus Pushgateway using the lightweight `PrometheusPusher` utility. Read
-[docs/metrics.md](docs/metrics.md) for a full description.
+Prometheus Pushgateway using the lightweight `PrometheusPusher` utility. The
+orchestrators also report per-agent token and loop usage to guard against
+runaway tasks. Read [docs/metrics.md](docs/metrics.md) for a full description.
 
 ## 📐 Environment Variables
 
