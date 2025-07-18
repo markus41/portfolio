@@ -7,6 +7,8 @@ import threading
 import sys
 import time
 import types
+import asyncio
+import tests.httpx_stub as httpx
 from pathlib import Path
 
 from urllib import request as urllib_request
@@ -347,6 +349,64 @@ def test_stream_endpoint(tmp_path):
             second = resp.readline().decode()
             assert "event: status" in first
             assert "handled" in second
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+
+
+def test_stream_endpoint_async(tmp_path):
+    """Verify streaming with ``httpx.AsyncClient`` works."""
+
+    _register_agent()
+    team_cfg = _write_team(tmp_path)
+    port = _get_free_port()
+    orch = SolutionOrchestrator({"demo": str(team_cfg)})
+    api.settings.API_AUTH_KEY = "secret"
+    app = api.create_app(orch)
+    server, thread = _start_server(app, port)
+
+    stream_url = f"http://127.0.0.1:{port}/teams/demo/stream"
+    headers = {"X-API-Key": "secret"}
+
+    async def collect_events() -> tuple[bool, bool]:
+        client = httpx.AsyncClient()
+        req = urllib_request.Request(stream_url, headers=headers)
+        resp = await asyncio.to_thread(urllib_request.urlopen, req, timeout=5)
+        status_seen = False
+        activity_seen = False
+        event_type = ""
+        while not (status_seen and activity_seen):
+            try:
+                line = await asyncio.wait_for(asyncio.to_thread(resp.readline), 5)
+            except asyncio.TimeoutError:
+                break
+            line = line.decode().strip()
+            if line.startswith("event:"):
+                event_type = line.split("event:", 1)[1].strip()
+            elif line.startswith("data:"):
+                data = json.loads(line.split("data:", 1)[1].strip())
+                if event_type == "status" and data.get("status"):
+                    status_seen = True
+                elif event_type == "activity":
+                    activity_seen = True
+        resp.close()
+        await client.aclose()
+        return status_seen, activity_seen
+
+    async def runner() -> tuple[bool, bool]:
+        task = asyncio.create_task(collect_events())
+        await asyncio.sleep(0.1)
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "echo_agent", "payload": {"x": 1}},
+            headers=headers,
+        )
+        return await task
+
+    try:
+        status, activity = asyncio.run(runner())
+        assert status
+        assert activity
     finally:
         server.should_exit = True
         thread.join(timeout=5)
