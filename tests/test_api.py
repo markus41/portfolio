@@ -69,13 +69,13 @@ class EchoAgent(BaseAgent):
         return {"echo": payload}
 
 
-def _write_team(tmp_path: Path) -> Path:
+def _write_team(tmp_path: Path, name: str = "team") -> Path:
     cfg = {
         "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
         "responsibilities": ["echo_agent"],
         "config": {"participants": [{"config": {"name": "echo_agent"}}]},
     }
-    path = tmp_path / "team.json"
+    path = tmp_path / f"{name}.json"
     path.write_text(json.dumps(cfg))
     return path
 
@@ -246,11 +246,14 @@ def test_workflow_endpoints(tmp_path):
 
 def test_history_and_cors(tmp_path):
     _register_agent()
-    team_cfg = _write_team(tmp_path)
+    team_cfg = _write_team(tmp_path, "team1")
+    other_cfg = _write_team(tmp_path, "team2")
     port = _get_free_port()
     api.settings.API_AUTH_KEY = "secret"
     api.settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/test.db"
-    app = api.create_app(SolutionOrchestrator({"demo": str(team_cfg)}))
+    app = api.create_app(
+        SolutionOrchestrator({"demo": str(team_cfg), "alpha": str(other_cfg)})
+    )
     server, thread = _start_server(app, port)
 
     try:
@@ -260,13 +263,43 @@ def test_history_and_cors(tmp_path):
             headers={"X-API-Key": "secret"},
         )
 
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/demo/event",
+            {"type": "other", "payload": {"y": 2}},
+            headers={"X-API-Key": "secret"},
+        )
+
+        _http_post(
+            f"http://127.0.0.1:{port}/teams/alpha/event",
+            {"type": "echo_agent", "payload": {"z": 3}},
+            headers={"X-API-Key": "secret"},
+        )
+
         code, body = _http_get(
-            f"http://127.0.0.1:{port}/history?limit=1",
+            f"http://127.0.0.1:{port}/history?limit=3",
             headers={"X-API-Key": "secret"},
         )
         assert code == 200
         data = json.loads(body)
-        assert data["history"][0]["team"] == "demo"
+        assert len(data["history"]) == 3
+        assert any(item["team"] == "alpha" for item in data["history"])
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/history?team=demo&event_type=echo_agent",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert len(data["history"]) == 1
+        assert data["history"][0]["event_type"] == "echo_agent"
+
+        code, body = _http_get(
+            f"http://127.0.0.1:{port}/history?event_type=other",
+            headers={"X-API-Key": "secret"},
+        )
+        assert code == 200
+        data = json.loads(body)
+        assert data["history"][0]["event_type"] == "other"
 
         code, _, allow_origin = _http_options(
             f"http://127.0.0.1:{port}/teams/demo/event",

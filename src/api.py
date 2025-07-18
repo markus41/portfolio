@@ -155,10 +155,23 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
 
     @app.get("/history")
     def get_history(
-        limit: int = 10, offset: int = 0, _=Depends(_auth)
+        limit: int = 10,
+        offset: int = 0,
+        team: str | None = None,
+        event_type: str | None = None,
+        _=Depends(_auth),
     ) -> Dict[str, Any]:
-        """Return persisted event history from the database."""
-        items = db.fetch_history(limit=limit, offset=offset)
+        """Return persisted event history from the database.
+
+        The results can be filtered by ``team`` and ``event_type``. When
+        omitted all events are returned ordered by timestamp.
+        """
+        items = db.fetch_history(
+            limit=limit,
+            offset=offset,
+            team=team,
+            event_type=event_type,
+        )
         return {"history": items}
 
     @app.post("/workflows", status_code=201)

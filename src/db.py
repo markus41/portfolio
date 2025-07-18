@@ -85,16 +85,51 @@ def insert_event(team: str, event_type: str, payload: dict, result: dict) -> Non
         conn.commit()
 
 
-def fetch_history(limit: int = 10, offset: int = 0) -> list[dict]:
-    """Return a list of history records ordered by timestamp descending."""
+def fetch_history(
+    limit: int = 10,
+    offset: int = 0,
+    *,
+    team: str | None = None,
+    event_type: str | None = None,
+) -> list[dict]:
+    """Return history records ordered by timestamp descending.
+
+    Parameters
+    ----------
+    limit:
+        Maximum number of records to return.
+    offset:
+        Number of records to skip from the start of the result set.
+    team:
+        Optional team name to filter by.
+    event_type:
+        Optional event type to filter by.
+    """
+
     path = _get_db_path()
     with sqlite3.connect(path) as conn:
         conn.row_factory = sqlite3.Row
-        cur = conn.execute(
+
+        query = (
             "SELECT id, team, event_type, payload, result, timestamp\n"
-            "FROM event_history ORDER BY datetime(timestamp) DESC LIMIT ? OFFSET ?",
-            (limit, offset),
+            "FROM event_history"
         )
+
+        filters: list[str] = []
+        params: list = []
+        if team is not None:
+            filters.append("team = ?")
+            params.append(team)
+        if event_type is not None:
+            filters.append("event_type = ?")
+            params.append(event_type)
+        if filters:
+            query += " WHERE " + " AND ".join(filters)
+
+        query += " ORDER BY datetime(timestamp) DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+        cur = conn.execute(query, params)
         rows = cur.fetchall()
     history: list[dict] = []
     for row in rows:
