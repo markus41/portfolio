@@ -30,7 +30,13 @@ You can exercise the orchestrator with a single team using a few lines of Python
 from src.solution_orchestrator import SolutionOrchestrator
 
 orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
-orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
+try:
+    orch.handle_event(
+        "sales",
+        {"type": "lead_capture", "payload": {"email": "alice@example.com"}},
+    )
+finally:
+    orch.close()
 ```
 
 ---

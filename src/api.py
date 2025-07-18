@@ -179,6 +179,10 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="unknown workflow")
         return json.loads(path.read_text())
 
+    @app.on_event("shutdown")
+    async def _shutdown() -> None:
+        await orch.aclose()
+
     return app
 
 

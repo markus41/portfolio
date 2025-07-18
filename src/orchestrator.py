@@ -200,3 +200,15 @@ class Orchestrator(BaseOrchestrator):
     async def monthly_tick(self) -> None:
         """Emit the RevOps analysis cron event."""
         await run_maybe_async(self.bus.publish, "RevOps.Analyze", {"tenant_id": "demo"})
+
+    # --- shutdown helpers -------------------------------------------------
+
+    async def aclose(self) -> None:
+        """Release resources held by the orchestrator."""
+        if hasattr(self.memory, "aclose"):
+            await self.memory.aclose()
+
+    def close(self) -> None:
+        """Synchronous wrapper around :meth:`aclose`."""
+        if hasattr(self.memory, "aclose"):
+            run_sync(self.memory.aclose())

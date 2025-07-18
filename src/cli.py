@@ -116,6 +116,8 @@ def cmd_start(args: argparse.Namespace) -> None:
                 await server.serve_forever()
             except asyncio.CancelledError:  # pragma: no cover - server shutdown
                 pass
+            finally:
+                await orch.aclose()
 
     try:
         asyncio.run(_run())

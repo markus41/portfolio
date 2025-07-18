@@ -149,3 +149,18 @@ class SolutionOrchestrator:
 
         engine = GraphWorkflowEngine(definition)
         return engine.run(self)
+
+    # --- shutdown helpers -------------------------------------------------
+
+    async def aclose(self) -> None:
+        """Close resources on all managed teams."""
+        for orch in self.teams.values():
+            mem = getattr(orch, "memory", None)
+            if mem and hasattr(mem, "aclose"):
+                await mem.aclose()
+
+    def close(self) -> None:
+        """Synchronous wrapper around :meth:`aclose`."""
+        from agentic_core import run_sync
+
+        run_sync(self.aclose())
