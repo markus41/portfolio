@@ -445,6 +445,8 @@ dotenv file before running the orchestrator or tests. An example file named
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `VISITOR_ANALYTICS_URL` / `VISITOR_ANALYTICS_KEY` | Visitor tracking analytics configuration |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
+| `LOG_FILE` | Write logs to this file instead of `stdout` |
+| `LOG_PLAIN` | Emit human readable logs when set to `true` or `1` |
 
 For an exhaustive description of all variables see
 [docs/environment.md](docs/environment.md).
