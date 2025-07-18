@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from importlib import import_module, metadata
-from typing import Type, TypeVar
+from typing import Any, Type, TypeVar
 
 from ..agents.base_agent import BaseAgent
 from ..plugins.base_plugin import BaseToolPlugin
@@ -128,3 +128,27 @@ def load_plugin(name: str) -> Type[BaseToolPlugin]:
         "src.plugins",
         BaseToolPlugin,
     )
+
+
+def attach_plugins(data: Any) -> None:
+    """Recursively replace ``plugin`` references with callables.
+
+    Any dict containing a ``plugin`` key is resolved using :func:`load_plugin`
+    and the resulting instance's :py:meth:`~BaseToolPlugin.execute` method is
+    stored under ``config['function']`` for consumption by AutoGen's
+    ``FunctionTool``. The ``plugin`` key remains untouched for debugging.
+    """
+
+    def _walk(obj: Any) -> None:
+        if isinstance(obj, dict):
+            if "plugin" in obj:
+                plugin_cls = load_plugin(obj["plugin"])
+                plugin = plugin_cls()
+                obj["function"] = plugin.execute
+            for v in obj.values():
+                _walk(v)
+        elif isinstance(obj, list):
+            for item in obj:
+                _walk(item)
+
+    _walk(data)

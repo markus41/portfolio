@@ -394,6 +394,19 @@ tool = ToolCls()
 Plugins placed directly inside ``src/agents`` or ``src/plugins`` require no
 registration and are resolved automatically by name.
 
+When referencing a plugin inside a team JSON file, provide the ``plugin``
+name under a ``FunctionTool`` configuration. ``TeamOrchestrator`` will
+automatically load the plugin and attach its ``execute`` method as the tool
+function::
+
+    {
+      "provider": "autogen.tools.FunctionTool",
+      "config": {"name": "log_event", "plugin": "log_event"}
+    }
+
+This indirection keeps the JSON concise while enabling custom business logic
+to live in reusable Python modules.
+
 ## 📦 Installation
 
 Install the Python dependencies with pip using the `requirements.txt` file or

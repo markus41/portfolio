@@ -89,6 +89,11 @@ Once installed, ``load_plugin('email')`` will return ``EmailPlugin``. Plugins
 placed directly in ``src/plugins/`` do not require registration and are
 automatically importable by name.
 
+Team configuration files may reference these plugins using a ``plugin`` key
+instead of embedding raw ``source_code``. During loading,
+``TeamOrchestrator`` calls :func:`src.utils.plugin_loader.attach_plugins` to
+replace the entry with the plugin's ``execute`` method.
+
 You can also resolve components manually using the helper in
 ``src.utils.plugin_loader``:
 

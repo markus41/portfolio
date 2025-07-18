@@ -67,7 +67,7 @@
                   "config": {
                     "name": "log_event",
                     "description": "Write a line to the central audit log and chronological trace.",
-                    "source_code": "def log_event(event_id: str, step: str, payload=None):\\n    print({\\\"event_id\\\": event_id, \\\"step\\\": step, \\\"payload\\\": payload})\\n    return {\\\"status\\\": \\\"logged\\\"}",
+                    "plugin": "log_event",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -82,7 +82,7 @@
                   "config": {
                     "name": "invoke_agent",
                     "description": "Call a specialised expert agent and wait for its status response.",
-                    "source_code": "def invoke_agent(agent_id: str, input):\\n    print(f\\\"Invoking {agent_id} with input: {input}\\\")\\n    return {\\\"status\\\": \\\"done\\\", \\\"agent\\\": agent_id}",
+                    "plugin": "invoke_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -97,7 +97,7 @@
                   "config": {
                     "name": "notify_human",
                     "description": "Escalate an issue or decision to a human operator.",
-                    "source_code": "def notify_human(severity: str, message: str):\\n    print(f\\\"[{severity.upper()}] {message}\\\")\\n    return {\\\"status\\\": \\\"sent\\\", \\\"severity\\\": severity}",
+                    "plugin": "notify_human",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -162,7 +162,7 @@
                   "config": {
                     "name": "lead_capture",
                     "description": "Normalize and register inbound web forms, emails, or chats as a structured lead.",
-                    "source_code": "def lead_capture(raw_input: dict):\\n    print(f'Captured lead: {raw_input}')\\n    return {'status': 'captured', 'lead': raw_input}",
+                    "plugin": "lead_capture",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -227,7 +227,7 @@
                   "config": {
                     "name": "lead_enrichment",
                     "description": "Enrich a lead with additional firmographics (Clearbit, LinkedIn, etc).",
-                    "source_code": "def lead_enrichment(lead_id: str):\\n    print(f'Enriching lead {lead_id}')\\n    return {'status': 'enriched', 'lead_id': lead_id}",
+                    "plugin": "lead_enrichment",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -292,7 +292,7 @@
                   "config": {
                     "name": "lead_scoring",
                     "description": "Score a lead using machine learning or rule-based criteria.",
-                    "source_code": "def lead_scoring(lead_id: str):\\n    print(f'Scoring lead {lead_id}')\\n    return {'status': 'scored', 'lead_id': lead_id, 'score': 80}",
+                    "plugin": "lead_scoring",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -357,7 +357,7 @@
                   "config": {
                     "name": "email_outreach",
                     "description": "Draft and send personalized emails to leads.",
-                    "source_code": "def email_outreach(lead_id: str, email_payload: dict):\\n    print(f'Sending outreach email to lead {lead_id}')\\n    return {'status': 'email_sent', 'lead_id': lead_id}",
+                    "plugin": "email_outreach",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -422,7 +422,7 @@
                   "config": {
                     "name": "generate_proposal",
                     "description": "Generate a sales proposal document.",
-                    "source_code": "def generate_proposal(client_id: str, deal_details: dict):\\n    print(f'Generating proposal for {client_id} with {deal_details}')\\n    return {'status': 'generated', 'client_id': client_id}",
+                    "plugin": "generate_proposal",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -487,7 +487,7 @@
                   "config": {
                     "name": "negotiation_agent",
                     "description": "Handle pricing questions and enforce discount guardrails.",
-                    "source_code": "def negotiation_agent(deal_id: str, negotiation_payload: dict):\\n    print(f'Negotiating deal {deal_id}')\\n    return {'status': 'negotiation_complete', 'deal_id': deal_id}",
+                    "plugin": "negotiation_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -552,7 +552,7 @@
                   "config": {
                     "name": "contract_agent",
                     "description": "Send contracts for e-signature and track signatures.",
-                    "source_code": "def contract_agent(contact_email: str, contract_payload: dict):\\n    print(f'Sending contract to {contact_email}')\\n    return {'status': 'contract_sent', 'contact_email': contact_email}",
+                    "plugin": "contract_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -617,7 +617,7 @@
                   "config": {
                     "name": "onboarding_agent",
                     "description": "Kick off welcome series and client project tasks.",
-                    "source_code": "def onboarding_agent(client_id: str):\\n    print(f'Onboarding client {client_id}')\\n    return {'status': 'onboarding_started', 'client_id': client_id}",
+                    "plugin": "onboarding_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -682,7 +682,7 @@
                   "config": {
                     "name": "csat_checker_agent",
                     "description": "Send CSAT surveys and start recovery if low.",
-                    "source_code": "def csat_checker_agent(client_id: str):\\n    print(f'CSAT survey for client {client_id}')\\n    return {'status': 'csat_sent', 'client_id': client_id}",
+                    "plugin": "csat_checker_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -747,7 +747,7 @@
                   "config": {
                     "name": "upsell_agent",
                     "description": "Detect cross-sell signals and send offers.",
-                    "source_code": "def upsell_agent(client_id: str, offer_payload: dict):\\n    print(f'Sending upsell offer to {client_id}')\\n    return {'status': 'upsell_sent', 'client_id': client_id}",
+                    "plugin": "upsell_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -812,7 +812,7 @@
                   "config": {
                     "name": "referral_agent",
                     "description": "Request and track referrals from existing clients.",
-                    "source_code": "def referral_agent(client_id: str):\\n    print(f'Requesting referral from {client_id}')\\n    return {'status': 'referral_requested', 'client_id': client_id}",
+                    "plugin": "referral_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -877,7 +877,7 @@
                   "config": {
                     "name": "chatbot_agent",
                     "description": "Live Q&A with website visitors, escalating when unsure.",
-                    "source_code": "def chatbot_agent(visitor_id: str, question: str):\\n    print(f'Chatbot handling question for visitor {visitor_id}: {question}')\\n    return {'status': 'answered', 'visitor_id': visitor_id}",
+                    "plugin": "chatbot_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -942,7 +942,7 @@
                   "config": {
                     "name": "visitor_tracking",
                     "description": "Track and fingerprint website visitors and log page views.",
-                    "source_code": "def visitor_tracking(visitor_data: dict):\\n    print(f'Tracking visitor: {visitor_data}')\\n    return {'status': 'tracked', 'visitor': visitor_data}",
+                    "plugin": "visitor_tracking",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -1007,7 +1007,7 @@
                   "config": {
                     "name": "segmentation_and_targeting",
                     "description": "Assign leads to audience segments and trigger ad or email campaigns.",
-                    "source_code": "def segmentation_and_targeting(lead_id: str):\\n    print(f'Segmenting and targeting lead {lead_id}')\\n    return {'status': 'segmented', 'lead_id': lead_id, 'segment': 'A'}",
+                    "plugin": "segmentation_and_targeting",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -1072,7 +1072,7 @@
                   "config": {
                     "name": "crm_entry_dedup",
                     "description": "Safely create or update CRM records, ensuring no duplicates.",
-                    "source_code": "def crm_entry_dedup(lead_data: dict):\\n    print(f'CRM dedup/entry: {lead_data}')\\n    return {'status': 'crm_synced', 'lead': lead_data}",
+                    "plugin": "crm_entry_dedup",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -1137,7 +1137,7 @@
                   "config": {
                     "name": "crm_pipeline_agent",
                     "description": "Monitor CRM deal stages and nudge sales follow-ups.",
-                    "source_code": "def crm_pipeline_agent(deal_id: str):\\n    print(f'Monitoring pipeline for deal {deal_id}')\\n    return {'status': 'pipeline_checked', 'deal_id': deal_id}",
+                    "plugin": "crm_pipeline_agent",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
@@ -1202,7 +1202,7 @@
                   "config": {
                     "name": "push_metric",
                     "description": "Push metrics to Prometheus.",
-                    "source_code": "def push_metric(metric: str, value: float, labels=None):\\n    print({'metric': metric, 'value': value, 'labels': labels})\\n    return {'status': 'queued'}",
+                    "plugin": "push_metric",
                     "global_imports": [],
                     "has_cancellation_support": false
                   }
