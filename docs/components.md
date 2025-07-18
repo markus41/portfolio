@@ -76,7 +76,8 @@ Utility classes can be plugged in using the same mechanism. Implement a
 ``BaseToolPlugin`` subclass under ``src/plugins`` or distribute it via an entry
 point in the ``brookside.plugins`` group. At runtime
 ``src.utils.plugin_loader.load_plugin`` resolves the class so it can be
-instantiated by agents or orchestrators.
+instantiated by agents or orchestrators. For example, to expose the
+``EmailPlugin`` via entry points add the following to ``setup.cfg``:
 
 ```ini
 [options.entry_points]
@@ -84,7 +85,8 @@ brookside.plugins =
     email = src.plugins.email_plugin:EmailPlugin
 ```
 
-Plugins placed directly in ``src/plugins/`` do not require registration and are
+Once installed, ``load_plugin('email')`` will return ``EmailPlugin``. Plugins
+placed directly in ``src/plugins/`` do not require registration and are
 automatically importable by name.
 
 You can also resolve components manually using the helper in
