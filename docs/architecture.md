@@ -138,6 +138,14 @@ When `TeamOrchestrator.handle_event` receives an event it forwards the payload t
 5. Providers (e.g. OpenAI clients) are called by AutoGen whenever a message requires LLM output.
 6. The original orchestrator persists the event through `MemoryService` for auditing.
 
+### Graph Workflow Engine
+
+`GraphWorkflowEngine` executes workflows described as nodes and edges.  Each node
+may specify a `team` and `event` that are dispatched through
+`SolutionOrchestrator`.  Calls can be synchronous using `step()` / `run()` or
+fully asynchronous via `async_step()` / `async_run()` which await the
+orchestrator's `handle_event` method.
+
 ## Building New Agents and Teams
 
 1. Implement a new agent class under `src/agents/` deriving from `BaseAgent` and providing a `run()` method.
