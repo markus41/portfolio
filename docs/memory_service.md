@@ -78,7 +78,7 @@ sequenceDiagram
 
 ## Swapping backends
 
-Four built-in backends are provided:
+Five built-in backends are provided:
 
 1. **REST** – the original implementation used for examples. Configure the
    endpoint via ``MEMORY_ENDPOINT``.
@@ -88,9 +88,12 @@ Four built-in backends are provided:
    ``MEMORY_FILE_PATH``.
 4. **Redis** – stores events in lists within a Redis instance using
    ``MEMORY_REDIS_URL``.
+5. **Embedding** – stores records in-memory and ranks them by cosine
+   similarity against the query string. Controlled with
+   ``MEMORY_EMBED_FIELD``.
 
 Select the backend using the ``MEMORY_BACKEND`` environment variable (``rest``,
-``rest_async``, ``file`` or ``redis``). The orchestrator reads these settings via ``src.config.Settings``
+``rest_async``, ``file``, ``redis`` or ``embedding``). The orchestrator reads these settings via ``src.config.Settings``
 so they can be placed in a ``.env`` file or exported in your shell.
 
 You can also provide your own implementation by subclassing

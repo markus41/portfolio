@@ -171,10 +171,11 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "*"
 
     # Memory Service
-    MEMORY_BACKEND: Literal["rest", "rest_async", "file", "redis"] = "rest"
+    MEMORY_BACKEND: Literal["rest", "rest_async", "file", "redis", "embedding"] = "rest"
     MEMORY_ENDPOINT: str = "http://localhost:8000"
     MEMORY_FILE_PATH: str = "memory.jsonl"
     MEMORY_REDIS_URL: str = "redis://localhost:6379/0"
+    MEMORY_EMBED_FIELD: str = "text"
 
     # Logistics & E-commerce
     TMS_API_URL: Optional[str] = None
