@@ -250,6 +250,9 @@ brookside-cli validate-team src/teams/sales_team_full.json
 # map a natural language task to a workflow template
 brookside-cli assist "handle new inventory"
 # => {"template": "src/teams/inventory_management_team.json"}
+
+# run an integration pipeline
+brookside-cli run-integration CRM_to_ERP_Contacts --team sales
 ```
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free

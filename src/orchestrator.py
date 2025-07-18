@@ -44,6 +44,7 @@ import logging
 from .agents.operations.support_agent import SupportAgent
 from .agents.operations.procurement_agent import ProcurementAgent
 from .agents.sales.revops_agent import RevOpsAgent
+from .agents.integration_agent import IntegrationAgent
 
 
 logger = logging.getLogger(__name__)
@@ -159,6 +160,9 @@ class Orchestrator(BaseOrchestrator):
                 "chatbot": ChatbotAgent(),
                 "crm_pipeline": CRMPipelineAgent(),
                 "segmentation": SegmentationAdTargetingAgent(),
+                "integration_request": IntegrationAgent(
+                    config_path="configs/integrations.yaml"
+                ),
             }
 
         # Additional global agents used outside of handle_event

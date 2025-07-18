@@ -38,9 +38,17 @@ class SegmentationEvent:
     budget_per_segment: int
 
 
+@dataclass
+class IntegrationRequest:
+    """Event payload for :class:`IntegrationAgent`."""
+
+    name: str
+
+
 __all__ = [
     "LeadCaptureEvent",
     "ChatbotEvent",
     "CRMPipelineEvent",
     "SegmentationEvent",
+    "IntegrationRequest",
 ]
