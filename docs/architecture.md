@@ -112,7 +112,7 @@ At this point all AutoGen agents are live and waiting for events. Teams remain a
 
 ### SolutionOrchestrator
 
-`src.solution_orchestrator.SolutionOrchestrator` manages multiple `TeamOrchestrator` instances.  It routes events to a named team via the async `handle_event(team, event)` method and records the results.
+`src.solution_orchestrator.SolutionOrchestrator` manages multiple `TeamOrchestrator` instances.  It routes events to a named team via the async `handle_event(team, event)` method and records the results. For higher throughput, events may be queued with `enqueue_event()` which are processed by a pool of worker tasks limited by `max_workers`.
 
 ## AutoGen Agents and Providers
 

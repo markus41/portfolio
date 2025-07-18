@@ -66,7 +66,7 @@ async def _handle_client(
         team = message.get("team")
         event = message.get("event", {})
         try:
-            result = await orch.handle_event(team, event)
+            result = await orch.enqueue_event(team, event)
             orch.report_status(team, "handled")
         except Exception as exc:  # pragma: no cover - defensive
             result = {"error": str(exc)}
@@ -103,7 +103,7 @@ def cmd_start(args: argparse.Namespace) -> None:
     from .solution_orchestrator import SolutionOrchestrator
 
     teams = _parse_team_mapping(tuple(args.teams))
-    orch = SolutionOrchestrator(teams)
+    orch = SolutionOrchestrator(teams, max_workers=args.workers)
 
     async def _run() -> None:
         server = await asyncio.start_server(
@@ -228,6 +228,12 @@ def build_parser() -> argparse.ArgumentParser:
     start_p.add_argument("teams", nargs="+", help="Team config as NAME=PATH pairs")
     start_p.add_argument("--host", default=DEFAULT_HOST, help="Bind address")
     start_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Bind port")
+    start_p.add_argument(
+        "--workers",
+        type=int,
+        default=5,
+        help="Maximum concurrent event handlers",
+    )
     start_p.set_defaults(func=cmd_start)
 
     send_p = sub.add_parser("send", help="Send an event to the orchestrator")

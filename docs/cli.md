@@ -14,6 +14,7 @@ Arguments:
 
 - `--host` – Bind address. Defaults to `127.0.0.1`.
 - `--port` – Port to listen on. Defaults to `8765`.
+- `--workers` – Maximum number of concurrent events. Defaults to `5`.
 
 The command prints the address on `stderr` and blocks until interrupted.
 

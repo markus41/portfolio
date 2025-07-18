@@ -28,9 +28,14 @@ You can exercise the orchestrator with a single team using a few lines of Python
 
 ```python
 from src.solution_orchestrator import SolutionOrchestrator
+import asyncio
 
 orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
-orch.handle_event("sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}})
+asyncio.run(
+    orch.enqueue_event(
+        "sales", {"type": "lead_capture", "payload": {"email": "alice@example.com"}}
+    )
+)
 ```
 
 ---
@@ -113,7 +118,9 @@ orch = SolutionOrchestrator({
 #     "sales": "src/teams/sales_team_full.yaml",
 #     "operations": "src/teams/operations_team.yaml",
 # })
-orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
+asyncio.run(
+    orch.enqueue_event("sales", {"type": "lead_capture", "payload": {}})
+)
 ```
 
 Teams can report progress upward via `orch.report_status(team, status)`.

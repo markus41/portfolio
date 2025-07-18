@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 import asyncio
 from .utils import ActivityLogger
 
@@ -29,6 +29,8 @@ class SolutionOrchestrator:
     persist_history:
         If ``True`` processed events are written to the SQLite history database
         via :mod:`src.db`.
+    max_workers:
+        Number of background worker tasks processing events concurrently.
     """
 
     def __init__(
@@ -37,6 +39,8 @@ class SolutionOrchestrator:
         planner_plans: Optional[Dict[str, List[Dict[str, Any]]]] = None,
         log_path: str | None = None,
         persist_history: bool = True,
+        *,
+        max_workers: int = 5,
     ) -> None:
         self.teams = {
             name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()
@@ -47,6 +51,12 @@ class SolutionOrchestrator:
         self.planner: Optional[PlannerAgent] = None
         self.activity_logger = ActivityLogger(log_path) if log_path else None
         self.persist_history = persist_history
+        self._queue: asyncio.Queue[
+            Tuple[str, Dict[str, Any], asyncio.Future]
+        ] = asyncio.Queue()
+        self._workers: list[asyncio.Task] = []
+        self._max_workers = max_workers
+        self._workers_started = False
         if planner_plans is not None:
             self.planner = PlannerAgent(self, planner_plans)
 
@@ -70,6 +80,47 @@ class SolutionOrchestrator:
             try:
                 q.put_nowait(message)
             except asyncio.QueueFull:  # pragma: no cover - unlikely
+                pass
+
+    def _start_workers(self) -> None:
+        """Launch background tasks consuming the internal event queue."""
+
+        if self._workers_started:
+            return
+        self._workers_started = True
+        for _ in range(self._max_workers):
+            self._workers.append(asyncio.create_task(self._worker_loop()))
+
+    async def _worker_loop(self) -> None:
+        """Process queued events sequentially inside each worker."""
+
+        while True:
+            team, event, fut = await self._queue.get()
+            try:
+                result = await self.handle_event(team, event)
+            except Exception as exc:  # pragma: no cover - defensive
+                result = {"error": str(exc)}
+            if not fut.cancelled():
+                fut.set_result(result)
+            self._queue.task_done()
+
+    async def enqueue_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Add ``event`` to the processing queue and wait for the result."""
+
+        self._start_workers()
+        fut: asyncio.Future = asyncio.get_running_loop().create_future()
+        await self._queue.put((team, event, fut))
+        return await fut
+
+    async def shutdown(self) -> None:
+        """Cancel worker tasks and wait for termination."""
+
+        for t in self._workers:
+            t.cancel()
+        for t in self._workers:
+            try:
+                await t
+            except asyncio.CancelledError:  # pragma: no cover - graceful shutdown
                 pass
 
     async def handle_event(self, team: str, event: Dict[str, Any]) -> Dict[str, Any]:

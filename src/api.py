@@ -109,7 +109,7 @@ def create_app(orchestrator: SolutionOrchestrator | None = None) -> FastAPI:
     @app.post("/teams/{name}/event")
     async def handle_event(name: str, event: Event, _=Depends(_auth)) -> Dict[str, Any]:
         """Dispatch ``event`` to ``name`` via the orchestrator."""
-        result = await orch.handle_event(name, event.dict())
+        result = await orch.enqueue_event(name, event.dict())
         if result.get("status") == "unknown_team":
             raise HTTPException(status_code=404, detail="unknown team")
         orch.report_status(name, "handled")
@@ -198,7 +198,8 @@ if __name__ == "__main__":  # pragma: no cover - manual execution
         return mapping
 
     teams = _parse_team_mapping(sys.argv[1:])
-    orch = SolutionOrchestrator(teams)
+    workers = int(os.getenv("MAX_WORKERS", "5"))
+    orch = SolutionOrchestrator(teams, max_workers=workers)
     app = create_app(orch)
     setup_logging()
 
