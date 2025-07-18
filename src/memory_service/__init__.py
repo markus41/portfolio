@@ -8,6 +8,7 @@ except Exception:  # pragma: no cover - httpx missing
     AsyncRestMemoryService = None  # type: ignore
 from .file import FileMemoryService
 from .redis import RedisMemoryService
+from .embedding import EmbeddingMemoryService
 
 __all__ = [
     "BaseMemoryService",
@@ -15,4 +16,5 @@ __all__ = [
     "AsyncRestMemoryService",
     "FileMemoryService",
     "RedisMemoryService",
+    "EmbeddingMemoryService",
 ]

@@ -72,10 +72,11 @@ variables documented below.
 - `CLOUD_DOCS_API_KEY` – Authentication token for the cloud docs API.
 
 ## Memory Service
-- `MEMORY_BACKEND` – Choose the persistence layer (`rest`, `file`, `redis`).
+- `MEMORY_BACKEND` – Choose the persistence layer (`rest`, `rest_async`, `file`, `redis`, `embedding`).
 - `MEMORY_ENDPOINT` – URL for the REST backend when `MEMORY_BACKEND=rest`.
 - `MEMORY_FILE_PATH` – File path when `MEMORY_BACKEND=file`.
 - `MEMORY_REDIS_URL` – Redis URL when `MEMORY_BACKEND=redis`.
+- `MEMORY_EMBED_FIELD` – Payload field containing text when `MEMORY_BACKEND=embedding`.
 
 ## Messaging & Notifications
 - `SENDGRID_API_KEY` – SendGrid API key.
