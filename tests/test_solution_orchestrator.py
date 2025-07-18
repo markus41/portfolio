@@ -100,3 +100,49 @@ def test_solution_orchestrator_concurrent(tmp_path):
 
     assert res_a["result"]["handled_by"] == "A"
     assert res_b["result"]["handled_by"] == "B"
+
+
+def test_team_reload_manual(tmp_path, monkeypatch):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    mod_b = types.ModuleType("src.agents.dummy_agent_b")
+    mod_b.DummyAgentB = DummyAgentB
+    sys.modules["src.agents.dummy_agent_b"] = mod_b
+
+    orch = SolutionOrchestrator({"A": str(team)})
+
+    out = orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {}})
+    assert out["result"]["handled_by"] == "A"
+
+    team.write_text(
+        json.dumps(
+            {
+                "provider": "autogen.agentchat.teams.RoundRobinGroupChat",
+                "responsibilities": ["dummy_agent_b"],
+                "config": {"participants": [{"config": {"name": "dummy_agent_b"}}]},
+            }
+        )
+    )
+
+    orch._on_team_modified("A", team)
+
+    out2 = orch.handle_event_sync("A", {"type": "dummy_agent_b", "payload": {}})
+    assert out2["result"]["handled_by"] == "B"
+
+
+def test_hot_reload_env_without_watchdog(tmp_path, monkeypatch):
+    team = _write_team(tmp_path, "dummy_agent_a")
+
+    mod_a = types.ModuleType("src.agents.dummy_agent_a")
+    mod_a.DummyAgentA = DummyAgentA
+    sys.modules["src.agents.dummy_agent_a"] = mod_a
+
+    monkeypatch.setenv("TEAM_HOT_RELOAD", "1")
+    orch = SolutionOrchestrator({"A": str(team)})
+
+    assert orch._observer is None
+

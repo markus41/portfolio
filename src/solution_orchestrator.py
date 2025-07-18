@@ -6,6 +6,19 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
 import asyncio
+import os
+import types
+
+try:  # pragma: no cover - optional dependency
+    from watchdog.observers import Observer  # type: ignore
+    from watchdog.events import FileSystemEventHandler
+except Exception:  # pragma: no cover - fallback when watchdog is missing
+    Observer = None
+
+    class FileSystemEventHandler:  # type: ignore[misc]
+        """Fallback event handler used when ``watchdog`` is unavailable."""
+
+        pass
 from .utils import ActivityLogger
 
 from . import db
@@ -41,6 +54,7 @@ class SolutionOrchestrator:
         self.teams = {
             name: TeamOrchestrator(Path(path)) for name, path in team_configs.items()
         }
+        self._observer: Observer | None = None
         self.history: list[dict] = []
         self.status: Dict[str, str] = {}
         self._subscribers: dict[str, list[asyncio.Queue]] = defaultdict(list)
@@ -49,6 +63,68 @@ class SolutionOrchestrator:
         self.persist_history = persist_history
         if planner_plans is not None:
             self.planner = PlannerAgent(self, planner_plans)
+
+        if os.getenv("TEAM_HOT_RELOAD") == "1" and Observer is not None:
+            self._setup_watchers(team_configs)
+
+    # ------------------------------------------------------------------
+    # Hot reload implementation
+    # ------------------------------------------------------------------
+    class _ReloadHandler(FileSystemEventHandler):
+        """Reload a team when its configuration file changes."""
+
+        def __init__(self, parent: "SolutionOrchestrator", name: str, path: Path) -> None:
+            self.parent = parent
+            self.name = name
+            self.path = path.resolve()
+
+        def on_modified(self, event) -> None:  # type: ignore[override]
+            if Path(getattr(event, "src_path", "")).resolve() == self.path:
+                self.parent._on_team_modified(self.name, self.path)
+
+        # Cover file moves that overwrite the config
+        def on_moved(self, event) -> None:  # type: ignore[override]
+            if Path(getattr(event, "dest_path", "")).resolve() == self.path:
+                self.parent._on_team_modified(self.name, self.path)
+
+    def _setup_watchers(self, team_configs: Dict[str, str]) -> None:
+        """Initialise watchdog observers for all team files."""
+
+        observer = Observer()
+        for name, path_str in team_configs.items():
+            path = Path(path_str).resolve()
+            handler = self._ReloadHandler(self, name, path)
+            observer.schedule(handler, path.parent, recursive=False)
+
+        observer.daemon = True
+        try:  # pragma: no cover - start may fail on some platforms
+            observer.start()
+        except Exception:
+            return
+        self._observer = observer
+
+    def _on_team_modified(self, name: str, path: Path) -> None:
+        """Rebuild the :class:`TeamOrchestrator` for ``name``."""
+
+        try:
+            self.teams[name] = TeamOrchestrator(path)
+            self.report_status(name, "reloaded")
+        except Exception as exc:  # pragma: no cover - invalid config
+            self.report_status(name, f"reload_failed: {exc}")
+
+    def close(self) -> None:
+        """Stop any active file watchers."""
+
+        if self._observer is not None:
+            try:
+                self._observer.stop()
+                self._observer.join(timeout=1)
+            except Exception:  # pragma: no cover - shutting down observer failed
+                pass
+            self._observer = None
+
+    def __del__(self) -> None:  # pragma: no cover - cleanup
+        self.close()
 
     def subscribe(self, team: str) -> asyncio.Queue:
         """Return a queue receiving streaming updates for ``team``."""

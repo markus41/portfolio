@@ -118,6 +118,18 @@ orch.handle_event("sales", {"type": "lead_capture", "payload": {}})
 
 Teams can report progress upward via `orch.report_status(team, status)`.
 
+#### Hot Reloading
+
+Enable automatic reloading of team configurations during development by setting
+the environment variable `TEAM_HOT_RELOAD=1` and installing the optional
+`watchdog` dependency. Each team file is monitored and the corresponding
+`TeamOrchestrator` is rebuilt when the file changes.
+
+```bash
+pip install watchdog  # optional
+TEAM_HOT_RELOAD=1 brookside-cli start sales=src/teams/sales_team_full.json
+```
+
 Agents may also advertise a list of `skills`. The orchestrator can route a task
 to the first agent declaring the requested skill:
 
@@ -439,6 +451,7 @@ dotenv file before running the orchestrator or tests.
 | `PROMETHEUS_PUSHGATEWAY` | Metrics aggregation endpoint |
 | `VISITOR_ANALYTICS_URL` / `VISITOR_ANALYTICS_KEY` | Visitor tracking analytics configuration |
 | `MLS_API_URL` / `MLS_API_KEY` | Real estate data feed |
+| `TEAM_HOT_RELOAD` | Set to `1` to watch team files and reload on changes |
 
 For an exhaustive description of all variables see
 [docs/environment.md](docs/environment.md).

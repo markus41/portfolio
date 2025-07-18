@@ -144,3 +144,4 @@ variables documented below.
 - `API_AUTH_KEY` – Token required by the FastAPI server for requests.
 - `ALLOWED_ORIGINS` – Comma separated list of domains allowed for CORS requests.
 - `SCRAPER_USER_AGENT` – HTTP User-Agent string used by `ScrapingPlugin`.
+- `TEAM_HOT_RELOAD` – Set to `1` to watch team files and reload on changes. Requires the optional `watchdog` package.
