@@ -97,8 +97,9 @@ class GraphWorkflowEngine:
     """Execute :class:`GraphWorkflowDefinition` nodes in topological order.
 
     Each node ``config`` dictionary may specify a ``team`` and ``event`` entry.
-    During execution these are passed to
+    During synchronous execution these are passed to
     :meth:`~src.solution_orchestrator.SolutionOrchestrator.handle_event_sync`.
+    Asynchronous flows use :meth:`~src.solution_orchestrator.SolutionOrchestrator.handle_event`.
     Nodes without either field are treated as no-ops.
     """
 
@@ -144,6 +145,31 @@ class GraphWorkflowEngine:
 
         return {"node": node_id, "team": team, "result": result}
 
+    async def async_step(self, orchestrator: "SolutionOrchestrator") -> dict:
+        """Asynchronously execute the next queued node."""
+
+        if not self._queue:
+            raise StopAsyncIteration("workflow complete")
+
+        node_id = self._queue.pop(0)
+        node = self._node_map[node_id]
+        team = node.config.get("team")
+        event = node.config.get("event")
+
+        if team and event:
+            result = await orchestrator.handle_event(team, event)
+        else:  # pragma: no cover - simple branch
+            result = {"status": "noop"}
+
+        for edge in self.definition.edges:
+            if edge.source == node_id:
+                tgt = edge.target
+                self._incoming[tgt] -= 1
+                if self._incoming[tgt] == 0:
+                    self._queue.append(tgt)
+
+        return {"node": node_id, "team": team, "result": result}
+
     def run(self, orchestrator: "SolutionOrchestrator") -> dict:
         """Execute all nodes sequentially until finished."""
 
@@ -151,6 +177,17 @@ class GraphWorkflowEngine:
         while True:
             try:
                 results.append(self.step(orchestrator))
-            except StopIteration:
+            except (StopIteration, StopAsyncIteration):
+                break
+        return {"status": "complete", "results": results}
+
+    async def async_run(self, orchestrator: "SolutionOrchestrator") -> dict:
+        """Asynchronously execute all nodes sequentially."""
+
+        results = []
+        while True:
+            try:
+                results.append(await self.async_step(orchestrator))
+            except (StopIteration, StopAsyncIteration):
                 break
         return {"status": "complete", "results": results}

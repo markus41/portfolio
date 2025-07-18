@@ -9,9 +9,11 @@ from src.solution_orchestrator import SolutionOrchestrator
 from src.agents.base_agent import BaseAgent
 from src.workflows.graph import (
     GraphWorkflowDefinition,
+    GraphWorkflowEngine,
     NodeDefinition,
     EdgeDefinition,
 )
+import asyncio
 
 
 class DummyAgentA(BaseAgent):
@@ -127,6 +129,106 @@ def test_branching_graph_execution(tmp_path):
     )
 
     result = orch.execute_workflow(wf)
+
+    assert result["status"] == "complete"
+    assert len(result["results"]) == 3
+    assert result["results"][0]["node"] == "start"
+    teams = {r["team"] for r in result["results"]}
+    assert teams == {"A", "B"}
+
+
+def test_async_linear_graph_execution(tmp_path):
+    _register_agents()
+    team_a = _write_team(tmp_path, "dummy_agent_a")
+    team_b = _write_team(tmp_path, "dummy_agent_b")
+
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+
+    wf = GraphWorkflowDefinition(
+        name="linear",
+        nodes=[
+            NodeDefinition(
+                id="a",
+                type="agent",
+                label="A",
+                config={
+                    "team": "A",
+                    "event": {"type": "dummy_agent_a", "payload": {"foo": 1}},
+                },
+            ),
+            NodeDefinition(
+                id="b",
+                type="agent",
+                label="B",
+                config={
+                    "team": "B",
+                    "event": {"type": "dummy_agent_b", "payload": {"bar": 2}},
+                },
+            ),
+        ],
+        edges=[EdgeDefinition(source="a", target="b")],
+    )
+
+    engine = GraphWorkflowEngine(wf)
+
+    async def _run():
+        return await engine.async_run(orch)
+
+    result = asyncio.run(_run())
+
+    assert result["status"] == "complete"
+    assert [r["team"] for r in result["results"]] == ["A", "B"]
+    assert result["results"][0]["result"]["result"]["handled_by"] == "A"
+    assert result["results"][1]["result"]["result"]["handled_by"] == "B"
+
+
+def test_async_branching_graph_execution(tmp_path):
+    _register_agents()
+    team_a = _write_team(tmp_path, "dummy_agent_a")
+    team_b = _write_team(tmp_path, "dummy_agent_b")
+
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+
+    wf = GraphWorkflowDefinition(
+        name="branching",
+        nodes=[
+            NodeDefinition(
+                id="start",
+                type="agent",
+                label="Start",
+                config={"team": "A", "event": {"type": "dummy_agent_a", "payload": {}}},
+            ),
+            NodeDefinition(
+                id="a",
+                type="agent",
+                label="A",
+                config={
+                    "team": "A",
+                    "event": {"type": "dummy_agent_a", "payload": {"a": 1}},
+                },
+            ),
+            NodeDefinition(
+                id="b",
+                type="agent",
+                label="B",
+                config={
+                    "team": "B",
+                    "event": {"type": "dummy_agent_b", "payload": {"b": 2}},
+                },
+            ),
+        ],
+        edges=[
+            EdgeDefinition(source="start", target="a"),
+            EdgeDefinition(source="start", target="b"),
+        ],
+    )
+
+    engine = GraphWorkflowEngine(wf)
+
+    async def _run():
+        return await engine.async_run(orch)
+
+    result = asyncio.run(_run())
 
     assert result["status"] == "complete"
     assert len(result["results"]) == 3
