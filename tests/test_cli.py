@@ -153,3 +153,38 @@ def test_match_workflow_unknown():
     from src import cli
 
     assert cli._match_workflow("unrelated gibberish task") is None
+
+
+def test_cli_history(tmp_path):
+    """The history subcommand should output filtered DB entries."""
+
+    from src.config import settings
+    from src import db
+
+    settings.DB_CONNECTION_STRING = f"sqlite:///{tmp_path}/h.db"
+    db.init_db()
+    db.insert_event("demo", "a", {"x": 1}, {"ok": True})
+    db.insert_event("demo", "b", {"y": 2}, {"ok": True})
+
+    env = dict(os.environ)
+    root = os.getcwd()
+    env["PYTHONPATH"] = f"{root}:{env.get('PYTHONPATH', '')}"
+    env["DB_CONNECTION_STRING"] = f"sqlite:///{tmp_path}/h.db"
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "src.cli",
+        "history",
+        "--limit",
+        "1",
+        "--team",
+        "demo",
+        "--event-type",
+        "a",
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5, env=env)
+    assert res.returncode == 0
+    data = json.loads(res.stdout.strip())
+    assert len(data) == 1
+    assert data[0]["event_type"] == "a"

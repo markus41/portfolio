@@ -69,6 +69,21 @@ brookside-cli run-integration CRM_to_ERP_Contacts --team sales
 The command sends an `integration_request` task to the orchestrator and prints
 the JSON result.
 
+## history
+
+Display persisted event history stored in the SQLite database.
+
+```bash
+brookside-cli history --limit 20 --team sales --event-type lead_capture
+```
+
+Arguments:
+
+- `--limit` – maximum number of records to return. Defaults to `10`.
+- `--offset` – number of records to skip before returning results.
+- `--team` – filter results to a specific team.
+- `--event-type` – filter by event type.
+
 ## Troubleshooting
 
 - **Connection refused** – `send` or `status` may fail with `[Errno 111] Connection refused` if the server is not running or the wrong `--host`/`--port` is used.

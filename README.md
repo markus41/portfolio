@@ -253,6 +253,9 @@ brookside-cli assist "handle new inventory"
 
 # run an integration pipeline
 brookside-cli run-integration CRM_to_ERP_Contacts --team sales
+
+# show recent event history
+brookside-cli history --limit 5 --team sales
 ```
 
 A helper utility ``brookside-assistant`` extracts campaign parameters from free

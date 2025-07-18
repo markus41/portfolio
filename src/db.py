@@ -20,6 +20,7 @@ from .config import settings
 # Database initialisation
 # ---------------------------------------------------------------------------
 
+
 def _get_db_path() -> Path:
     """Return the path to the SQLite database file based on settings."""
     url = settings.DB_CONNECTION_STRING
@@ -85,16 +86,44 @@ def insert_event(team: str, event_type: str, payload: dict, result: dict) -> Non
         conn.commit()
 
 
-def fetch_history(limit: int = 10, offset: int = 0) -> list[dict]:
-    """Return a list of history records ordered by timestamp descending."""
+def fetch_history(
+    limit: int = 10,
+    offset: int = 0,
+    team: str | None = None,
+    event_type: str | None = None,
+) -> list[dict]:
+    """Return a list of history records ordered by timestamp descending.
+
+    Parameters
+    ----------
+    limit:
+        Maximum number of rows to return.
+    offset:
+        Number of rows to skip before returning results.
+    team:
+        Optional team name to filter by.
+    event_type:
+        Optional event type to filter by.
+    """
+
     path = _get_db_path()
+    query = (
+        "SELECT id, team, event_type, payload, result, timestamp\n"
+        "FROM event_history WHERE 1=1"
+    )
+    params: list[str | int] = []
+    if team is not None:
+        query += " AND team = ?"
+        params.append(team)
+    if event_type is not None:
+        query += " AND event_type = ?"
+        params.append(event_type)
+    query += " ORDER BY datetime(timestamp) DESC LIMIT ? OFFSET ?"
+    params.extend([limit, offset])
+
     with sqlite3.connect(path) as conn:
         conn.row_factory = sqlite3.Row
-        cur = conn.execute(
-            "SELECT id, team, event_type, payload, result, timestamp\n"
-            "FROM event_history ORDER BY datetime(timestamp) DESC LIMIT ? OFFSET ?",
-            (limit, offset),
-        )
+        cur = conn.execute(query, params)
         rows = cur.fetchall()
     history: list[dict] = []
     for row in rows:
@@ -109,4 +138,3 @@ def fetch_history(limit: int = 10, offset: int = 0) -> list[dict]:
             }
         )
     return history
-

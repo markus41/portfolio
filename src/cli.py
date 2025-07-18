@@ -101,8 +101,10 @@ def _parse_team_mapping(pairs: Tuple[str, ...]) -> Dict[str, str]:
 def cmd_start(args: argparse.Namespace) -> None:
     """Start the orchestrator server and block forever."""
     from .solution_orchestrator import SolutionOrchestrator
+    from . import db
 
     teams = _parse_team_mapping(tuple(args.teams))
+    db.init_db()
     orch = SolutionOrchestrator(teams)
 
     async def _run() -> None:
@@ -210,6 +212,20 @@ def cmd_run_integration(args: argparse.Namespace) -> None:
     print(json.dumps(resp))
 
 
+def cmd_history(args: argparse.Namespace) -> None:
+    """Retrieve persisted event history and print as JSON."""
+
+    from . import db
+
+    items = db.fetch_history(
+        limit=args.limit,
+        offset=args.offset,
+        team=args.team,
+        event_type=args.event_type,
+    )
+    print(json.dumps(items))
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -257,6 +273,15 @@ def build_parser() -> argparse.ArgumentParser:
     status_p.add_argument("--host", default=DEFAULT_HOST, help="Server address")
     status_p.add_argument("--port", type=int, default=DEFAULT_PORT, help="Server port")
     status_p.set_defaults(func=cmd_status)
+
+    history_p = sub.add_parser("history", help="Show event history")
+    history_p.add_argument(
+        "--limit", type=int, default=10, help="Number of records to return"
+    )
+    history_p.add_argument("--offset", type=int, default=0, help="Records to skip")
+    history_p.add_argument("--team", help="Filter by team name")
+    history_p.add_argument("--event-type", help="Filter by event type")
+    history_p.set_defaults(func=cmd_history)
 
     validate_p = sub.add_parser(
         "validate-team", help="Validate a team JSON configuration file"
