@@ -68,6 +68,8 @@ variables documented below.
 - `DB_CONNECTION_STRING` – Database URL.
 - `KAFKA_BOOTSTRAP_SERVERS` – Kafka broker list.
 - `RABBITMQ_URL` – RabbitMQ connection string.
+- `CLOUD_DOCS_API_URL` – Base URL for the cloud document service.
+- `CLOUD_DOCS_API_KEY` – Authentication token for the cloud docs API.
 
 ## Memory Service
 - `MEMORY_BACKEND` – Choose the persistence layer (`rest`, `file`, `redis`).
@@ -77,6 +79,7 @@ variables documented below.
 
 ## Messaging & Notifications
 - `SENDGRID_API_KEY` – SendGrid API key.
+- `DEFAULT_FROM_EMAIL` – Address used as the sender when none is provided.
 - `SLACK_WEBHOOK_URL` – Slack webhook for notifications.
 - `TEAMS_WEBHOOK_URL` – Microsoft Teams webhook.
 - `TWILIO_ACCOUNT_SID` – Twilio account SID.
@@ -139,3 +142,4 @@ variables documented below.
 - `CONFIG_PATH` – Path to the orchestrator configuration, defaults to `config/playbook.yaml`.
 - `API_AUTH_KEY` – Token required by the FastAPI server for requests.
 - `ALLOWED_ORIGINS` – Comma separated list of domains allowed for CORS requests.
+- `SCRAPER_USER_AGENT` – HTTP User-Agent string used by `ScrapingPlugin`.

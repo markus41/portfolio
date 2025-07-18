@@ -52,3 +52,26 @@ def test_env_file_override(monkeypatch, tmp_path):
     mod = _reload_settings(monkeypatch, ENV_FILE=str(env_file))
     assert mod.settings.OPENAI_API_KEY == "from_override"
     _reload_settings(monkeypatch, ENV_FILE=None, OPENAI_API_KEY=None)
+
+
+def test_new_plugin_settings(monkeypatch):
+    """Ensure newly added plugin settings load from environment vars."""
+
+    env = {
+        "DEFAULT_FROM_EMAIL": "test@example.com",
+        "CLOUD_DOCS_API_URL": "http://docs",
+        "CLOUD_DOCS_API_KEY": "token",
+        "SCRAPER_USER_AGENT": "AgentBot",
+    }
+    mod = _reload_settings(monkeypatch, **env)
+    assert mod.settings.DEFAULT_FROM_EMAIL == "test@example.com"
+    assert mod.settings.CLOUD_DOCS_API_URL == "http://docs"
+    assert mod.settings.CLOUD_DOCS_API_KEY == "token"
+    assert mod.settings.SCRAPER_USER_AGENT == "AgentBot"
+    _reload_settings(
+        monkeypatch,
+        DEFAULT_FROM_EMAIL=None,
+        CLOUD_DOCS_API_URL=None,
+        CLOUD_DOCS_API_KEY=None,
+        SCRAPER_USER_AGENT=None,
+    )

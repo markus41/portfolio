@@ -113,8 +113,12 @@ class Settings(BaseSettings):
     KAFKA_BOOTSTRAP_SERVERS: Optional[str] = None
     RABBITMQ_URL: Optional[str] = None
 
+    CLOUD_DOCS_API_URL: Optional[str] = None
+    CLOUD_DOCS_API_KEY: Optional[str] = None
+
     # Messaging & Notifications
     SENDGRID_API_KEY: Optional[str] = None
+    DEFAULT_FROM_EMAIL: str = "noreply@example.com"
     SLACK_WEBHOOK_URL: Optional[str] = None
     TEAMS_WEBHOOK_URL: Optional[str] = None
     FCM_SERVER_KEY: Optional[str] = None
@@ -169,6 +173,7 @@ class Settings(BaseSettings):
     CONFIG_PATH: str = "config/playbook.yaml"
     API_AUTH_KEY: Optional[str] = None
     ALLOWED_ORIGINS: str = "*"
+    SCRAPER_USER_AGENT: str = "BrooksideBot/1.0"
 
     # Memory Service
     MEMORY_BACKEND: Literal["rest", "rest_async", "file", "redis"] = "rest"
