@@ -48,7 +48,7 @@ except Exception:  # pragma: no cover - tests still run without it
     autogen = None
 
 from .base_orchestrator import BaseOrchestrator
-from .utils.plugin_loader import load_agent
+from .utils.plugin_loader import load_agent, attach_plugins
 
 
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "docs" / "team_schema.json"
@@ -112,7 +112,9 @@ class TeamOrchestrator(BaseOrchestrator):
         except jsonschema.ValidationError as exc:
             raise ValueError(f"Invalid team configuration: {exc.message}") from exc
         # Keep the raw specification for downstream AutoGen integration
-        # without forcing the dependency at test time.
+        # without forcing the dependency at test time. Plugin references are
+        # resolved into callables so AutoGen can execute them.
+        attach_plugins(data)
         self.team_config: Dict[str, Any] = data
 
         self.responsibilities: list[str] = data.get("responsibilities", [])
