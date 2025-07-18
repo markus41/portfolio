@@ -6,6 +6,19 @@ from pathlib import Path
 
 import pytest
 
+# Provide minimal stubs for optional dependencies used by the orchestrator so
+# importing the module succeeds in environments without them.
+sys.modules.setdefault(
+    "prometheus_client",
+    types.SimpleNamespace(
+        CollectorRegistry=lambda: object(),
+        Gauge=lambda *a, **k: types.SimpleNamespace(
+            labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)
+        ),
+        push_to_gateway=lambda *a, **k: None,
+    ),
+)
+
 from src.solution_orchestrator import SolutionOrchestrator
 from src.agents.base_agent import BaseAgent
 from src.memory_service.base import BaseMemoryService
@@ -44,7 +57,7 @@ def test_solution_orchestrator_routing(tmp_path, monkeypatch):
     mod_b.DummyAgentB = DummyAgentB
     sys.modules["src.agents.dummy_agent_b"] = mod_b
 
-    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, persist_history=False)
 
     out_a = orch.handle_event_sync(
         "A", {"type": "dummy_agent_a", "payload": {"foo": 1}}
@@ -67,7 +80,7 @@ def test_solution_orchestrator_logging(tmp_path, monkeypatch):
     sys.modules["src.agents.dummy_agent_a"] = mod_a
 
     log_path = tmp_path / "activity.jsonl"
-    orch = SolutionOrchestrator({"A": str(team)}, log_path=str(log_path))
+    orch = SolutionOrchestrator({"A": str(team)}, log_path=str(log_path), persist_history=False)
 
     orch.handle_event_sync("A", {"type": "dummy_agent_a", "payload": {"x": 1}})
 
@@ -89,7 +102,7 @@ def test_solution_orchestrator_concurrent(tmp_path):
     mod_b.DummyAgentB = DummyAgentB
     sys.modules["src.agents.dummy_agent_b"] = mod_b
 
-    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)})
+    orch = SolutionOrchestrator({"A": str(team_a), "B": str(team_b)}, persist_history=False)
 
     async def _run():
         return await asyncio.gather(
@@ -126,7 +139,7 @@ def test_async_context_closes_memory(tmp_path):
     mod_a.DummyAgentA = DummyAgentA
     sys.modules["src.agents.dummy_agent_a"] = mod_a
 
-    orch = SolutionOrchestrator({"A": str(team)})
+    orch = SolutionOrchestrator({"A": str(team)}, persist_history=False)
     mem = DummyMemory()
     orch.teams["A"].memory = mem
 

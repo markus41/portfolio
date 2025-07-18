@@ -9,6 +9,18 @@ import socket
 
 import pytest
 
+# Provide stubs for optional dependencies used during CLI integration tests.
+sys.modules.setdefault(
+    "prometheus_client",
+    types.SimpleNamespace(
+        CollectorRegistry=lambda: object(),
+        Gauge=lambda *a, **k: types.SimpleNamespace(
+            labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)
+        ),
+        push_to_gateway=lambda *a, **k: None,
+    ),
+)
+
 
 def _write_team(tmp_path: Path) -> Path:
     cfg = {

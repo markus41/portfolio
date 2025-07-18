@@ -14,6 +14,19 @@ sys.modules.setdefault(
     ),
 )
 
+# Provide a minimal 'prometheus_client' stub so importing the orchestrator does
+# not fail if the library is missing in the test environment.
+sys.modules.setdefault(
+    "prometheus_client",
+    types.SimpleNamespace(
+        CollectorRegistry=lambda: object(),
+        Gauge=lambda *a, **k: types.SimpleNamespace(
+            labels=lambda **kw: types.SimpleNamespace(set=lambda v: None)
+        ),
+        push_to_gateway=lambda *a, **k: None,
+    ),
+)
+
 from src.orchestrator import Orchestrator
 from src.base_orchestrator import BaseOrchestrator
 from src.events import (
