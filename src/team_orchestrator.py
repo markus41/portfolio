@@ -35,7 +35,7 @@ except Exception:  # pragma: no cover - optional dependency
 
     jsonschema = types.SimpleNamespace(validate=_validate, ValidationError=_VE)
 
-from agentic_core import EventBus, AsyncEventBus
+from agentic_core import EventBus, AsyncEventBus, create_event_bus
 
 try:  # pragma: no cover - PyYAML is optional
     import yaml  # type: ignore
@@ -126,7 +126,7 @@ class TeamOrchestrator(BaseOrchestrator):
                         f"Agent '{name}' not permitted by responsibilities"
                     )
 
-        bus = bus or AsyncEventBus()
+        bus = bus or create_event_bus(async_mode=True)
         super().__init__(bus=bus)
 
         for part in participants:

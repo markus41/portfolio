@@ -25,7 +25,13 @@ try:  # pragma: no cover - optional dependency
 except Exception:  # pragma: no cover - optional dependency
     openai = None
 
-from agentic_core import EventBus, AsyncEventBus, run_maybe_async, run_sync
+from agentic_core import (
+    EventBus,
+    AsyncEventBus,
+    create_event_bus,
+    run_maybe_async,
+    run_sync,
+)
 
 from .base_orchestrator import BaseOrchestrator
 
@@ -119,7 +125,7 @@ class Orchestrator(BaseOrchestrator):
             Path used by the ``file`` backend if specified.
         """
 
-        bus = AsyncEventBus()
+        bus = create_event_bus(async_mode=True)
 
         backend = memory_backend or settings.MEMORY_BACKEND
         if backend == "file":

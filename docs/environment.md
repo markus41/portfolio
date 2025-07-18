@@ -81,6 +81,10 @@ variables documented below.
 - `MEMORY_REDIS_URL` – Redis URL when `MEMORY_BACKEND=redis`.
 - `MEMORY_EMBED_FIELD` – Payload field containing text when `MEMORY_BACKEND=embedding`.
 
+## Event Bus
+- `EVENT_BUS_BACKEND` – Implementation used for pub/sub (`memory` or `redis`).
+- `REDIS_URL` – Connection string for the Redis bus when `EVENT_BUS_BACKEND=redis`.
+
 ## Messaging & Notifications
 - `SENDGRID_API_KEY` – SendGrid API key.
 - `DEFAULT_FROM_EMAIL` – Address used as the sender when none is provided.

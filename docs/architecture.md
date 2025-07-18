@@ -163,9 +163,10 @@ Beyond the standard setup you can extend almost every component:
   endpoints in your favorite database or caching layer and point
   `src.memory_service.MemoryService` to the new base URL.
 * **Pluggable EventBus** – the in-memory bus works for single-process demos. In
-  production you might adapt it to wrap Redis pub/sub or Kafka topics. As long
-  as the API exposes `subscribe(topic, handler)` and `publish(topic, data)` the
-  orchestrators will function the same.
+  production you can switch to `RedisEventBus` or implement adapters for Kafka
+  or RabbitMQ. Set `EVENT_BUS_BACKEND` to `redis` and provide `REDIS_URL` to
+  enable cross-process dispatch. Any backend exposing `subscribe(topic, handler)`
+  and `publish(topic, data)` will integrate seamlessly with the orchestrators.
 * **Custom Providers** – AutoGen agents rely on model providers for LLM access.
   You can create new providers for different AI services by implementing the
   same interface that `OpenAIChatCompletionClient` exposes and referencing that

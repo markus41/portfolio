@@ -26,6 +26,21 @@ class MockTransport:
         return await self.handler(request)
 
 
+class BaseTransport:
+    """Dummy transport base used by FastAPI TestClient."""
+    pass
+
+
+class Client:
+    """Synchronous HTTP client placeholder used by FastAPI TestClient."""
+    def __init__(self, *a, **k):
+        pass
+
+
+class _client:
+    CookieTypes = None
+
+
 class AsyncClient:
     def __init__(self, transport=None, base_url=""):
         self.transport = transport or MockTransport(lambda req: Response())

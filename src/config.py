@@ -109,6 +109,7 @@ class Settings(BaseSettings):
     GCS_BUCKET_NAME: Optional[str] = None
     GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = None
     REDIS_URL: Optional[str] = None
+    EVENT_BUS_BACKEND: Literal["memory", "redis"] = "memory"
     DB_CONNECTION_STRING: Optional[str] = None
     KAFKA_BOOTSTRAP_SERVERS: Optional[str] = None
     RABBITMQ_URL: Optional[str] = None

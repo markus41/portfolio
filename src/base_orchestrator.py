@@ -5,7 +5,13 @@ from __future__ import annotations
 from typing import Any, Dict, Type
 import inspect
 
-from agentic_core import EventBus, AsyncEventBus, run_sync, run_maybe_async
+from agentic_core import (
+    EventBus,
+    AsyncEventBus,
+    create_event_bus,
+    run_sync,
+    run_maybe_async,
+)
 from .events import (
     LeadCaptureEvent,
     ChatbotEvent,
@@ -29,7 +35,7 @@ class BaseOrchestrator:
         bus: EventBus | AsyncEventBus | None = None,
         memory: BaseMemoryService | None = None,
     ) -> None:
-        self.bus = bus or AsyncEventBus()
+        self.bus = bus or create_event_bus(async_mode=True)
         self.memory = memory
         self.agents: Dict[str, Any] = {}
         self.event_schemas: Dict[str, Type[Any]] = {

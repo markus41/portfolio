@@ -11,46 +11,19 @@ import asyncio
 import inspect
 from typing import Any, Callable, Dict, Iterable, List
 
+from src.event_bus import (
+    BaseEventBus,
+    InMemoryEventBus,
+    AsyncInMemoryEventBus,
+    RedisEventBus,
+    AsyncRedisEventBus,
+    create_event_bus,
+)
 
-class EventBus:
-    """Very small in-memory pub/sub bus.
-
-    Example
-    -------
-    >>> bus = EventBus()
-    >>> events: List[dict] = []
-    >>> bus.subscribe("greet", lambda p: events.append(p))
-    >>> bus.publish("greet", {"msg": "hi"})
-    >>> events
-    [{'msg': 'hi'}]
-    """
-
-    def __init__(self) -> None:
-        self._subs: Dict[str, List[Callable[[dict], Any]]] = {}
-
-    def subscribe(self, topic: str, fn: Callable[[dict], Any]) -> None:
-        """Register ``fn`` to be called when ``topic`` is published."""
-        self._subs.setdefault(topic, []).append(fn)
-
-    def publish(self, topic: str, payload: dict) -> None:
-        """Synchronously notify all subscribers of ``topic``."""
-        for fn in self._subs.get(topic, []):
-            fn(payload)
-
-
-class AsyncEventBus(EventBus):
-    """Asynchronous variant of :class:`EventBus` using ``asyncio``."""
-
-    async def publish(self, topic: str, payload: dict) -> None:
-        """Dispatch ``payload`` to subscribers as asyncio tasks."""
-        tasks = []
-        for fn in self._subs.get(topic, []):
-            if inspect.iscoroutinefunction(fn):
-                tasks.append(asyncio.create_task(fn(payload)))
-            else:
-                tasks.append(asyncio.create_task(asyncio.to_thread(fn, payload)))
-        if tasks:
-            await asyncio.gather(*tasks)
+# Backwards compatibility: re-export the in-memory implementations under the
+# previous names so existing imports keep working.
+EventBus = InMemoryEventBus
+AsyncEventBus = AsyncInMemoryEventBus
 
 
 class MemoryService:
