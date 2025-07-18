@@ -561,6 +561,43 @@ print(f"Finished on: {engine.current}")
 
 See [docs/workflows.md](docs/workflows.md) for a detailed overview.
 
+### Executing JSON Workflows with `SolutionOrchestrator`
+
+Graph-based workflows can be driven directly by the orchestrator. The repository
+includes a small example graph at
+`src/workflows/examples/basic_graph.json`:
+
+```json
+{
+  "name": "basic_sales_flow",
+  "nodes": [
+    {"id": "capture", "type": "agent", "label": "Capture Lead",
+     "config": {"team": "sales",
+                "event": {"type": "lead_capture",
+                          "payload": {"email": "alice@example.com"}}}},
+    {"id": "followup", "type": "agent", "label": "Follow Up",
+     "config": {"team": "sales",
+                "event": {"type": "crm_pipeline",
+                          "payload": {"deal_id": "d1"}}}}
+  ],
+  "edges": [{"source": "capture", "target": "followup"}]
+}
+```
+
+Load the workflow and execute all nodes in order:
+
+```python
+from src.solution_orchestrator import SolutionOrchestrator
+from src.workflows.graph import GraphWorkflowDefinition
+
+orch = SolutionOrchestrator({"sales": "src/teams/sales_team_full.json"})
+wf = GraphWorkflowDefinition.from_file(
+    "src/workflows/examples/basic_graph.json"
+)
+result = orch.execute_workflow(wf)
+print(result["status"])
+```
+
 ## 🤝 Contributing
 
 We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment and running the test suite. By participating you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
