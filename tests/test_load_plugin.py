@@ -56,3 +56,21 @@ def test_load_plugin_invalid_entry_point(monkeypatch):
 
     with pytest.raises(TypeError):
         load_plugin("bad")
+
+
+def test_load_email_plugin_via_entry_point(monkeypatch):
+    """load_plugin('email') should resolve the EmailPlugin class."""
+
+    ep = importlib.metadata.EntryPoint(
+        "email", "src.plugins.email_plugin:EmailPlugin", "brookside.plugins"
+    )
+    monkeypatch.setattr(importlib.metadata, "entry_points", lambda group=None: [ep])
+    monkeypatch.setattr(
+        "src.utils.plugin_loader.import_module",
+        lambda *a, **k: (_ for _ in ()).throw(AssertionError("import_module called")),
+    )
+
+    from src.plugins.email_plugin import EmailPlugin
+
+    cls = load_plugin("email")
+    assert cls is EmailPlugin
