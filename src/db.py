@@ -76,16 +76,16 @@ def init_db() -> None:
         # ------------------------------------------------------------------
         # Index creation / migration
         # ------------------------------------------------------------------
-        existing_indexes = {
-            row[1] for row in conn.execute("PRAGMA index_list('event_history')")
-        }
+        index_rows = conn.execute("PRAGMA index_list('event_history')")
+        existing_indexes = {row[1] for row in index_rows}
         if "idx_event_history_timestamp" not in existing_indexes:
             conn.execute(
-                "CREATE INDEX idx_event_history_timestamp ON event_history(timestamp)"
+                "CREATE INDEX idx_event_history_timestamp ON "
+                "event_history(timestamp)"
             )
         if "idx_event_history_team" not in existing_indexes:
             conn.execute(
-                "CREATE INDEX idx_event_history_team ON event_history(team)"
+                "CREATE INDEX idx_event_history_team ON " "event_history(team)"
             )
 
 
@@ -94,14 +94,21 @@ def init_db() -> None:
 # ---------------------------------------------------------------------------
 
 
-def insert_event(team: str, event_type: str, payload: dict, result: dict) -> None:
+def insert_event(
+    team: str,
+    event_type: str,
+    payload: dict,
+    result: dict,
+) -> None:
     """Insert a single event entry into the history table."""
     path = _get_db_path()
     ts = datetime.utcnow().isoformat()
     with sqlite3.connect(path) as conn:
         conn.execute(
-            "INSERT INTO event_history (team, event_type, payload, result, timestamp)\n"
-            "VALUES (?, ?, ?, ?, ?)",
+            (
+                "INSERT INTO event_history (team, event_type, payload, "
+                "result, timestamp)\nVALUES (?, ?, ?, ?, ?)"
+            ),
             (team, event_type, json.dumps(payload), json.dumps(result), ts),
         )
         conn.commit()

@@ -3,6 +3,15 @@
 This folder contains a minimal React application powered by [ReactFlow](https://reactflow.dev/).
 It provides a drag-and-drop editor for connecting agents and tools into an executable workflow.
 
+## Node Toolbox
+
+The editor now exposes a sidebar **Node Toolbox** listing common node types
+such as "Agent" and "Task". Drag an item from the toolbox onto the canvas to
+instantiate a new node with a sensible default label. Right-clicking a node or
+edge opens a context menu for duplicating, editing, or deleting the element.
+Editing uses an accessible modal dialog with live validation to prevent empty
+labels.
+
 ## Development
 
 ```bash
