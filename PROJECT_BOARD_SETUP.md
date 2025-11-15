@@ -14,6 +14,8 @@ The following issue templates are available in `.github/ISSUE_TEMPLATE/`:
 |--------------|--------------|---------|---------|
 | `bug_report.yml` | `[Bug]:` | `bug` | Report reproducible problems |
 | `feature_request.yml` | `[Feature]:` | `enhancement` | Suggest improvements or new ideas |
+| `epic_feature_request.yml` | `[Epic]:` | `enhancement`, `needs-breakdown` | Large feature requests with multiple sub-issues |
+| `sub_issue.yml` | `[Sub-Issue]:` | `enhancement`, `sub-issue` | Sub-tasks that are part of a larger feature |
 | `accessibility.yml` | `[A11y]:` | `accessibility`, `enhancement` | Report accessibility issues |
 | `documentation_request.yml` | `[Docs]:` | `documentation`, `enhancement` | Request new or improved documentation |
 | `performance.yml` | `[Performance]:` | `performance`, `enhancement` | Report performance issues |
@@ -34,10 +36,20 @@ To effectively organize issues on the project board, create the following column
 - **Filter**: Label = `bug`
 - **Workflow**: Move to "In Progress" when work starts
 
-### 3. Enhancement
+### 3. Epic Features
+- **Purpose**: Large feature requests that need to be broken down into sub-issues
+- **Filter**: Label = `enhancement` AND Label = `needs-breakdown`
+- **Workflow**: Break down into sub-issues, then move to "Enhancement" column
+
+### 4. Enhancement
 - **Purpose**: New features and general improvements
-- **Filter**: Label = `enhancement` AND NOT (`accessibility` OR `documentation` OR `performance`)
+- **Filter**: Label = `enhancement` AND NOT (`accessibility` OR `documentation` OR `performance` OR `needs-breakdown` OR `sub-issue`)
 - **Workflow**: Prioritize and move to "In Progress" when ready
+
+### 5. Sub-Issues
+- **Purpose**: Sub-tasks that are part of larger features
+- **Filter**: Label = `sub-issue`
+- **Workflow**: Complete as part of parent epic feature
 
 ### 4. Accessibility
 - **Purpose**: Accessibility improvements and issues
@@ -202,3 +214,78 @@ If you need assistance setting up the project board:
 ## Summary
 
 By following this guide, you'll have a well-organized project board that automatically categorizes issues based on their type, making it easier to prioritize and manage work across different areas of the project.
+
+---
+
+## Automated Issue Management System
+
+This repository includes an automated issue management system for handling large feature requests with multiple sub-issues.
+
+### Using the Issue Generator Script
+
+The `scripts/generate_issues.py` script helps manage large feature requests:
+
+```bash
+# Preview issues without creating them
+python scripts/generate_issues.py --dry-run
+
+# Create issues on GitHub (requires GitHub CLI)
+python scripts/generate_issues.py --create
+
+# Export to documentation
+python scripts/generate_issues.py --export-md --export-json
+```
+
+### Managed Feature Requests
+
+The system currently manages these feature requests:
+
+1. **Feature Request #4**: Document Distribution & Management System
+   - 13 sub-issues covering document upload, OCR, approval workflows, and search
+   - Priority: High
+   - Labels: `enhancement`, `priority-high`, `document-management`
+
+2. **Feature Request #5**: Dashboard & Analytics Platform
+   - 37 sub-issues covering charts, customization, exports, and analytics
+   - Priority: Medium-High
+   - Labels: `enhancement`, `priority-medium-high`, `analytics`, `dashboard`
+
+3. **Feature Request #6**: Navigation & User Experience Overhaul
+   - 43 sub-issues covering search, navigation, notifications, and keyboard shortcuts
+   - Priority: High
+   - Labels: `enhancement`, `priority-high`, `navigation`, `ux`
+
+### Agent Assignment
+
+Issues are automatically assigned to specialized agent types based on their category:
+
+- **Frontend Development Agent**: UI/UX implementation
+- **Backend Development Agent**: Server-side logic and APIs
+- **Full-Stack Development Agent**: End-to-end features
+- **Database Agent**: Schema design and queries
+- **DevOps/Infrastructure Agent**: Deployment and infrastructure
+- **Security Agent**: Security features and audits
+- **UX/UI Design Agent**: User experience design
+- **Machine Learning Agent**: AI/ML features
+- **Documentation Agent**: Documentation and guides
+- **Testing/QA Agent**: Testing and quality assurance
+
+### GitHub Actions Integration
+
+The repository includes a GitHub Actions workflow (`.github/workflows/issue-automation.yml`) that can:
+
+- Preview issues before creation
+- Create issues programmatically on GitHub
+- Export issue documentation automatically
+- Validate issue templates
+
+Run the workflow from the Actions tab in GitHub.
+
+### Documentation Files
+
+- `ISSUES_OVERVIEW.md`: Complete documentation of all feature requests and sub-issues
+- `issues_data.json`: Structured JSON data for programmatic access
+- `scripts/README.md`: Detailed documentation of the issue generator script
+
+For more information, see the [scripts README](../scripts/README.md).
+

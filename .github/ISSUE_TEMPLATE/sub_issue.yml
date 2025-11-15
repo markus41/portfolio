@@ -1,0 +1,116 @@
+name: "🔧 Sub-Issue"
+description: A sub-task that is part of a larger feature request
+labels: [enhancement, sub-issue]
+title: "[Sub-Issue]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This template is for sub-issues that are part of a larger feature request or epic.
+  
+  - type: input
+    id: parent_issue
+    attributes:
+      label: Parent Feature Request
+      description: Link to the parent issue this is part of (e.g., #4)
+      placeholder: "#"
+    validations:
+      required: true
+  
+  - type: input
+    id: issue_number
+    attributes:
+      label: Sub-Issue Number
+      description: Optional tracking number (e.g., 37, 38, etc.)
+      placeholder: "37"
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Detailed description of what this sub-issue should accomplish
+      placeholder: |
+        What needs to be built or implemented?
+        What are the specific requirements?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What defines "done" for this sub-issue?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component Area
+      description: Which part of the system does this affect?
+      options:
+        - Frontend/UI
+        - Backend/API
+        - Database
+        - Infrastructure
+        - Documentation
+        - Testing
+        - Full-Stack
+        - Other
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: agents
+    attributes:
+      label: Suggested Agents
+      description: What types of specialized agents should work on this?
+      multiple: true
+      options:
+        - Frontend Development Agent
+        - Backend Development Agent
+        - Full-Stack Development Agent
+        - Database Agent
+        - DevOps/Infrastructure Agent
+        - Security Agent
+        - UX/UI Design Agent
+        - Machine Learning Agent
+        - Documentation Agent
+        - Testing/QA Agent
+  
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimated Time
+      description: How long do you estimate this will take?
+      placeholder: "e.g., 3-4 days, 1 week, 1-2 weeks"
+  
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: Technical Notes
+      description: Any technical considerations, dependencies, or implementation notes
+      placeholder: |
+        - Dependencies on other issues
+        - Technical approach suggestions
+        - Libraries or tools to use
+  
+  - type: textarea
+    id: related_issues
+    attributes:
+      label: Related Sub-Issues
+      description: Other sub-issues that are related or have dependencies
+      placeholder: |
+        - Depends on: #38
+        - Related to: #40, #41
+        - Blocks: #42
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, mockups, code examples, or references
