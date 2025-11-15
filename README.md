@@ -726,6 +726,18 @@ result = orch.execute_workflow(wf)
 print(result["status"])
 ```
 
+## 🗺️ Feature Roadmap
+
+We have documented comprehensive feature requests for future enhancements:
+
+- **[FR-015: Automation & Workflow Engine](docs/feature_requests/FR-015-automation-workflow-engine.md)** - Marketing automation with member lifecycle campaigns (Issues #343-349)
+- **[FR-016: Integration Hub & API Platform](docs/feature_requests/FR-016-integration-hub-api-platform.md)** - Third-party integrations and API ecosystem (Issues #350-357)
+- **[FR-017: Mobile-First Experience & PWA](docs/feature_requests/FR-017-mobile-first-pwa.md)** - Progressive Web App with mobile-specific features (Issues #358-369)
+- **[FR-018: User Experience & Design System](docs/feature_requests/FR-018-ux-design-system.md)** - Complete design system with accessibility and branding (Issues #370-414)
+- **[FR-019: Analytics & Business Intelligence](docs/feature_requests/FR-019-analytics-business-intelligence.md)** - Advanced analytics with predictive insights (Issues #415-419)
+
+See the [Feature Requests Master Index](docs/feature_requests/README.md) for a complete overview of all 77 planned enhancements and the [Issues Creation Guide](docs/ISSUES_CREATION_GUIDE.md) for instructions on creating and tracking these issues.
+
 ## 🤝 Contributing
 
 We welcome community contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for a full guide on setting up a development environment and running the test suite. By participating you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
