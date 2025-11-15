@@ -1,0 +1,126 @@
+name: "\U0001F680 Feature Request - Batch Creation Template"
+description: Template for creating feature requests from the feature request documentation
+labels: [enhancement, feature-request]
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Batch Feature Request Creation Template
+        
+        This template is for creating multiple related feature requests and sub-issues
+        based on the documented feature requests #15-19.
+        
+        **Before creating issues:**
+        1. Review the feature request documentation in `docs/feature_requests/`
+        2. Identify which feature request(s) you want to implement
+        3. Assign appropriate GitHub agents if available
+        4. Set up project board columns
+        
+  - type: dropdown
+    id: feature_request_number
+    attributes:
+      label: Feature Request Number
+      description: Which feature request is this issue related to?
+      options:
+        - "FR-015: Automation & Workflow Engine"
+        - "FR-016: Integration Hub & API Platform"
+        - "FR-017: Mobile-First Experience & PWA"
+        - "FR-018: User Experience & Design System"
+        - "FR-019: Analytics & Business Intelligence"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: issue_numbers
+    attributes:
+      label: Sub-Issue Numbers
+      description: |
+        List the sub-issue numbers you want to create (comma-separated).
+        Example: 343, 344, 345
+      placeholder: "343, 344, 345"
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Implementation Priority
+      description: What is the priority for this feature/issue?
+      options:
+        - "Critical"
+        - "High"
+        - "Medium"
+        - "Low"
+      default: 1
+    validations:
+      required: true
+      
+  - type: textarea
+    id: assigned_agents
+    attributes:
+      label: Assigned GitHub Agents
+      description: |
+        List the GitHub agents you want to assign to these issues.
+        Refer to the recommended agents in the feature request documentation.
+      placeholder: |
+        - Email automation specialist
+        - Workflow orchestration agent
+        - Campaign management agent
+    validations:
+      required: false
+      
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: |
+        List any dependencies between issues or external dependencies.
+      placeholder: |
+        - Issue #349 must be completed before #348
+        - Requires Twilio API account for #355
+    validations:
+      required: false
+      
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Proposed Timeline
+      description: When do you plan to implement this?
+      placeholder: |
+        Start: Week of YYYY-MM-DD
+        Estimated completion: Week of YYYY-MM-DD
+    validations:
+      required: false
+      
+  - type: textarea
+    id: success_metrics
+    attributes:
+      label: Success Metrics
+      description: How will you measure success for this implementation?
+      placeholder: |
+        - Member retention increase by X%
+        - Feature adoption rate > Y%
+        - Performance improvement Z%
+    validations:
+      required: false
+      
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any additional context or information
+    validations:
+      required: false
+      
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-Implementation Checklist
+      description: Confirm you have completed these steps
+      options:
+        - label: "I have reviewed the feature request documentation"
+        - label: "I have identified available GitHub agents"
+        - label: "I have considered technical dependencies"
+        - label: "I have set up project board tracking"
+        - label: "I have stakeholder approval (if required)"
