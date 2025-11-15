@@ -1,0 +1,132 @@
+name: Issue Management Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - 'preview'
+          - 'create-issues'
+          - 'export-docs'
+      feature_request:
+        description: 'Feature request number (4, 5, 6, or "all")'
+        required: false
+        default: 'all'
+
+jobs:
+  manage-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      - name: Preview issues
+        if: github.event.inputs.action == 'preview'
+        run: |
+          python scripts/generate_issues.py --dry-run
+      
+      - name: Export documentation
+        if: github.event.inputs.action == 'export-docs'
+        run: |
+          python scripts/generate_issues.py --export-md --export-json
+          echo "## Issue Documentation Generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Generated files:" >> $GITHUB_STEP_SUMMARY
+          echo "- ISSUES_OVERVIEW.md" >> $GITHUB_STEP_SUMMARY
+          echo "- issues_data.json" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Create issues on GitHub
+        if: github.event.inputs.action == 'create-issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Install GitHub CLI if not available
+          if ! command -v gh &> /dev/null; then
+            echo "Installing GitHub CLI..."
+            type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh -y
+          fi
+          
+          # Verify authentication
+          gh auth status
+          
+          # Create issues
+          python scripts/generate_issues.py --create
+          
+          echo "## Issues Created Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Created feature requests and their sub-issues." >> $GITHUB_STEP_SUMMARY
+      
+      - name: Commit generated documentation
+        if: github.event.inputs.action == 'export-docs'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add ISSUES_OVERVIEW.md issues_data.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "docs: update issue documentation"
+      
+      - name: Push changes
+        if: github.event.inputs.action == 'export-docs'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+  validate-issue-templates:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Validate issue templates
+        run: |
+          echo "Validating issue templates..."
+          
+          # Check if all required templates exist
+          templates=(
+            ".github/ISSUE_TEMPLATE/bug_report.yml"
+            ".github/ISSUE_TEMPLATE/feature_request.yml"
+            ".github/ISSUE_TEMPLATE/accessibility.yml"
+            ".github/ISSUE_TEMPLATE/documentation_request.yml"
+            ".github/ISSUE_TEMPLATE/performance.yml"
+            ".github/ISSUE_TEMPLATE/question.yml"
+            ".github/ISSUE_TEMPLATE/security.yml"
+          )
+          
+          for template in "${templates[@]}"; do
+            if [ -f "$template" ]; then
+              echo "✓ $template exists"
+            else
+              echo "✗ $template is missing"
+              exit 1
+            fi
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Issue Template Validation" >> $GITHUB_STEP_SUMMARY
+          echo "✓ All required issue templates are present" >> $GITHUB_STEP_SUMMARY

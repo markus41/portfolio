@@ -1,0 +1,154 @@
+name: "📋 Feature Request with Sub-Issues"
+description: Large feature request that requires breaking down into multiple sub-issues
+labels: [enhancement, needs-breakdown]
+title: "[Epic]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing a comprehensive feature! This template is for large features that will be broken down into multiple sub-issues.
+  
+  - type: input
+    id: feature_number
+    attributes:
+      label: Feature Request Number
+      description: Optional reference number for tracking (e.g., FR-4, FR-5)
+      placeholder: "FR-X"
+  
+  - type: input
+    id: subtitle
+    attributes:
+      label: Feature Subtitle
+      description: A descriptive subtitle for this feature
+      placeholder: "E.g., Hierarchical Document Distribution with OCR"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - Document Management
+        - Analytics/Dashboard
+        - Navigation/UX
+        - Security
+        - Performance
+        - Integration
+        - Other
+    validations:
+      required: true
+  
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Be specific about current limitations.
+      placeholder: |
+        Current system lacks...
+        Users cannot...
+        No capability for...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Detailed description of the proposed solution
+      placeholder: |
+        Build a system that...
+        Implement capabilities for...
+        Include features such as...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternative solutions did you consider? Why were they not chosen?
+      placeholder: |
+        1. Alternative approach A (reason for not choosing)
+        2. Alternative approach B (reason for not choosing)
+        3. Continue with current system (reason for not choosing)
+    validations:
+      required: true
+  
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected Impact
+      description: Who will be affected? What are the expected benefits?
+      placeholder: |
+        - Affects: [users/admins/all]
+        - Estimated time: [X weeks]
+        - Benefits: [improved efficiency, better UX, etc.]
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How urgent is this feature?
+      options:
+        - Critical
+        - High
+        - Medium-High
+        - Medium
+        - Low
+      default: 2
+    validations:
+      required: true
+  
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical Considerations
+      description: Technologies, services, or technical challenges involved
+      placeholder: |
+        - Required services: [AWS, APIs, etc.]
+        - Technical challenges: [scalability, integration, etc.]
+        - Dependencies: [other features, libraries, etc.]
+    validations:
+      required: true
+  
+  - type: textarea
+    id: sub_issues
+    attributes:
+      label: Sub-Issues Breakdown
+      description: List the main sub-tasks this feature should be broken into
+      placeholder: |
+        - [ ] Sub-issue 1: Description
+        - [ ] Sub-issue 2: Description
+        - [ ] Sub-issue 3: Description
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: agents
+    attributes:
+      label: Required Agent Types
+      description: What types of specialized agents should work on this?
+      multiple: true
+      options:
+        - Frontend Development Agent
+        - Backend Development Agent
+        - Full-Stack Development Agent
+        - Database Agent
+        - DevOps/Infrastructure Agent
+        - Security Agent
+        - UX/UI Design Agent
+        - Machine Learning Agent
+        - Documentation Agent
+        - Testing/QA Agent
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, mockups, diagrams, or references
+      placeholder: |
+        Links to designs, related issues, research, etc.
