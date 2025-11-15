@@ -96,6 +96,8 @@ jobs:
 
   validate-issue-templates:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
