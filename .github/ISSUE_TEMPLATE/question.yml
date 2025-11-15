@@ -1,0 +1,82 @@
+name: Question / Help
+description: Ask a question about the project
+title: "[Question]: "
+labels: ["question"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before You Ask
+
+        👋 Thanks for your question! Please check these resources first:
+        - Project documentation
+        - README.md
+        - Existing GitHub issues and discussions
+
+        If you didn't find an answer, we're here to help!
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Getting Started
+        - Development Workflow
+        - Architecture & Design
+        - Infrastructure & Deployment
+        - Configuration
+        - Error Handling
+        - Best Practices
+        - Integration Setup
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: Ask your question clearly and provide context
+      placeholder: |
+        How do I...?
+        What is the best way to...?
+        Can you explain...?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Provide any relevant background, what you've tried, or related documentation
+      placeholder: |
+        I've tried...
+        I'm working on...
+        I found this page but it doesn't explain...
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (if applicable)
+      description: If relevant, provide details about your environment
+      placeholder: |
+        - Python version:
+        - Operating System:
+        - Browser (if UI related):
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and discussions for similar questions
+          required: true
+        - label: I have checked the project documentation for relevant information
+          required: true

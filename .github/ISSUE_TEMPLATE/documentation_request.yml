@@ -1,0 +1,148 @@
+name: Documentation Request
+description: Request new documentation or improvements to existing docs
+title: "[Docs]: "
+labels: ["documentation", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation! Please provide details about what you'd like to see documented.
+
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: What type of documentation change are you requesting?
+      options:
+        - New documentation page
+        - Improve existing documentation
+        - Add code examples
+        - Add diagrams/visuals
+        - Clarify confusing section
+        - Fix outdated information
+        - Add best practices
+        - Migration guide
+        - Tutorial
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: section
+    attributes:
+      label: Documentation Section
+      description: Which section should this documentation be in?
+      options:
+        - Guide
+        - Development
+        - Architecture
+        - Infrastructure
+        - Quick Reference
+        - Error Handling
+        - Other/New Section
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who is the primary audience for this documentation?
+      options:
+        - Developers
+        - DevOps Engineers
+        - Architects
+        - New Contributors
+        - All Roles
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what documentation you'd like to see
+      placeholder: |
+        What topic needs to be documented?
+        What problem does this solve?
+        What information is missing or unclear?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe the use case or scenario this documentation would address
+      placeholder: |
+        When would someone need this documentation?
+        What task are they trying to accomplish?
+    validations:
+      required: true
+
+  - type: input
+    id: related-url
+    attributes:
+      label: Related Documentation URL
+      description: If improving existing docs, provide the URL
+      placeholder: https://example.com/docs/page
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposed-outline
+    attributes:
+      label: Proposed Outline or Content (Optional)
+      description: If you have ideas for how this should be structured, share them here
+      placeholder: |
+        # Proposed structure
+        ## Section 1
+        - Point A
+        - Point B
+        ## Section 2
+        ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or References
+      description: Share examples from other docs, code snippets, or reference materials
+      placeholder: |
+        Links to similar documentation:
+        - https://example.com/similar-doc
+
+        Code examples:
+        ```python
+        # example code
+        ```
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this documentation?
+      options:
+        - Critical (blocking work)
+        - High (frequently needed)
+        - Medium (nice to have)
+        - Low (future enhancement)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing documentation to ensure this doesn't already exist
+          required: true
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: I am willing to contribute to writing this documentation
+          required: false

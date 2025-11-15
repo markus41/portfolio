@@ -1,0 +1,136 @@
+name: Performance Issue
+description: Report slow loading times, large bundle sizes, or performance problems
+title: "[Performance]: "
+labels: ["performance", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us make the application faster! Report performance issues or slow loading times.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Performance Issue Type
+      description: What kind of performance problem are you experiencing?
+      options:
+        - Slow page load time
+        - Large JavaScript bundle
+        - Large image/asset sizes
+        - Slow search functionality
+        - Sluggish navigation/interactions
+        - Memory usage issues
+        - Build time performance
+        - Multiple large assets loading
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page-url
+    attributes:
+      label: Affected Page URL
+      description: Link to the page with performance issues (or "All pages" if site-wide)
+      placeholder: https://example.com/page
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the performance problem you're experiencing
+      placeholder: |
+        The page takes 10+ seconds to load...
+        The search feature is very slow when typing...
+        Images are not optimized and take a long time to load...
+    validations:
+      required: true
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Performance Metrics (if available)
+      description: Share any metrics from browser DevTools, Lighthouse, or PageSpeed Insights
+      placeholder: |
+        Lighthouse scores:
+        - Performance: 45/100
+        - First Contentful Paint: 3.5s
+        - Time to Interactive: 8.2s
+
+        Network tab shows:
+        - Total page size: 10MB
+        - Number of requests: 150
+        - Largest asset: bundle.js (5MB)
+    validations:
+      required: false
+
+  - type: textarea
+    id: browser-network
+    attributes:
+      label: Browser & Network Information
+      description: Provide details about your testing environment
+      placeholder: |
+        - Browser: Chrome 120, Safari 17, Firefox 121
+        - Connection: 4G, Cable, WiFi
+        - Device: Desktop, Mobile, Tablet
+        - Screen size/resolution:
+      value: |
+        - Browser:
+        - Connection:
+        - Device:
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Videos
+      description: If helpful, provide screenshots from DevTools, Lighthouse, or screen recordings
+      placeholder: |
+        Drag and drop screenshots here
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggested-solution
+    attributes:
+      label: Suggested Solution
+      description: If you have ideas for improving performance, share them
+      placeholder: |
+        - Compress images with WebP format
+        - Lazy load images below the fold
+        - Code-split JavaScript bundles
+        - Use CDN for static assets
+        - Implement caching headers
+    validations:
+      required: false
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: User Impact
+      description: How severely does this affect user experience?
+      options:
+        - Critical - Site is unusable
+        - High - Significantly degrades experience
+        - Medium - Noticeable slowness
+        - Low - Minor optimization opportunity
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have tested on the live production site
+          required: true
+        - label: I have tested with browser cache cleared
+          required: true
+        - label: I have tested on multiple browsers/devices (if possible)
+          required: false
+        - label: I have included performance metrics or screenshots
+          required: false
