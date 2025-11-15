@@ -1,0 +1,138 @@
+name: Accessibility Issue
+description: Report accessibility issues or suggest improvements
+title: "[A11y]: "
+labels: ["accessibility", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us make the portfolio accessible to everyone! Report accessibility issues or suggest improvements.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Accessibility Issue Type
+      description: What kind of accessibility issue are you reporting?
+      options:
+        - Keyboard navigation
+        - Screen reader compatibility
+        - Color contrast
+        - Missing alt text
+        - Focus indicators
+        - ARIA labels/roles
+        - Heading structure
+        - Link text clarity
+        - Form accessibility
+        - Mobile accessibility
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL
+      description: Link to the page with the accessibility issue
+      placeholder: https://example.com/page
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the accessibility issue you encountered
+      placeholder: |
+        When using a screen reader...
+        The color contrast between...
+        Keyboard navigation doesn't work for...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Impact Level
+      description: How severely does this affect accessibility?
+      options:
+        - Critical - Completely blocks access
+        - High - Major difficulty accessing content
+        - Medium - Noticeable inconvenience
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-users
+    attributes:
+      label: Who is Affected?
+      description: Which users or assistive technologies are impacted?
+      placeholder: |
+        - Screen reader users (JAWS, NVDA, VoiceOver)
+        - Keyboard-only navigation users
+        - Users with color blindness
+        - Users with low vision
+        - Mobile device users
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing-tools
+    attributes:
+      label: Testing Tools Used
+      description: What tools or methods did you use to identify this issue?
+      placeholder: |
+        - WAVE accessibility checker
+        - axe DevTools
+        - Screen reader: (e.g., NVDA, JAWS, VoiceOver)
+        - Keyboard testing
+        - Color contrast analyzer
+        - Manual testing
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested Solution
+      description: If you have ideas for fixing this issue, share them here
+      placeholder: |
+        Add alt text to the image: "..."
+        Increase contrast ratio to meet WCAG AA standards
+        Add aria-label to the navigation menu
+    validations:
+      required: false
+
+  - type: dropdown
+    id: wcag-guideline
+    attributes:
+      label: WCAG Guideline (if known)
+      description: Which WCAG guideline does this relate to?
+      options:
+        - 1.1 Text Alternatives
+        - 1.3 Adaptable
+        - 1.4 Distinguishable
+        - 2.1 Keyboard Accessible
+        - 2.4 Navigable
+        - 2.5 Input Modalities
+        - 3.1 Readable
+        - 3.2 Predictable
+        - 3.3 Input Assistance
+        - 4.1 Compatible
+        - Not sure / Multiple guidelines
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have verified this issue exists on the live site
+          required: true
+        - label: I have tested with actual assistive technology (if applicable)
+          required: false
+        - label: I am willing to help fix this issue
+          required: false

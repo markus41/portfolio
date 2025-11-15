@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/markus41/portfolio#readme
+    about: Browse the project documentation
+  - name: 💬 GitHub Discussions
+    url: https://github.com/markus41/portfolio/discussions
+    about: Ask questions and discuss ideas in GitHub Discussions

@@ -1,0 +1,281 @@
+name: Security Issue
+description: Report security vulnerabilities or concerns (private issues recommended)
+title: "[Security]: "
+labels: ["security", "priority-high"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Security Reporting
+
+        **IMPORTANT**: For sensitive security vulnerabilities, please use GitHub's [private security reporting](../../security/advisories/new) instead of creating a public issue.
+
+        Use this template for:
+        - Non-sensitive security improvements
+        - Security best practices
+        - Security configuration issues
+        - Documentation security concerns
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this security issue?
+      options:
+        - Critical - Immediate risk (use private reporting!)
+        - High - Significant vulnerability
+        - Medium - Moderate security concern
+        - Low - Security improvement/hardening
+        - Informational - Best practice suggestion
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Security Issue Type
+      description: What type of security issue is this?
+      options:
+        - Exposed secrets/credentials
+        - Insecure configuration
+        - Vulnerable dependency
+        - Insufficient permissions
+        - Missing security headers
+        - Cross-site scripting (XSS) risk
+        - Injection vulnerability
+        - Authentication/authorization issue
+        - Data exposure risk
+        - Insecure workflow/automation
+        - Security best practice
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected Area
+      description: Where is the security issue located?
+      options:
+        - Source code
+        - Configuration files
+        - GitHub Actions workflows
+        - Environment variables/.env
+        - Dependencies (packages)
+        - Custom scripts
+        - Integration configurations
+        - Frontend/UI components
+        - Backend/API
+        - Multiple areas
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Issue Description
+      description: Describe the security concern (DO NOT include actual secrets or sensitive data!)
+      placeholder: |
+        What is the security issue?
+        What is the potential impact?
+        Who could be affected?
+
+        DO NOT paste actual secrets, tokens, or credentials!
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location/File Path
+      description: Where is the security issue located?
+      placeholder: |
+        File: .github/workflows/workflow-name.yml
+        Line: 45
+        or
+        Configuration: config/settings.py
+    validations:
+      required: false
+
+  - type: dropdown
+    id: public-exposure
+    attributes:
+      label: Public Exposure
+      description: Is this issue publicly visible or exploitable?
+      options:
+        - "Yes - Currently exposed in public repository"
+        - "Yes - Exposed in deployed site"
+        - "No - Requires repository access"
+        - "No - Requires credentials"
+        - "Unsure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could happen if this issue is exploited?
+      placeholder: |
+        Potential consequences:
+        - Unauthorized access to...
+        - Data exposure of...
+        - Code injection leading to...
+        - Credential compromise allowing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce/Verify
+      description: How can this security issue be reproduced or verified?
+      placeholder: |
+        1. Navigate to file/page...
+        2. Observe that...
+        3. This allows...
+
+        DO NOT include actual exploitation steps for critical vulnerabilities!
+    validations:
+      required: false
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Supporting evidence (sanitize any sensitive information!)
+      placeholder: |
+        Scanner output (sanitized):
+        ```
+        Tool output (remove any sensitive paths)
+        ```
+
+        Screenshot showing the issue (redact sensitive info)
+
+        DO NOT paste actual secrets or credentials!
+    validations:
+      required: false
+
+  - type: textarea
+    id: affected-versions
+    attributes:
+      label: Affected Versions/Commits
+      description: Which versions or commits are affected?
+      placeholder: |
+        - Commit: abc123...
+        - Date range: 2024-01-01 to present
+        - All versions
+        - Version: vX.X.X
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested Fix/Mitigation
+      description: How should this be fixed or mitigated?
+      placeholder: |
+        Recommended actions:
+        1. Rotate exposed credentials
+        2. Add secret to GitHub Secrets
+        3. Update workflow to use ${{ secrets.TOKEN }}
+        4. Update dependency to version X.X.X
+        5. Add security header: ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: cve-exists
+    attributes:
+      label: CVE or Security Advisory
+      description: Is there an existing CVE or security advisory?
+      options:
+        - "Yes - CVE exists"
+        - "Yes - Security advisory exists"
+        - "No"
+        - "Unsure"
+    validations:
+      required: false
+
+  - type: input
+    id: cve-reference
+    attributes:
+      label: CVE/Advisory Reference
+      description: If applicable, provide CVE number or advisory link
+      placeholder: CVE-2024-XXXXX or https://github.com/advisories/GHSA-...
+    validations:
+      required: false
+
+  - type: textarea
+    id: compliance
+    attributes:
+      label: Compliance/Standards Impact
+      description: Does this affect compliance with security standards?
+      placeholder: |
+        Affected standards:
+        - OWASP Top 10: Category
+        - CWE: Number
+        - SOC 2
+        - GDPR
+        - Other compliance requirements
+    validations:
+      required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Remediation Urgency
+      description: How urgently should this be addressed?
+      options:
+        - Immediate (active exploitation risk)
+        - High (patch within 24-48 hours)
+        - Medium (patch within 1 week)
+        - Low (include in next release)
+        - Informational (no immediate action)
+    validations:
+      required: true
+
+  - type: textarea
+    id: temporary-mitigation
+    attributes:
+      label: Temporary Mitigation
+      description: Are there any temporary mitigations in place?
+      placeholder: |
+        Current mitigations:
+        - Disabled affected workflow
+        - Restricted access to...
+        - Monitoring enabled for...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant security information
+      placeholder: |
+        - Related security issues
+        - Security tool output
+        - Industry advisories
+        - Best practice references
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Security Checklist
+      options:
+        - label: I have NOT included actual secrets, tokens, or credentials in this issue
+          required: true
+        - label: For critical vulnerabilities, I have considered using private security reporting
+          required: true
+        - label: I have sanitized all evidence and examples
+          required: true
+        - label: I have assessed the severity and impact accurately
+          required: false
+        - label: I have searched for existing CVEs or advisories
+          required: false
