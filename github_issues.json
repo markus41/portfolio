@@ -1,0 +1,1441 @@
+{
+  "feature_requests": [
+    {
+      "number": 7,
+      "title": "[Feature #7] Advanced Member Management with Editable Grid and Custom Fields",
+      "body": "## Feature Category\nMember Management Enhancement\n\n## Problem Statement\nMember management lacks critical features: no editable grid, limited custom fields, modal-only editing, no bulk import progress, basic filtering, and no duplicate detection. Admins spend excessive time on manual data management.\n\n## Proposed Solution\nImplement editable grid like chapters page, add unlimited custom fields, enable inline editing, add bulk import with progress tracking, implement advanced filtering with saved filters, add auto member merge/duplicate detection.\n\n## Alternatives Considered\n- Keeping modal-only editing (creates friction)\n- Limited custom fields (doesn't meet needs)\n- Manual duplicate detection (too time-consuming)\n\n## Expected Impact\n- **Priority**: Medium-high priority\n- **Affects**: National and chapter admins\n- **Estimated Time**: 4-5 weeks\n- **Impact**: Reduces member management time by ~70%\n\n## Technical Considerations\nVirtual scrolling for large lists, debouncing for inline edits, background jobs for bulk import, fuzzy matching for duplicates, database indexing for custom fields.\n\n## Assigned Agent\nBackend/Frontend Integration Agent - handles complex CRUD operations with UI components\n",
+      "labels": [
+        "enhancement",
+        "feature-request",
+        "medium"
+      ],
+      "assigned_agent": "Backend/Frontend Integration Agent - handles complex CRUD operations with UI components"
+    },
+    {
+      "number": 8,
+      "title": "[Feature #8] Full-Featured Email Campaign Management with A/B Testing",
+      "body": "## Feature Category\nMarketing/Communications Enhancement\n\n## Problem Statement\nCampaign management is severely limited: creation doesn't work, no templates, no A/B testing, no send time optimization, basic editor, missing analytics. Segment query shows raw text instead of visual builder. No preview before sending.\n\n## Proposed Solution\nFix campaign creation, add templates library, implement A/B testing for subject/content/timing, add AI send time optimization, build drag-and-drop email editor, add campaign cloning, create visual segment builder, add comprehensive analytics with click maps.\n\n## Alternatives Considered\n- Integrating Mailchimp/SendGrid UI (loses customization)\n- Basic email only (doesn't meet marketing needs)\n- Text-only editor (limits design)\n\n## Expected Impact\n- **Priority**: Medium priority\n- **Affects**: Marketing team, admins\n- **Estimated Time**: 5-6 weeks\n- **Impact**: Increases email engagement by ~40%\n\n## Technical Considerations\nEmail service provider (SendGrid, AWS SES), template storage, email rendering preview, segment query engine, pixel/link tracking, A/B test calculations.\n\n## Assigned Agent\nMarketing Automation Agent - specializes in email campaigns and analytics\n",
+      "labels": [
+        "enhancement",
+        "feature-request",
+        "medium"
+      ],
+      "assigned_agent": "Marketing Automation Agent - specializes in email campaigns and analytics"
+    },
+    {
+      "number": 9,
+      "title": "[Feature #9] Complete LMS with Course Builder, Tracking, and Certifications",
+      "body": "## Feature Category\nEducation/LMS Enhancement\n\n## Problem Statement\nLMS is broken: course creation doesn't work, no preview, no enrollment tracking, no progress visualization, no certificates, no learning paths with prerequisites. Members cannot access professional development.\n\n## Proposed Solution\nFix course creation, implement SCORM-compatible course builder, add preview, build enrollment tracking with capacity management, create progress visualization, add auto certificate generation, implement learning paths with prerequisites, add quiz engine.\n\n## Alternatives Considered\n- Integrating Moodle/Canvas (complexity)\n- Basic course listing (doesn't meet CE needs)\n- Video-only platform (lacks interactivity)\n\n## Expected Impact\n- **Priority**: Medium-high priority\n- **Affects**: All members\n- **Estimated Time**: 6-8 weeks\n- **Impact**: Increases course completion by ~50%\n\n## Technical Considerations\nSCORM player, video streaming with CDN, quiz engine, PDF certificate generation with signatures, CE credit tracking, prerequisite logic.\n\n## Assigned Agent\nLearning Management Agent - specializes in educational content and certification workflows\n",
+      "labels": [
+        "enhancement",
+        "feature-request",
+        "medium"
+      ],
+      "assigned_agent": "Learning Management Agent - specializes in educational content and certification workflows"
+    },
+    {
+      "number": 10,
+      "title": "[Feature #10] Custom Report Builder with Visual Designer and Scheduling",
+      "body": "## Feature Category\nReporting/Analytics Enhancement\n\n## Problem Statement\nReporting is broken: 'Run Report' doesn't execute, reports don't display properly on web, no interactive preview, no in-browser parameter editing, no scheduling, no sharing. Builder shows columns but no data types or preview.\n\n## Proposed Solution\nFix report execution, create visual report builder, add interactive preview with drill-down, enable in-browser parameter editing, implement scheduled email delivery, add sharing with permissions, build template library, enable custom graph creation.\n\n## Alternatives Considered\n- Using Tableau/Power BI (expensive, complex)\n- Static reports only (no ad-hoc analysis)\n- Excel export only (loses interactivity)\n\n## Expected Impact\n- **Priority**: Medium priority\n- **Affects**: All admin users\n- **Estimated Time**: 5-6 weeks\n- **Impact**: Reduces report creation time by ~80%\n\n## Technical Considerations\nQuery builder with SQL generation, report caching, background job queue for large reports, real-time data refresh, JSON report definitions, column-level permissions.\n\n## Assigned Agent\nAnalytics & Reporting Agent - specializes in data visualization and report generation\n",
+      "labels": [
+        "enhancement",
+        "feature-request",
+        "medium"
+      ],
+      "assigned_agent": "Analytics & Reporting Agent - specializes in data visualization and report generation"
+    },
+    {
+      "number": 11,
+      "title": "[Feature #11] Comprehensive Event Management with Registration and Analytics",
+      "body": "## Feature Category\nEvent Management Enhancement\n\n## Problem Statement\nEvent management is broken and incomplete: creation workflow doesn't work, no session selection for multi-track events, no meal preferences, no hotel management, no companion registration, no virtual event support, no post-event surveys. Event cards lack status indicators and venue info.\n\n## Proposed Solution\nFix creation workflow, add session selection for tracks, implement meal/dietary preferences, add hotel room block management, enable guest registration, integrate virtual event streaming, add automated post-event surveys, implement CPE credit tracking, create photo galleries, build sponsor portal.\n\n## Alternatives Considered\n- Using Eventbrite/Cvent (loses customization)\n- Basic registration only (doesn't meet complex needs)\n- Separate virtual platform (fragments UX)\n\n## Expected Impact\n- **Priority**: Medium-high priority\n- **Affects**: All members, event coordinators\n- **Estimated Time**: 6-8 weeks\n- **Impact**: Increases event registration by ~35%\n\n## Technical Considerations\nPayment gateway integration, session capacity management, calendar integration (iCal), QR code check-in, email reminder automation, mobile app integration.\n\n## Assigned Agent\nEvent Management Agent - specializes in event logistics and registration workflows\n",
+      "labels": [
+        "enhancement",
+        "feature-request",
+        "medium"
+      ],
+      "assigned_agent": "Event Management Agent - specializes in event logistics and registration workflows"
+    }
+  ],
+  "sub_issues": [
+    {
+      "number": 130,
+      "title": "[Issue #130] Implement Editable Grid for Members",
+      "body": "## Description\nConvert member table to editable grid similar to chapters page. Allow clicking into any cell to edit directly inline without opening modals. Auto-save changes on blur or Enter key.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Data Grid Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Data Grid Agent"
+    },
+    {
+      "number": 131,
+      "title": "[Issue #131] Add Unlimited Custom Columns",
+      "body": "## Description\nAllow admins to create custom fields for member data beyond standard fields. Support field types like text, number, date, dropdown, checkbox, multi-select, file upload.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nBackend Schema Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Backend Schema Agent"
+    },
+    {
+      "number": 132,
+      "title": "[Issue #132] Enable Inline Editing Without Modals",
+      "body": "## Description\nMake all member data editable directly in the table view. Click a cell to edit, tab to next field, auto-save changes, show validation errors inline without popup interruptions.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Form Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Form Agent"
+    },
+    {
+      "number": 133,
+      "title": "[Issue #133] Add Bulk Import with Progress Tracking",
+      "body": "## Description\nBuild CSV/Excel import feature with drag-and-drop upload, column mapping interface, validation preview, progress bar during import, error report for failed rows, and rollback option.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nData Import Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Data Import Agent"
+    },
+    {
+      "number": 134,
+      "title": "[Issue #134] Implement Advanced Filtering with Saved Filters",
+      "body": "## Description\nCreate advanced filter builder with multiple conditions, AND/OR logic, and save filter combinations with names like 'California Active Members' for quick re-use.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nQuery Builder Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Query Builder Agent"
+    },
+    {
+      "number": 135,
+      "title": "[Issue #135] Add Member Merge and Duplicate Detection",
+      "body": "## Description\nAutomatically detect potential duplicate members based on email, name similarity, phone number. Suggest merges and provide merge interface to combine duplicate records.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nData Quality Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Data Quality Agent"
+    },
+    {
+      "number": 136,
+      "title": "[Issue #136] Enable Inline Editing in Member Detail Modal",
+      "body": "## Description\nMake member detail modal editable instead of read-only. Allow clicking any field to edit, show save/cancel buttons, validate before saving, and show success feedback.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Form Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Form Agent"
+    },
+    {
+      "number": 137,
+      "title": "[Issue #137] Add Engagement Score Breakdown",
+      "body": "## Description\nInstead of just showing numeric engagement score, provide breakdown showing how it's calculated (event attendance 30%, course completions 25%, email opens 20%, etc.) with details.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAnalytics Display Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Analytics Display Agent"
+    },
+    {
+      "number": 138,
+      "title": "[Issue #138] Standardize Status Badges",
+      "body": "## Description\nFix inconsistent status badge colors and styles. Use green for Active, red for Inactive, yellow for Pending, gray for Lapsed. Apply consistently across all views.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nUI Components Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "UI Components Agent"
+    },
+    {
+      "number": 139,
+      "title": "[Issue #139] Fix Add Member Button",
+      "body": "## Description\nEnsure Add Member button actually opens the new member form modal. This overlaps with Issue #1 but specific to the member management page.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Bug Fix Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Bug Fix Agent"
+    },
+    {
+      "number": 140,
+      "title": "[Issue #140] Add Bulk Selection Checkboxes",
+      "body": "## Description\nAdd checkbox column to member table for selecting multiple members. Include 'Select All' checkbox in header and show bulk action toolbar when items selected.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Data Grid Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Data Grid Agent"
+    },
+    {
+      "number": 141,
+      "title": "[Issue #141] Add Quick Filters Above Table",
+      "body": "## Description\nProvide filter chips above table for common filters like 'Active Members', 'Pending Renewals', 'California', 'Joined This Year' that apply with single click.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Filter Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Filter Agent"
+    },
+    {
+      "number": 142,
+      "title": "[Issue #142] Add Column Resize Handles",
+      "body": "## Description\nMake table columns resizable by dragging column borders. Save column widths per user so table appearance persists across sessions.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Data Grid Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Data Grid Agent"
+    },
+    {
+      "number": 143,
+      "title": "[Issue #143] Implement Sticky Header When Scrolling",
+      "body": "## Description\nMake table header stick to top of viewport when scrolling down long member lists so column labels remain visible for context.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend CSS Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend CSS Agent"
+    },
+    {
+      "number": 144,
+      "title": "[Issue #144] Add Row Hover Highlights",
+      "body": "## Description\nHighlight entire row on hover to make it easier to visually track across columns. Use subtle background color change.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend CSS Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend CSS Agent"
+    },
+    {
+      "number": 145,
+      "title": "[Issue #145] Show Column Sorting Indicators",
+      "body": "## Description\nWhen column is sorted, show up/down arrow in column header. Allow clicking column header to sort ascending, click again for descending, click again to remove sort.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Data Grid Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Data Grid Agent"
+    },
+    {
+      "number": 146,
+      "title": "[Issue #146] Improve Pagination Display",
+      "body": "## Description\nShow 'Showing 1-50 of 1,247 members' instead of just page numbers. Makes it clear where you are in the total dataset and how many results exist.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Pagination Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Pagination Agent"
+    },
+    {
+      "number": 147,
+      "title": "[Issue #147] Add Table Density Options",
+      "body": "## Description\nProvide compact, comfortable, and spacious view options that adjust row height and padding. Compact fits more rows on screen, spacious is easier to read.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Layout Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Frontend Layout Agent"
+    },
+    {
+      "number": 148,
+      "title": "[Issue #148] Add Self-Service Password Reset",
+      "body": "## Description\nBuild password reset flow where members can reset their own password via email link without contacting admin. Send reset email, validate token, allow setting new password.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAuthentication Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Authentication Agent"
+    },
+    {
+      "number": 149,
+      "title": "[Issue #149] Implement Two-Factor Authentication",
+      "body": "## Description\nAdd optional 2FA for members using authenticator apps (Google Authenticator, Authy). Show QR code for setup, validate codes on login, provide backup codes.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSecurity Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Security Agent"
+    },
+    {
+      "number": 150,
+      "title": "[Issue #150] Add Member Profile Photo Upload",
+      "body": "## Description\nAllow members to upload profile photo with cropping tool to ensure proper aspect ratio and size. Display photos throughout system (member directory, comments, etc.).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFile Upload Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "File Upload Agent"
+    },
+    {
+      "number": 151,
+      "title": "[Issue #151] Create Digital Membership Card with QR Code",
+      "body": "## Description\nGenerate digital membership card with member info and QR code that can be scanned for event check-in or identity verification. Allow downloading to Apple/Google Wallet.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nQR Code Generator Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "QR Code Generator Agent"
+    },
+    {
+      "number": 152,
+      "title": "[Issue #152] Enable Download of Tax Documents/Receipts",
+      "body": "## Description\nProvide member portal section where members can download receipts for dues payments, event registrations, donations for tax purposes. Include year-end summary.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nPDF Generation Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "PDF Generation Agent"
+    },
+    {
+      "number": 153,
+      "title": "[Issue #153] Build Personal Dashboard with Widgets",
+      "body": "## Description\nCreate member-facing dashboard showing upcoming events, course progress, renewal date, engagement stats. Allow customizing which widgets appear.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nDashboard Builder Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Dashboard Builder Agent"
+    },
+    {
+      "number": 154,
+      "title": "[Issue #154] Add Referral Tracking System",
+      "body": "## Description\nImplement referral program where members can generate referral links, track who they referred, earn rewards for successful referrals, and see referral leaderboard.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nReferral Tracking Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Referral Tracking Agent"
+    },
+    {
+      "number": 155,
+      "title": "[Issue #155] Implement Member-to-Member Messaging",
+      "body": "## Description\nAdd internal messaging system where members can send messages to other members. Include inbox, sent messages, message threading, and notifications.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nMessaging System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Messaging System Agent"
+    },
+    {
+      "number": 156,
+      "title": "[Issue #156] Add Personal Calendar Integration",
+      "body": "## Description\nAllow members to sync their NABIP events with personal calendar (Google Calendar, Outlook, Apple Calendar). Provide iCal feed URL or OAuth integration.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCalendar Integration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Calendar Integration Agent"
+    },
+    {
+      "number": 157,
+      "title": "[Issue #157] Create Mobile App QR Code Login",
+      "body": "## Description\nGenerate QR code that members can scan with mobile device to quickly log into member portal without typing credentials. Short-lived QR codes for security.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAuthentication Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Authentication Agent"
+    },
+    {
+      "number": 158,
+      "title": "[Issue #158] Add Membership Calculator/Comparison Tool",
+      "body": "## Description\nBuild tool showing different membership tiers, benefits, and pricing. Allow comparing tiers side-by-side to help prospects choose appropriate membership level.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nComparison Tool Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Comparison Tool Agent"
+    },
+    {
+      "number": 159,
+      "title": "[Issue #159] Create Member Referral Rewards Program",
+      "body": "## Description\nTrack member referrals and automatically apply rewards (discounts, points, recognition). Show referral dashboard with stats and reward balance.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nRewards System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Rewards System Agent"
+    },
+    {
+      "number": 160,
+      "title": "[Issue #160] Build Tiered Benefits Visualization",
+      "body": "## Description\nCreate visual comparison of benefits across membership tiers (Individual, Agency, Corporate). Use checkmarks, highlighted features, and tier badges.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nUI Visualization Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "UI Visualization Agent"
+    },
+    {
+      "number": 161,
+      "title": "[Issue #161] Implement Automatic Tier Upgrades",
+      "body": "## Description\nWhen member meets criteria for higher tier (e.g. certain # of employees), automatically suggest or apply upgrade. Send notification with upgrade benefits.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nBusiness Rules Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Business Rules Agent"
+    },
+    {
+      "number": 162,
+      "title": "[Issue #162] Add Membership Pause/Hold Options",
+      "body": "## Description\nAllow members to temporarily pause membership for life events (medical leave, sabbatical) without losing member # or tenure. Set resume date.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nMembership Lifecycle Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Membership Lifecycle Agent"
+    },
+    {
+      "number": 163,
+      "title": "[Issue #163] Enable Transfer Membership Between Individuals",
+      "body": "## Description\nProvide workflow for transferring membership from one person to another (like when employee leaves company). Transfer history and benefits eligibility.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nMembership Transfer Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Membership Transfer Agent"
+    },
+    {
+      "number": 164,
+      "title": "[Issue #164] Support Household/Family Memberships",
+      "body": "## Description\nAllow linking multiple individual memberships into family/household account. Share benefits, single renewal date, family discount pricing, linked profiles.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #7\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nMembership Grouping Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-7"
+      ],
+      "parent_feature": 7,
+      "assigned_agent": "Membership Grouping Agent"
+    },
+    {
+      "number": 165,
+      "title": "[Issue #165] Fix Campaign Creation Workflow",
+      "body": "## Description\nRepair the completely broken campaign creation process. Ensure form loads, all fields work, rich text editor functions, and campaigns actually save/send.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Bug Fix Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend Bug Fix Agent"
+    },
+    {
+      "number": 166,
+      "title": "[Issue #166] Add Campaign Templates Library",
+      "body": "## Description\nBuild library of pre-designed email templates organized by category (Newsletter, Event Announcement, Welcome Series). Allow previewing and using templates as starting point.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nEmail Template Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Email Template Agent"
+    },
+    {
+      "number": 167,
+      "title": "[Issue #167] Implement A/B Testing Capabilities",
+      "body": "## Description\nAdd A/B testing for subject lines, email content, and send times. Set up test with winner criteria (open rate, click rate), test percentage, and automatic winner selection.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nA/B Testing Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "A/B Testing Agent"
+    },
+    {
+      "number": 168,
+      "title": "[Issue #168] Add Send Time Optimization",
+      "body": "## Description\nUse AI to analyze when each member typically opens emails and schedule delivery for optimal time. Provide 'Optimize Send Time' option when scheduling campaigns.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nML Optimization Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "ML Optimization Agent"
+    },
+    {
+      "number": 169,
+      "title": "[Issue #169] Build Visual Email Editor",
+      "body": "## Description\nCreate drag-and-drop email builder with blocks for text, images, buttons, social links, dividers. Include pre-built layouts, mobile preview, and HTML code editor for power users.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nEmail Editor Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Email Editor Agent"
+    },
+    {
+      "number": 170,
+      "title": "[Issue #170] Add Campaign Cloning",
+      "body": "## Description\nProvide 'Clone Campaign' button that duplicates existing campaign with all settings and content. Useful for recurring newsletters or similar campaigns.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCampaign Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Campaign Management Agent"
+    },
+    {
+      "number": 171,
+      "title": "[Issue #171] Display Actual Schedule Date",
+      "body": "## Description\nInstead of showing vague 'scheduled' status, display exact date and time campaign will send. Make it prominent so admins can verify before campaign goes out.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Display Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend Display Agent"
+    },
+    {
+      "number": 172,
+      "title": "[Issue #172] Add Test Recipient Configuration",
+      "body": "## Description\nFor 'Send Test' button, add interface to specify test email addresses. Allow saving test list (team members) for quick future tests.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nEmail Testing Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Email Testing Agent"
+    },
+    {
+      "number": 173,
+      "title": "[Issue #173] Implement Rich Text Editor",
+      "body": "## Description\nReplace basic campaign editor with full rich text editor supporting bold, italics, links, images, lists, alignment, and basic formatting like Notion or Google Docs.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nRich Text Editor Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Rich Text Editor Agent"
+    },
+    {
+      "number": 174,
+      "title": "[Issue #174] Add Campaign Preview",
+      "body": "## Description\nBefore sending, show preview of exactly how email will appear in inbox. Preview desktop and mobile views, test on different email clients (Gmail, Outlook, Apple Mail).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nEmail Preview Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Email Preview Agent"
+    },
+    {
+      "number": 175,
+      "title": "[Issue #175] Build Visual Segment Query Builder",
+      "body": "## Description\nReplace 'status:active' text field with visual query builder. Allow selecting field from dropdown, choosing operator (equals, contains, greater than), entering value with autocomplete.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nQuery Builder Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Query Builder Agent"
+    },
+    {
+      "number": 176,
+      "title": "[Issue #176] Add Campaign Metrics/Analytics",
+      "body": "## Description\nAfter sending, display comprehensive analytics: sends, deliveries, opens, clicks, unsubscribes, bounces, complaints. Show open rate and click rate over time graphs.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAnalytics Display Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Analytics Display Agent"
+    },
+    {
+      "number": 177,
+      "title": "[Issue #177] Add Helpful Placeholders to Campaign Fields",
+      "body": "## Description\nInclude descriptive placeholder text in form fields like 'Enter subject line (60 characters max)' or 'Select segment or create new' to guide users.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend UX Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend UX Agent"
+    },
+    {
+      "number": 178,
+      "title": "[Issue #178] Include Character Count for Subject Lines",
+      "body": "## Description\nDisplay character count for subject line with warning when approaching limits that cause truncation in email clients (typically 60 chars).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Validation Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend Validation Agent"
+    },
+    {
+      "number": 179,
+      "title": "[Issue #179] Replace Not Scheduled with Date Picker",
+      "body": "## Description\nInstead of showing 'Not scheduled' text, show actual date/time picker control where admins can select when campaign should send or save as draft.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Form Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend Form Agent"
+    },
+    {
+      "number": 180,
+      "title": "[Issue #180] Add Autocomplete to Segment Query",
+      "body": "## Description\nWhen typing segment queries, provide autocomplete suggestions for fields, operators, and values based on available data and common queries.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAutocomplete Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Autocomplete Agent"
+    },
+    {
+      "number": 181,
+      "title": "[Issue #181] Implement Inline Validation Messages",
+      "body": "## Description\nShow validation errors directly below form fields as user types, not just on submit. Use red text and icons to indicate errors like 'Email address is required'.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Validation Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Frontend Validation Agent"
+    },
+    {
+      "number": 182,
+      "title": "[Issue #182] Create Announcement Banner System",
+      "body": "## Description\nBuild system for displaying urgent announcements at top of pages. Support different banner types (info, warning, success), dismissible options, and link to more details.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nNotification System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Notification System Agent"
+    },
+    {
+      "number": 183,
+      "title": "[Issue #183] Build Internal Messaging/Chat",
+      "body": "## Description\nAdd real-time chat system for admin-to-admin and member-to-member communication. Include typing indicators, read receipts, file sharing, and message search.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nChat System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Chat System Agent"
+    },
+    {
+      "number": 184,
+      "title": "[Issue #184] Add Discussion Forums/Communities",
+      "body": "## Description\nCreate forum system with categories, threads, replies, upvoting, best answer marking, and moderation tools for community discussions.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nForum System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Forum System Agent"
+    },
+    {
+      "number": 185,
+      "title": "[Issue #185] Implement Comment System on Resources",
+      "body": "## Description\nAllow members to comment on documents, courses, blog posts. Include threading, @mentions, notifications, and moderation tools.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nComment System Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Comment System Agent"
+    },
+    {
+      "number": 186,
+      "title": "[Issue #186] Create Member Polls and Surveys",
+      "body": "## Description\nBuild poll/survey tool for gathering member feedback. Include question types (multiple choice, rating, free text), logic branching, and response analytics.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSurvey Builder Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Survey Builder Agent"
+    },
+    {
+      "number": 187,
+      "title": "[Issue #187] Add Newsletter Subscription Management",
+      "body": "## Description\nLet members choose which newsletters they receive. Create preference center with checkboxes for different newsletter types and frequency options.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSubscription Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Subscription Management Agent"
+    },
+    {
+      "number": 188,
+      "title": "[Issue #188] Build Communication Preferences Center",
+      "body": "## Description\nCentral dashboard where members control all communication preferences: emails, push notifications, SMS, frequency limits, topics of interest.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #8\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nPreferences Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-8"
+      ],
+      "parent_feature": 8,
+      "assigned_agent": "Preferences Management Agent"
+    },
+    {
+      "number": 189,
+      "title": "[Issue #189] Fix Course Creation Completely",
+      "body": "## Description\nRepair broken course creation functionality. Ensure form loads, file uploads work, modules can be added, and courses actually publish to catalog.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Bug Fix Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Frontend Bug Fix Agent"
+    },
+    {
+      "number": 190,
+      "title": "[Issue #190] Implement Course Preview",
+      "body": "## Description\nBuild preview interface showing course outline, sample lessons, instructor info, and what learners will experience. Include preview of first video or lesson.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCourse Preview Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Course Preview Agent"
+    },
+    {
+      "number": 191,
+      "title": "[Issue #191] Add Course Enrollment Tracking",
+      "body": "## Description\nTrack who enrolls in courses, when they enroll, completion status, quiz scores, and time spent. Provide enrollment reports and exports.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nEnrollment Tracking Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Enrollment Tracking Agent"
+    },
+    {
+      "number": 192,
+      "title": "[Issue #192] Build Progress Visualization",
+      "body": "## Description\nShow progress bars for course completion, module completion, quiz completion. Use segmented progress bars showing which modules are done vs remaining.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nProgress Visualization Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Progress Visualization Agent"
+    },
+    {
+      "number": 193,
+      "title": "[Issue #193] Add Automated Certificate Generation",
+      "body": "## Description\nWhen learner completes course, auto-generate PDF certificate with their name, course title, completion date, CE credits earned, and digital signature.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCertificate Generator Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Certificate Generator Agent"
+    },
+    {
+      "number": 194,
+      "title": "[Issue #194] Create Learning Paths with Prerequisites",
+      "body": "## Description\nAllow grouping courses into learning paths (beginner \u2192 intermediate \u2192 advanced). Enforce prerequisites so users must complete Course A before accessing Course B.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nLearning Path Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Learning Path Agent"
+    },
+    {
+      "number": 195,
+      "title": "[Issue #195] Display Course Capacity Limits",
+      "body": "## Description\nShow enrollment limits on course cards like '23/50 enrolled' or 'FULL - Waitlist Available'. Prevent over-enrollment and manage waitlists.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCapacity Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Capacity Management Agent"
+    },
+    {
+      "number": 196,
+      "title": "[Issue #196] Show Segmented Progress Bars",
+      "body": "## Description\nInstead of single solid progress bar, show segmented bar with each segment representing a module. Visual indication of which modules complete and which remain.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nUI Visualization Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "UI Visualization Agent"
+    },
+    {
+      "number": 197,
+      "title": "[Issue #197] Add Individual Progress Tracking",
+      "body": "## Description\nIn Learning Stats section, show each member's personal progress across all courses, not just aggregates. Include completion rate, courses in progress, courses completed.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nProgress Analytics Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Progress Analytics Agent"
+    },
+    {
+      "number": 198,
+      "title": "[Issue #198] Implement Category Filtering",
+      "body": "## Description\nMake course categories like 'Medicare & Medicaid' actually filter the course list when clicked. Add filter pills and clear all filters option.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Filter Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Frontend Filter Agent"
+    },
+    {
+      "number": 199,
+      "title": "[Issue #199] Show Module Breakdown in Duration",
+      "body": "## Description\nInstead of just '12 hours', show breakdown like '12 hours total: Module 1 (3hrs), Module 2 (4hrs), Module 3 (5hrs)' so learners know time commitment per section.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCourse Details Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Course Details Agent"
+    },
+    {
+      "number": 200,
+      "title": "[Issue #200] Add Prerequisite Checking Before Enroll",
+      "body": "## Description\nWhen clicking 'Enroll Now', check if user has completed prerequisites. If not, show message listing required courses and provide links to enroll in those first.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nPrerequisite Checker Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Prerequisite Checker Agent"
+    },
+    {
+      "number": 201,
+      "title": "[Issue #201] Create Course Builder with SCORM Support",
+      "body": "## Description\nBuild course authoring tool supporting SCORM 1.2 and 2004. Allow importing SCORM packages and creating SCORM-compliant courses for compatibility with other LMS systems.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSCORM Integration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "SCORM Integration Agent"
+    },
+    {
+      "number": 202,
+      "title": "[Issue #202] Build Quiz and Assessment Engine",
+      "body": "## Description\nCreate quiz builder with question types: multiple choice, true/false, multiple select, fill-in-blank, essay. Include passing scores, retake limits, randomization.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAssessment Engine Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Assessment Engine Agent"
+    },
+    {
+      "number": 203,
+      "title": "[Issue #203] Implement Certificate Designer",
+      "body": "## Description\nVisual designer for creating certificate templates. Include placeholders for name, course, date, CE credits. Support logos, signatures, backgrounds.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCertificate Design Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Certificate Design Agent"
+    },
+    {
+      "number": 204,
+      "title": "[Issue #204] Add Credit Tracking Across Providers",
+      "body": "## Description\nTrack CE credits earned from NABIP courses plus external providers. Maintain transcript showing all credits with course names, dates, providers, credit amounts.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCredit Tracking Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Credit Tracking Agent"
+    },
+    {
+      "number": 205,
+      "title": "[Issue #205] Create Transcript Generation",
+      "body": "## Description\nGenerate official transcript PDF showing all courses completed, dates, scores, credits earned. Include NABIP logo and digital verification code.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nTranscript Generator Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Transcript Generator Agent"
+    },
+    {
+      "number": 206,
+      "title": "[Issue #206] Build Course Recommendations Engine",
+      "body": "## Description\nUse AI/ML to recommend courses based on member's role, previous completions, peers in similar roles, and trending courses in their state/chapter.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nRecommendation Engine Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Recommendation Engine Agent"
+    },
+    {
+      "number": 207,
+      "title": "[Issue #207] Integrate Live Webinar Platform",
+      "body": "## Description\nConnect Zoom or Teams for live webinar courses. Auto-create meeting, send join links, track attendance, record sessions, and award CE credits based on attendance.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #9\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nWebinar Integration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-9"
+      ],
+      "parent_feature": 9,
+      "assigned_agent": "Webinar Integration Agent"
+    },
+    {
+      "number": 208,
+      "title": "[Issue #208] Fix Run Report Execution Completely",
+      "body": "## Description\nRepair the broken report execution engine so reports actually run when clicking 'Run Report' button. Fix backend processing, query generation, and result delivery.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nBackend Bug Fix Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Backend Bug Fix Agent"
+    },
+    {
+      "number": 209,
+      "title": "[Issue #209] Improve Report Web Viewing",
+      "body": "## Description\nMake reports display properly in web browser with responsive layout. Support desktop and mobile viewing with appropriate column wrapping and horizontal scrolling.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Display Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Frontend Display Agent"
+    },
+    {
+      "number": 210,
+      "title": "[Issue #210] Add Interactive Report Preview",
+      "body": "## Description\nShow live preview of report results with filtering, sorting, and search. Allow interacting with data before deciding to download or schedule.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nInteractive Report Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Interactive Report Agent"
+    },
+    {
+      "number": 211,
+      "title": "[Issue #211] Enable In-Browser Parameter Editing",
+      "body": "## Description\nLet users modify report parameters (date ranges, filters, grouping) directly in browser and see updated results without re-running entire report.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nParameter Editor Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Parameter Editor Agent"
+    },
+    {
+      "number": 212,
+      "title": "[Issue #212] Add Scheduled Report Delivery",
+      "body": "## Description\nAllow scheduling reports to run automatically (daily, weekly, monthly) and email results to distribution list. Include options for format (PDF, Excel, CSV).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nReport Scheduler Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Report Scheduler Agent"
+    },
+    {
+      "number": 213,
+      "title": "[Issue #213] Implement Report Sharing with Permissions",
+      "body": "## Description\nAdd sharing controls to give specific users or groups access to reports. Set permissions like view-only, can-edit, can-share. Track who has access.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nPermissions Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Permissions Management Agent"
+    },
+    {
+      "number": 214,
+      "title": "[Issue #214] Add Data Type Indicators to Columns",
+      "body": "## Description\nIn report builder, show icon or label indicating each column's data type (text, number, date, currency) to help users understand and format data correctly.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nReport Builder UI Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Report Builder UI Agent"
+    },
+    {
+      "number": 215,
+      "title": "[Issue #215] Make Web View Different from Details",
+      "body": "## Description\nThe 'Web View' tab should show formatted report in browser, while 'Details' tab shows report configuration. Currently they show the same thing.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Layout Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Frontend Layout Agent"
+    },
+    {
+      "number": 216,
+      "title": "[Issue #216] Add Format Preview for Exports",
+      "body": "## Description\nBefore downloading, show preview of how export will look in each format (CSV plain text, Excel with formatting, PDF with charts and layout).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nExport Preview Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Export Preview Agent"
+    },
+    {
+      "number": 217,
+      "title": "[Issue #217] Show Run History Not Just Last Run",
+      "body": "## Description\nInstead of 'Last run: Never', show complete run history with timestamps, who ran it, parameters used, and links to download previous results.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nReport History Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Report History Agent"
+    },
+    {
+      "number": 218,
+      "title": "[Issue #218] Add Actual Data Preview",
+      "body": "## Description\nShow preview of actual data the report will return based on current date, not just sample data. Limited to first 100 rows but real query results.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nData Preview Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Data Preview Agent"
+    },
+    {
+      "number": 219,
+      "title": "[Issue #219] Add Sharing Options to Visibility",
+      "body": "## Description\nReport visibility setting should include sharing options like 'Private', 'Shared with team', 'Shared with chapter admins', 'Public to all admins'.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nVisibility Settings Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Visibility Settings Agent"
+    },
+    {
+      "number": 220,
+      "title": "[Issue #220] Create In-Depth Report Templates",
+      "body": "## Description\nBuild library of pre-configured reports for common needs: Member Roster, Financial Summary, Event Attendance, Chapter Performance, Renewal Forecast.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nReport Templates Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Report Templates Agent"
+    },
+    {
+      "number": 221,
+      "title": "[Issue #221] Add Custom Visual Builder",
+      "body": "## Description\nCreate drag-and-drop interface for building report visualizations. Place charts, tables, metrics, filters on canvas and arrange layout visually.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nVisual Builder Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Visual Builder Agent"
+    },
+    {
+      "number": 222,
+      "title": "[Issue #222] Allow Selecting Data Sources",
+      "body": "## Description\nLet users choose which data to visualize: members, events, financials, courses, campaigns. Support joining multiple data sources in single report.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nData Source Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Data Source Agent"
+    },
+    {
+      "number": 223,
+      "title": "[Issue #223] Provide 3+ Chart Type Options",
+      "body": "## Description\nFor each dataset, offer chart type choices: bar, line, pie, area, scatter, etc. Allow switching between chart types to find best visualization.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nChart Options Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Chart Options Agent"
+    },
+    {
+      "number": 224,
+      "title": "[Issue #224] Enable Custom Graph Creation",
+      "body": "## Description\nIntegrate Chart.js or similar library allowing users to create fully custom graphs with their data. Include customization of colors, labels, axes, legends.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nChart Integration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Chart Integration Agent"
+    },
+    {
+      "number": 225,
+      "title": "[Issue #225] Add Report Drill-Down Capabilities",
+      "body": "## Description\nMake report elements clickable to drill into details. Clicking bar in chart shows underlying data, clicking summary number shows transaction list.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nDrill-Down Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Drill-Down Agent"
+    },
+    {
+      "number": 226,
+      "title": "[Issue #226] Include Export with Formatting Preserved",
+      "body": "## Description\nWhen exporting to Excel or PDF, maintain all formatting: colors, fonts, chart styles, cell borders, column widths from the web version.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #10\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nExport Formatting Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-10"
+      ],
+      "parent_feature": 10,
+      "assigned_agent": "Export Formatting Agent"
+    },
+    {
+      "number": 227,
+      "title": "[Issue #227] Fix Event Creation Workflow",
+      "body": "## Description\nRepair completely broken event creation. Ensure form loads, all fields work including date/time pickers, location fields, virtual event settings, pricing, and publishing.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Bug Fix Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Frontend Bug Fix Agent"
+    },
+    {
+      "number": 228,
+      "title": "[Issue #228] Show Venue/Location Info Prominently",
+      "body": "## Description\nOn event cards and listings, display venue name and city prominently so users can quickly see where event is happening. Include map link.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Display Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Frontend Display Agent"
+    },
+    {
+      "number": 229,
+      "title": "[Issue #229] Add Color Legend for Event Types/Status",
+      "body": "## Description\nCreate legend showing what different colors mean for event types (conference=blue, webinar=green, training=orange) and status (upcoming, in-progress, past, cancelled).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nUI Components Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "UI Components Agent"
+    },
+    {
+      "number": 230,
+      "title": "[Issue #230] Implement Consistent Event Color Coding",
+      "body": "## Description\nApply color coding consistently across all event displays: calendar, list view, cards, detail pages. Use same color scheme throughout.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nUI Standardization Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "UI Standardization Agent"
+    },
+    {
+      "number": 231,
+      "title": "[Issue #231] Add Tooltip Explanations for Colors",
+      "body": "## Description\nWhen hovering over colored event elements, show tooltip explaining what the color means like 'Green = Webinar' or 'Red = Cancelled'.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend UX Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Frontend UX Agent"
+    },
+    {
+      "number": 232,
+      "title": "[Issue #232] Include Legend in Event List Header",
+      "body": "## Description\nDisplay color legend at top of event list page so users can reference what colors mean without having to hover or remember.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nFrontend Layout Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Frontend Layout Agent"
+    },
+    {
+      "number": 233,
+      "title": "[Issue #233] Add Session Selection for Multi-Track Events",
+      "body": "## Description\nFor conferences with multiple concurrent sessions, allow attendees to build personal schedule by selecting which sessions to attend in each time slot.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSession Scheduler Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Session Scheduler Agent"
+    },
+    {
+      "number": 234,
+      "title": "[Issue #234] Implement Meal Preferences and Dietary Restrictions",
+      "body": "## Description\nDuring registration, collect meal preferences (vegetarian, vegan, gluten-free, kosher, halal, allergies) for catering planning and name badge printing.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nRegistration Form Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Registration Form Agent"
+    },
+    {
+      "number": 235,
+      "title": "[Issue #235] Add Hotel Room Block Management",
+      "body": "## Description\nManage hotel room blocks for multi-day events. Track room reservations, show rooms available vs booked, provide hotel booking link, and send reminders to book before deadline.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nHotel Management Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Hotel Management Agent"
+    },
+    {
+      "number": 236,
+      "title": "[Issue #236] Enable Companion/Guest Registration",
+      "body": "## Description\nAllow primary registrant to register guests/companions with them. Collect guest info, charge companion fee if applicable, and include guests in attendee count.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nGuest Registration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Guest Registration Agent"
+    },
+    {
+      "number": 237,
+      "title": "[Issue #237] Integrate Event Mobile App",
+      "body": "## Description\nProvide mobile app for events with schedule, speaker bios, venue maps, attendee networking, live polling, Q&A, and push notifications for session changes.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nMobile App Integration Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Mobile App Integration Agent"
+    },
+    {
+      "number": 238,
+      "title": "[Issue #238] Add Virtual Event Streaming Integration",
+      "body": "## Description\nIntegrate Zoom, Teams, or Webex for virtual/hybrid events. Auto-create meetings, send join links, track virtual attendance separately from in-person, and record sessions.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nVirtual Event Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Virtual Event Agent"
+    },
+    {
+      "number": 239,
+      "title": "[Issue #239] Implement Post-Event Survey Automation",
+      "body": "## Description\nAutomatically send survey to attendees after event ends. Include questions about satisfaction, session quality, speakers, venue, and likelihood to recommend.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSurvey Automation Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Survey Automation Agent"
+    },
+    {
+      "number": 240,
+      "title": "[Issue #240] Add CPE Credit Tracking and Certificates",
+      "body": "## Description\nTrack CPE credits earned at events, automatically generate certificates of attendance showing credits earned, and submit credits to state boards if integrated.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nCPE Tracking Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "CPE Tracking Agent"
+    },
+    {
+      "number": 241,
+      "title": "[Issue #241] Create Event Photo Galleries",
+      "body": "## Description\nUpload event photos to gallery, allow attendees to view and download, enable tagging people in photos, and integrate with social media sharing.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nPhoto Gallery Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Photo Gallery Agent"
+    },
+    {
+      "number": 242,
+      "title": "[Issue #242] Build Sponsor/Exhibitor Management Portal",
+      "body": "## Description\nGive sponsors access to portal for managing booth details, uploading logos, viewing lead list, sending messages to attendees, and downloading attendee lists (if permitted).\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nSponsor Portal Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Sponsor Portal Agent"
+    },
+    {
+      "number": 243,
+      "title": "[Issue #243] Add Event Conversion Funnel",
+      "body": "## Description\nTrack and visualize conversion funnel showing how many people viewed event page, started registration, completed registration, and actually attended. Identify drop-off points.\n\n## Parent Feature Request\nThis is a sub-issue of Feature Request #11\n\n## Related Issues\n- Part of #7 (if applicable based on parent feature)\n\n## Assigned Agent\nAnalytics Funnel Agent\n",
+      "labels": [
+        "enhancement",
+        "sub-issue",
+        "feature-11"
+      ],
+      "parent_feature": 11,
+      "assigned_agent": "Analytics Funnel Agent"
+    }
+  ],
+  "summary": {
+    "total_feature_requests": 5,
+    "total_sub_issues": 114,
+    "feature_request_numbers": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "sub_issue_range": "130-243"
+  }
+}

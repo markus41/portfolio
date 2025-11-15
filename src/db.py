@@ -84,9 +84,7 @@ def init_db() -> None:
                 "CREATE INDEX idx_event_history_timestamp ON event_history(timestamp)"
             )
         if "idx_event_history_team" not in existing_indexes:
-            conn.execute(
-                "CREATE INDEX idx_event_history_team ON event_history(team)"
-            )
+            conn.execute("CREATE INDEX idx_event_history_team ON event_history(team)")
 
 
 # ---------------------------------------------------------------------------
