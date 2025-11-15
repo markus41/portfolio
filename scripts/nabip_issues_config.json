@@ -1,0 +1,856 @@
+{
+  "feature_requests": [
+    {
+      "number": 12,
+      "title": "NABIP Super Menu & Content Integration",
+      "description": "Complete NABIP Website Integration with Mega-Menu Navigation",
+      "category": "Content/Navigation Enhancement",
+      "problem_statement": "System needs to integrate all NABIP website content (74 distinct features across 9 sections) into unified platform. Currently separate systems create fragmented user experience. Need mega-menu navigation with full content hierarchy.",
+      "proposed_solution": "Integrate complete NABIP content hierarchy across sections: Agent Finder, Who We Are, Membership, Professional Development, Advocacy, DEIB, Events, Member Resources, Chapter Resources, Newsroom. Implement mega-menu with multi-column layout, search within menu, breadcrumbs, responsive mobile design.",
+      "alternatives": [
+        "Keeping separate website (fragments experience)",
+        "Simple link integration (doesn't provide unified platform)",
+        "iFrame embedding (poor UX, performance)"
+      ],
+      "expected_impact": "Medium-high priority, affects all members, estimated time: 8-10 weeks, consolidates all touchpoints",
+      "priority": "Medium-High",
+      "technical_considerations": "Content migration from existing site, CMS for content management, search indexing across all content, permission system for restricted content, navigation analytics.",
+      "labels": ["enhancement", "navigation", "content-management", "mega-menu"],
+      "assignees": [],
+      "sub_issues": [
+        {
+          "number": 244,
+          "section": "Looking for an Agent",
+          "title": "Implement Find an Agent Search",
+          "description": "Build agent search tool allowing public to find NABIP agents by location, specialty, languages spoken. Include agent profiles with contact info and credentials.",
+          "labels": ["enhancement", "search", "frontend"],
+          "agents": ["frontend-agent", "search-agent"]
+        },
+        {
+          "number": 245,
+          "section": "Looking for an Agent",
+          "title": "Add Why Work With an Agent Page",
+          "description": "Create informational page explaining benefits of working with NABIP agent vs going direct to insurance company. Include testimonials and value proposition.",
+          "labels": ["enhancement", "content", "marketing"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 246,
+          "section": "Looking for an Agent",
+          "title": "Create Helpful Guides Resource Section",
+          "description": "Compile library of consumer guides about health insurance topics: understanding plans, choosing coverage, enrollments periods, Medicare, ACA, etc.",
+          "labels": ["enhancement", "content", "documentation"],
+          "agents": ["content-agent", "documentation-agent"]
+        },
+        {
+          "number": 247,
+          "section": "Looking for an Agent",
+          "title": "Add Comprehensive Glossary with Search",
+          "description": "Build searchable glossary of insurance terms and acronyms. Include definitions, related terms, and examples. Allow quick lookup from any page.",
+          "labels": ["enhancement", "search", "content"],
+          "agents": ["search-agent", "content-agent"]
+        },
+        {
+          "number": 248,
+          "section": "Who We Are",
+          "title": "Import NABIP Healthcare Bill of Rights",
+          "description": "Add NABIP's Healthcare Bill of Rights document with formatting. Make it shareable, downloadable PDF, and link from multiple places.",
+          "labels": ["enhancement", "content", "pdf"],
+          "agents": ["content-agent", "pdf-agent"]
+        },
+        {
+          "number": 249,
+          "section": "Who We Are",
+          "title": "Add Impact & Influence Report Viewer",
+          "description": "Upload annual Impact & Influence Report as interactive web version. Include stats, graphs, accomplishments, legislative wins, and downloadable PDF.",
+          "labels": ["enhancement", "reporting", "visualization"],
+          "agents": ["visualization-agent", "frontend-agent"]
+        },
+        {
+          "number": 250,
+          "section": "Who We Are",
+          "title": "Integrate Mission, Vision & Code of Ethics",
+          "description": "Create dedicated page for Mission Statement, Vision Statement, and Code of Ethics. Make prominently accessible and printable.",
+          "labels": ["enhancement", "content"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 251,
+          "section": "Who We Are",
+          "title": "Create Board of Trustees Directory",
+          "description": "Build directory of board members with photos, bios, contact info, term dates, and committee assignments. Keep current as board changes.",
+          "labels": ["enhancement", "directory", "cms"],
+          "agents": ["cms-agent", "frontend-agent"]
+        },
+        {
+          "number": 252,
+          "section": "Who We Are",
+          "title": "Build Staff Directory with Contact Info",
+          "description": "Create staff directory organized by department. Include names, titles, photos, email, phone, and brief bio for each staff member.",
+          "labels": ["enhancement", "directory", "cms"],
+          "agents": ["cms-agent", "frontend-agent"]
+        },
+        {
+          "number": 253,
+          "section": "Who We Are",
+          "title": "Add National Leadership Section",
+          "description": "Showcase national officers (President, President-Elect, Secretary, Treasurer) with larger profiles including headshots, bios, priorities, and contact.",
+          "labels": ["enhancement", "content", "leadership"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 254,
+          "section": "Who We Are",
+          "title": "Implement Strategic Initiatives Tracker",
+          "description": "Display current strategic initiatives with progress indicators, milestones, owners, and completion status. Update regularly to show progress.",
+          "labels": ["enhancement", "tracking", "dashboard"],
+          "agents": ["dashboard-agent", "frontend-agent"]
+        },
+        {
+          "number": 255,
+          "section": "Who We Are",
+          "title": "Add Policies & Procedures Documentation",
+          "description": "Create repository for organizational policies and procedures. Organize by category, make searchable, show last updated date.",
+          "labels": ["enhancement", "documentation", "search"],
+          "agents": ["documentation-agent", "search-agent"]
+        },
+        {
+          "number": 256,
+          "section": "Who We Are",
+          "title": "Create Interactive Find A Chapter Map",
+          "description": "Build interactive US map where users can click state to see chapters in that state. Include zoom, search by zip code, and chapter details.",
+          "labels": ["enhancement", "maps", "frontend"],
+          "agents": ["maps-agent", "frontend-agent"]
+        },
+        {
+          "number": 257,
+          "section": "Who We Are",
+          "title": "Add Bylaws Document Viewer",
+          "description": "Display NABIP bylaws in web-friendly format with table of contents, search, and downloadable PDF. Show amendment history and effective dates.",
+          "labels": ["enhancement", "documentation", "pdf"],
+          "agents": ["documentation-agent", "pdf-agent"]
+        },
+        {
+          "number": 258,
+          "section": "Who We Are",
+          "title": "Create NABIP Executive Partners Showcase",
+          "description": "Feature Executive Partners (corporate sponsors) with logos, descriptions, benefits they provide to members, and links to their resources.",
+          "labels": ["enhancement", "content", "partnerships"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 259,
+          "section": "Who We Are",
+          "title": "Add Brokers Making a Difference Stories",
+          "description": "Create blog/story section highlighting member success stories, community impact, and how NABIP agents are making a difference in their communities.",
+          "labels": ["enhancement", "blog", "content"],
+          "agents": ["blog-agent", "content-agent"]
+        },
+        {
+          "number": 260,
+          "section": "Membership",
+          "title": "Link to My Account Dashboard",
+          "description": "Add 'My Account' link in navigation going to member's personal dashboard where they manage profile, dues, events, courses.",
+          "labels": ["enhancement", "navigation", "authentication"],
+          "agents": ["auth-agent", "frontend-agent"]
+        },
+        {
+          "number": 261,
+          "section": "Membership",
+          "title": "Add Join Now Workflow",
+          "description": "Create membership application flow for new members. Collect info, select membership type, pay dues, create account, and send welcome email.",
+          "labels": ["enhancement", "workflow", "payment"],
+          "agents": ["workflow-agent", "payment-agent"]
+        },
+        {
+          "number": 262,
+          "section": "Membership",
+          "title": "Create Why Join NABIP Value Proposition",
+          "description": "Build marketing page explaining benefits of NABIP membership. Include testimonials, stats, ROI calculator, and comparison to going it alone.",
+          "labels": ["enhancement", "marketing", "content"],
+          "agents": ["content-agent", "marketing-agent"]
+        },
+        {
+          "number": 263,
+          "section": "Membership",
+          "title": "Integrate Renew Now Functionality",
+          "description": "Add renewal workflow for existing members. Show renewal amount, any changes to benefits, pay online, and update info during renewal.",
+          "labels": ["enhancement", "workflow", "payment"],
+          "agents": ["workflow-agent", "payment-agent"]
+        },
+        {
+          "number": 264,
+          "section": "Membership",
+          "title": "Build Member Benefits Catalog",
+          "description": "Comprehensive listing of all member benefits organized by category: education, advocacy, networking, resources, discounts. Link to details for each.",
+          "labels": ["enhancement", "content", "catalog"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 265,
+          "section": "Membership",
+          "title": "Add Corporate Partnership Information",
+          "description": "Information page for companies interested in corporate partnership. Include partnership levels, benefits, pricing, and application process.",
+          "labels": ["enhancement", "content", "partnerships"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 266,
+          "section": "Membership",
+          "title": "Create Agency Dues Model Calculator",
+          "description": "Interactive calculator for agencies to determine dues based on number of agents. Show breakdown and allow submitting payment.",
+          "labels": ["enhancement", "calculator", "payment"],
+          "agents": ["calculator-agent", "payment-agent"]
+        },
+        {
+          "number": 267,
+          "section": "Professional Development",
+          "title": "Integrate Online Learning Institute",
+          "description": "Full integration of course catalog, enrollment, progress tracking, certificates from Online Learning Institute into main platform.",
+          "labels": ["enhancement", "education", "integration"],
+          "agents": ["integration-agent", "education-agent"]
+        },
+        {
+          "number": 268,
+          "section": "Professional Development",
+          "title": "Add REBC Designation Tracking",
+          "description": "Track members pursuing Registered Employee Benefits Consultant designation. Show requirements, progress, courses needed, and application process.",
+          "labels": ["enhancement", "tracking", "education"],
+          "agents": ["tracking-agent", "education-agent"]
+        },
+        {
+          "number": 269,
+          "section": "Professional Development",
+          "title": "Build Medicare Advantage Certification Module",
+          "description": "Online training and certification for Medicare Advantage. Include course, exam, certificate generation, and renewal tracking.",
+          "labels": ["enhancement", "education", "certification"],
+          "agents": ["education-agent", "certification-agent"]
+        },
+        {
+          "number": 270,
+          "section": "Professional Development",
+          "title": "Add DC Health Link Broker Training",
+          "description": "Training module for DC Health Link. Includes required courses, exam, certification, and annual renewal requirements.",
+          "labels": ["enhancement", "education", "certification"],
+          "agents": ["education-agent", "certification-agent"]
+        },
+        {
+          "number": 271,
+          "section": "Professional Development",
+          "title": "Create Speakers Bureau Directory",
+          "description": "Searchable directory of NABIP members available for speaking engagements. Include topics, availability, testimonials, and booking request form.",
+          "labels": ["enhancement", "directory", "search"],
+          "agents": ["directory-agent", "search-agent"]
+        },
+        {
+          "number": 272,
+          "section": "Professional Development",
+          "title": "Build Career Center Job Board",
+          "description": "Job board for insurance industry positions. Allow employers to post jobs, members to search and apply, and track applications.",
+          "labels": ["enhancement", "jobs", "search"],
+          "agents": ["jobs-agent", "search-agent"]
+        },
+        {
+          "number": 273,
+          "section": "Advocacy",
+          "title": "Add Legislative Issues Tracker",
+          "description": "Track current federal and state legislative issues affecting health insurance brokers. Show status, NABIP position, action needed from members.",
+          "labels": ["enhancement", "tracking", "legislation"],
+          "agents": ["tracking-agent", "content-agent"]
+        },
+        {
+          "number": 274,
+          "section": "Advocacy",
+          "title": "Create Policy Documents Library",
+          "description": "Repository for NABIP policy positions, white papers, comment letters, testimony. Organize by topic and date.",
+          "labels": ["enhancement", "documentation", "library"],
+          "agents": ["documentation-agent", "cms-agent"]
+        },
+        {
+          "number": 275,
+          "section": "Advocacy",
+          "title": "Build Compliance Corner Resources",
+          "description": "Compliance resources for brokers: laws, regulations, forms, checklists, webinars, FAQs. Keep updated as regulations change.",
+          "labels": ["enhancement", "compliance", "resources"],
+          "agents": ["compliance-agent", "content-agent"]
+        },
+        {
+          "number": 276,
+          "section": "Advocacy",
+          "title": "Add NABIP PAC Contribution Portal",
+          "description": "Online portal for contributing to NABIP PAC. Show contribution levels, how funds are used, leaderboards, and tax information.",
+          "labels": ["enhancement", "payment", "portal"],
+          "agents": ["payment-agent", "frontend-agent"]
+        },
+        {
+          "number": 277,
+          "section": "Advocacy",
+          "title": "Create Operation Shout Campaign Tools",
+          "description": "Tools and templates for members to contact legislators: pre-written emails, talking points, district info, call scripts, and tracking participation.",
+          "labels": ["enhancement", "advocacy", "tools"],
+          "agents": ["advocacy-agent", "content-agent"]
+        },
+        {
+          "number": 278,
+          "section": "Advocacy",
+          "title": "Add State Resources Directory",
+          "description": "State-specific resources organized by state: regulations, forms, state association contacts, news, and legislative updates.",
+          "labels": ["enhancement", "directory", "resources"],
+          "agents": ["directory-agent", "content-agent"]
+        },
+        {
+          "number": 279,
+          "section": "Advocacy",
+          "title": "Build Agent/Client Surveys System",
+          "description": "System for conducting surveys of agents and clients. Create surveys, distribute, collect responses, and view analytics.",
+          "labels": ["enhancement", "surveys", "analytics"],
+          "agents": ["survey-agent", "analytics-agent"]
+        },
+        {
+          "number": 280,
+          "section": "DEIB",
+          "title": "Add DEIB Committee Information",
+          "description": "Information about Diversity, Equity, Inclusion & Belonging committee: members, mission, meetings, how to get involved.",
+          "labels": ["enhancement", "content", "deib"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 281,
+          "section": "DEIB",
+          "title": "Display Vision & Core Values",
+          "description": "Dedicated page for DEIB vision statement and core values. Make visually appealing and shareable.",
+          "labels": ["enhancement", "content", "deib"],
+          "agents": ["content-agent", "design-agent"]
+        },
+        {
+          "number": 282,
+          "section": "DEIB",
+          "title": "Add Committee Findings Reports",
+          "description": "Publish committee reports, surveys, recommendations, and progress on DEIB initiatives. Keep stakeholders informed.",
+          "labels": ["enhancement", "reporting", "deib"],
+          "agents": ["reporting-agent", "content-agent"]
+        },
+        {
+          "number": 283,
+          "section": "DEIB",
+          "title": "Create DEIB Training Modules",
+          "description": "Online training on diversity, equity, inclusion, unconscious bias, cultural competency. Required or optional for members.",
+          "labels": ["enhancement", "education", "deib"],
+          "agents": ["education-agent", "content-agent"]
+        },
+        {
+          "number": 284,
+          "section": "DEIB",
+          "title": "Add DEIB Resources Library",
+          "description": "Curated resources: articles, videos, toolkits, statistics, best practices for creating inclusive workplaces and serving diverse clients.",
+          "labels": ["enhancement", "resources", "deib"],
+          "agents": ["content-agent", "library-agent"]
+        },
+        {
+          "number": 285,
+          "section": "Events",
+          "title": "Create Events List with Filters",
+          "description": "Comprehensive event listing with filters by type, date, location, cost, CE credits. Include search and calendar/list view toggle.",
+          "labels": ["enhancement", "events", "search"],
+          "agents": ["events-agent", "search-agent"]
+        },
+        {
+          "number": 286,
+          "section": "Events",
+          "title": "Add Capitol Conference Registration",
+          "description": "Dedicated registration page for annual Capitol Conference. Include agenda, speakers, hotel info, registration options, and pricing.",
+          "labels": ["enhancement", "events", "registration"],
+          "agents": ["events-agent", "registration-agent"]
+        },
+        {
+          "number": 287,
+          "section": "Events",
+          "title": "Build Annual Convention Portal",
+          "description": "Multi-page portal for Annual Convention with schedule, speakers, exhibitors, hotel, travel, social events, and mobile app download.",
+          "labels": ["enhancement", "events", "portal"],
+          "agents": ["events-agent", "portal-agent"]
+        },
+        {
+          "number": 288,
+          "section": "Events",
+          "title": "Add Chapter Events Calendar Integration",
+          "description": "Aggregate all chapter events into searchable calendar. Allow filtering by state/chapter, exporting to personal calendar.",
+          "labels": ["enhancement", "events", "calendar"],
+          "agents": ["calendar-agent", "integration-agent"]
+        },
+        {
+          "number": 289,
+          "section": "Member Resources",
+          "title": "Build Resource Hub with Search",
+          "description": "Central hub for all member resources organized by topic. Include search, popular resources, recently added, and personalized recommendations.",
+          "labels": ["enhancement", "resources", "search"],
+          "agents": ["search-agent", "recommendation-agent"]
+        },
+        {
+          "number": 290,
+          "section": "Member Resources",
+          "title": "Create App Store Links/QR Codes",
+          "description": "Prominently display links and QR codes to download NABIP mobile app from Apple App Store and Google Play Store.",
+          "labels": ["enhancement", "mobile", "content"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 291,
+          "section": "Member Resources",
+          "title": "Duplicate Member Benefits Section",
+          "description": "Add quick access to member benefits from resources section for convenience. Link to full benefits catalog.",
+          "labels": ["enhancement", "navigation", "content"],
+          "agents": ["frontend-agent", "content-agent"]
+        },
+        {
+          "number": 292,
+          "section": "Member Resources",
+          "title": "Add Mentor Program Signup",
+          "description": "Information and signup for mentorship program. Match new members with experienced mentors, track meetings, provide discussion guides.",
+          "labels": ["enhancement", "mentorship", "workflow"],
+          "agents": ["workflow-agent", "matching-agent"]
+        },
+        {
+          "number": 293,
+          "section": "Member Resources",
+          "title": "Create Podcast & Webinars Library",
+          "description": "On-demand library of podcast episodes and recorded webinars. Include player, show notes, transcripts, and ability to subscribe.",
+          "labels": ["enhancement", "media", "library"],
+          "agents": ["media-agent", "library-agent"]
+        },
+        {
+          "number": 294,
+          "section": "Member Resources",
+          "title": "Add bip Magazine Archive",
+          "description": "Digital archive of all bip magazine issues. Browsable by issue, searchable by topic, downloadable PDFs.",
+          "labels": ["enhancement", "archive", "search"],
+          "agents": ["archive-agent", "search-agent"]
+        },
+        {
+          "number": 295,
+          "section": "Member Resources",
+          "title": "Add NABIP Logo Download Center",
+          "description": "Brand assets for members: logos (various formats), style guide, templates, approved usage examples, and request custom materials.",
+          "labels": ["enhancement", "branding", "downloads"],
+          "agents": ["asset-agent", "frontend-agent"]
+        },
+        {
+          "number": 296,
+          "section": "Member Resources",
+          "title": "Build Compliance Corner Duplicate",
+          "description": "Quick access to compliance resources from main navigation since it's highly used. Links to full compliance section.",
+          "labels": ["enhancement", "navigation", "compliance"],
+          "agents": ["frontend-agent", "compliance-agent"]
+        },
+        {
+          "number": 297,
+          "section": "Member Resources",
+          "title": "Add NABIP Vision Statement",
+          "description": "Display organizational vision statement prominently. Make it shareable and reference it throughout site.",
+          "labels": ["enhancement", "content"],
+          "agents": ["content-agent", "frontend-agent"]
+        },
+        {
+          "number": 298,
+          "section": "Member Resources",
+          "title": "Create LPRT Leading Producers Round Table",
+          "description": "Portal for Leading Producers Round Table members: exclusive resources, networking, advanced training, recognition program.",
+          "labels": ["enhancement", "portal", "membership"],
+          "agents": ["portal-agent", "membership-agent"]
+        },
+        {
+          "number": 299,
+          "section": "Member Resources",
+          "title": "Add LTC Portal Access",
+          "description": "Resources and tools specific to long-term care insurance: training, forms, marketing materials, state regulations.",
+          "labels": ["enhancement", "portal", "resources"],
+          "agents": ["portal-agent", "content-agent"]
+        },
+        {
+          "number": 300,
+          "section": "Member Resources",
+          "title": "Build Medicare Portal",
+          "description": "Comprehensive Medicare resources: training, AEP materials, plan comparison tools, compliance requirements, marketing materials.",
+          "labels": ["enhancement", "portal", "medicare"],
+          "agents": ["portal-agent", "medicare-agent"]
+        },
+        {
+          "number": 301,
+          "section": "Member Resources",
+          "title": "Add NABIP Foundation Information",
+          "description": "Information about NABIP Foundation charitable work, grant programs, scholarship applications, donation portal, and foundation board.",
+          "labels": ["enhancement", "content", "foundation"],
+          "agents": ["content-agent", "donation-agent"]
+        },
+        {
+          "number": 302,
+          "section": "Member Resources",
+          "title": "Create Employer Plan Benchmarking Tools",
+          "description": "Tools for comparing employer plans: benefit benchmarking data, contribution rates, plan design trends, by industry and size.",
+          "labels": ["enhancement", "tools", "analytics"],
+          "agents": ["analytics-agent", "tools-agent"]
+        },
+        {
+          "number": 303,
+          "section": "Chapter Resources",
+          "title": "Add Name Change Resources",
+          "description": "Resources for chapters considering name change: process, templates, announcement examples, branding transition guide.",
+          "labels": ["enhancement", "resources", "content"],
+          "agents": ["content-agent", "template-agent"]
+        },
+        {
+          "number": 304,
+          "section": "Chapter Resources",
+          "title": "Build National Committees Directory",
+          "description": "List of all national committees with purpose, members, meeting schedules, and how to join or request speaker.",
+          "labels": ["enhancement", "directory", "committees"],
+          "agents": ["directory-agent", "content-agent"]
+        },
+        {
+          "number": 305,
+          "section": "Chapter Resources",
+          "title": "Create Leadership Academy Portal",
+          "description": "Leadership training program for chapter leaders: courses, webinars, toolkits, mentorship, certification track.",
+          "labels": ["enhancement", "portal", "education"],
+          "agents": ["portal-agent", "education-agent"]
+        },
+        {
+          "number": 306,
+          "section": "Chapter Resources",
+          "title": "Add Awards Showcase",
+          "description": "Display award programs: Chapter of the Year, Member of the Year, Rising Star. Include criteria, winners, nomination process.",
+          "labels": ["enhancement", "content", "awards"],
+          "agents": ["content-agent", "showcase-agent"]
+        },
+        {
+          "number": 307,
+          "section": "Chapter Resources",
+          "title": "Create Guidebooks Library",
+          "description": "Digital library of guidebooks for chapter operations: officer duties, event planning, membership retention, fundraising.",
+          "labels": ["enhancement", "library", "documentation"],
+          "agents": ["library-agent", "documentation-agent"]
+        },
+        {
+          "number": 308,
+          "section": "Chapter Resources",
+          "title": "Add Leadership Reports Templates",
+          "description": "Templates for chapter reports: monthly reports, annual reports, financial statements, strategic plans.",
+          "labels": ["enhancement", "templates", "reporting"],
+          "agents": ["template-agent", "reporting-agent"]
+        },
+        {
+          "number": 309,
+          "section": "Chapter Resources",
+          "title": "Build Leadership Training Modules",
+          "description": "Online training for chapter officers on topics like running meetings, Roberts Rules, budgeting, volunteer management.",
+          "labels": ["enhancement", "education", "training"],
+          "agents": ["education-agent", "training-agent"]
+        },
+        {
+          "number": 310,
+          "section": "Chapter Resources",
+          "title": "Create Chapter Tools Repository",
+          "description": "Tools for chapter management: roster templates, event checklists, marketing templates, social media graphics, email templates.",
+          "labels": ["enhancement", "tools", "templates"],
+          "agents": ["template-agent", "tools-agent"]
+        },
+        {
+          "number": 311,
+          "section": "Chapter Resources",
+          "title": "Add Media Tools Kit",
+          "description": "Media relations toolkit: press release templates, media contact lists, spokesperson training, crisis communication guide.",
+          "labels": ["enhancement", "tools", "media"],
+          "agents": ["media-agent", "template-agent"]
+        },
+        {
+          "number": 312,
+          "section": "Chapter Resources",
+          "title": "Build Staff Speaker Request Form",
+          "description": "Form for requesting NABIP national staff speaker for chapter event. Include date, topic, audience size, logistics.",
+          "labels": ["enhancement", "forms", "workflow"],
+          "agents": ["forms-agent", "workflow-agent"]
+        },
+        {
+          "number": 313,
+          "section": "Chapter Resources",
+          "title": "Create Chapter Event Submission Form",
+          "description": "Form for chapters to submit events to national calendar. Auto-populates calendar after approval.",
+          "labels": ["enhancement", "forms", "calendar"],
+          "agents": ["forms-agent", "calendar-agent"]
+        },
+        {
+          "number": 314,
+          "section": "Newsroom",
+          "title": "Create Press Releases Archive",
+          "description": "Searchable archive of all NABIP press releases organized by date and topic. Include social sharing buttons.",
+          "labels": ["enhancement", "archive", "search"],
+          "agents": ["archive-agent", "search-agent"]
+        },
+        {
+          "number": 315,
+          "section": "Newsroom",
+          "title": "Add Media Contacts",
+          "description": "Contact information for NABIP media relations team and spokespersons. Include headshots, bios, expertise areas.",
+          "labels": ["enhancement", "content", "media"],
+          "agents": ["content-agent", "directory-agent"]
+        },
+        {
+          "number": 316,
+          "section": "Newsroom",
+          "title": "Build News Feed with RSS",
+          "description": "Latest news feed pulling from press releases, blog, industry news. Provide RSS feed for syndication.",
+          "labels": ["enhancement", "rss", "feed"],
+          "agents": ["feed-agent", "integration-agent"]
+        },
+        {
+          "number": 317,
+          "section": "Newsroom",
+          "title": "Add Press Kit Downloads",
+          "description": "Downloadable press kit with logos, fact sheet, backgrounders, spokesperson bios, recent press releases.",
+          "labels": ["enhancement", "downloads", "media"],
+          "agents": ["asset-agent", "media-agent"]
+        },
+        {
+          "number": 318,
+          "section": "Navigation UX",
+          "title": "Implement Mega-Menu with Multi-Column",
+          "description": "Build mega-menu dropdown that appears on hover/click showing all subsections in organized multi-column layout with icons.",
+          "labels": ["enhancement", "navigation", "frontend", "ux"],
+          "agents": ["frontend-agent", "ux-agent"]
+        },
+        {
+          "number": 319,
+          "section": "Navigation UX",
+          "title": "Add Search Within Menu",
+          "description": "Include search box at top of mega-menu to search across all navigation items and jump directly to pages.",
+          "labels": ["enhancement", "search", "navigation"],
+          "agents": ["search-agent", "frontend-agent"]
+        },
+        {
+          "number": 320,
+          "section": "Navigation UX",
+          "title": "Create Breadcrumb Navigation for Deep Pages",
+          "description": "On all pages more than 2 levels deep, show breadcrumb path showing where user is and allowing jump back to any level.",
+          "labels": ["enhancement", "navigation", "ux"],
+          "agents": ["frontend-agent", "ux-agent"]
+        },
+        {
+          "number": 321,
+          "section": "Navigation UX",
+          "title": "Add Ask Your Question Button Prominently",
+          "description": "Prominent button in header opening contact/help form. Make it easy for users to get help when needed.",
+          "labels": ["enhancement", "ux", "support"],
+          "agents": ["frontend-agent", "support-agent"]
+        },
+        {
+          "number": 322,
+          "section": "Navigation UX",
+          "title": "Include Sign In Integration",
+          "description": "Sign In link in top right of navigation. When signed in, replace with user menu showing profile, account, logout.",
+          "labels": ["enhancement", "authentication", "navigation"],
+          "agents": ["auth-agent", "frontend-agent"]
+        },
+        {
+          "number": 323,
+          "section": "Navigation UX",
+          "title": "Make Navigation Responsive/Mobile-Friendly",
+          "description": "Ensure mega-menu works on mobile with hamburger icon, slide-out drawer, and touch-friendly sizing.",
+          "labels": ["enhancement", "mobile", "responsive"],
+          "agents": ["frontend-agent", "mobile-agent"]
+        },
+        {
+          "number": 324,
+          "section": "Navigation UX",
+          "title": "Add Hover States with Smooth Animations",
+          "description": "Subtle hover animations on navigation items: color change, underline, slight lift. Make transitions smooth (300ms).",
+          "labels": ["enhancement", "css", "animations"],
+          "agents": ["frontend-agent", "animation-agent"]
+        },
+        {
+          "number": 325,
+          "section": "Navigation UX",
+          "title": "Include Icons for Major Sections",
+          "description": "Add icons next to major navigation sections for visual recognition. Use consistent icon style throughout.",
+          "labels": ["enhancement", "icons", "ux"],
+          "agents": ["design-agent", "frontend-agent"]
+        },
+        {
+          "number": 326,
+          "section": "Navigation UX",
+          "title": "Implement Keyboard Navigation Support",
+          "description": "Support arrow keys to navigate through menu, Enter to select, Escape to close, Tab to move through items.",
+          "labels": ["enhancement", "accessibility", "keyboard"],
+          "agents": ["accessibility-agent", "frontend-agent"]
+        },
+        {
+          "number": 327,
+          "section": "Navigation UX",
+          "title": "Add Recently Visited Items Tracking",
+          "description": "Show 'Recently Visited' section in user menu or sidebar showing last 5-10 pages user accessed for quick return.",
+          "labels": ["enhancement", "ux", "tracking"],
+          "agents": ["tracking-agent", "frontend-agent"]
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Committee & Volunteer Management",
+      "description": "Complete Committee Management with Collaboration Tools",
+      "category": "Committee Management Enhancement",
+      "problem_statement": "No system for managing committees, volunteers, or board members. Need tools for committee member portals, meeting scheduling, document collaboration, task tracking, volunteer hour logging, and board packet generation.",
+      "proposed_solution": "Build comprehensive committee management: committee member portal with permissions, meeting scheduler with polls, document collaboration space, task assignment and tracking, volunteer hour logging with reports, application workflow, board packet generation.",
+      "alternatives": [
+        "Using Google Workspace only (lacks committee-specific features)",
+        "Manual management (too time-consuming)",
+        "Third-party volunteer platform (integration complexity)"
+      ],
+      "expected_impact": "Medium priority, affects committee members and admins, estimated time: 4-5 weeks, reduces coordination time by ~60%",
+      "priority": "Medium",
+      "technical_considerations": "Real-time collaboration with WebSockets, document version control, notification system for assignments, calendar API integration, PDF generation for board packets.",
+      "labels": ["enhancement", "committee-management", "collaboration"],
+      "assignees": [],
+      "sub_issues": [
+        {
+          "number": 328,
+          "section": "Committee Management",
+          "title": "Create Committee Member Portal",
+          "description": "Build portal for committee members to access committee documents, calendar, tasks, and discussions. Apply role-based access so members only see their committees.",
+          "labels": ["enhancement", "portal", "authentication"],
+          "agents": ["portal-agent", "auth-agent"]
+        },
+        {
+          "number": 329,
+          "section": "Committee Management",
+          "title": "Add Meeting Scheduler with Polls",
+          "description": "Tool for scheduling committee meetings. Send poll with date options, collect availability, auto-select best time, send calendar invites.",
+          "labels": ["enhancement", "scheduling", "calendar"],
+          "agents": ["scheduling-agent", "calendar-agent"]
+        },
+        {
+          "number": 330,
+          "section": "Committee Management",
+          "title": "Implement Document Collaboration Space",
+          "description": "Shared document workspace for committee with folders, file upload, version control, comments, and real-time editing for supported file types.",
+          "labels": ["enhancement", "collaboration", "documents"],
+          "agents": ["collaboration-agent", "document-agent"]
+        },
+        {
+          "number": 331,
+          "section": "Committee Management",
+          "title": "Build Task Assignment and Tracking",
+          "description": "Create and assign tasks to committee members. Set due dates, priorities, descriptions. Track completion status and send reminders.",
+          "labels": ["enhancement", "tasks", "tracking"],
+          "agents": ["task-agent", "tracking-agent"]
+        },
+        {
+          "number": 332,
+          "section": "Committee Management",
+          "title": "Add Volunteer Hour Logging",
+          "description": "Allow committee members and volunteers to log hours worked. Include activity, date, hours, and description. Generate reports for leadership.",
+          "labels": ["enhancement", "volunteer", "reporting"],
+          "agents": ["volunteer-agent", "reporting-agent"]
+        },
+        {
+          "number": 333,
+          "section": "Committee Management",
+          "title": "Create Committee Application Workflow",
+          "description": "Application process for members wanting to join committees. Collect qualifications, submit application, route for approval, notify applicant of decision.",
+          "labels": ["enhancement", "workflow", "applications"],
+          "agents": ["workflow-agent", "approval-agent"]
+        },
+        {
+          "number": 334,
+          "section": "Committee Management",
+          "title": "Implement Board Packet Generation",
+          "description": "Auto-generate board packets by combining agenda, reports, financials, meeting minutes into single PDF. Email to board members before meetings.",
+          "labels": ["enhancement", "pdf", "automation"],
+          "agents": ["pdf-agent", "automation-agent"]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Financial & Commerce Platform",
+      "description": "Complete eCommerce System with Payment Processing",
+      "category": "Financial/eCommerce Enhancement",
+      "problem_statement": "System lacks financial capabilities: no shopping cart for multiple purchases, no saved payment methods, no auto-renewal, basic promo codes, no gift memberships, limited invoice payment, no expense reimbursement.",
+      "proposed_solution": "Build complete eCommerce platform: shopping cart for bundled purchases, secure payment vault for saved methods, auto-renewal configuration, flexible payment plans, enhanced promo code system, gift membership purchasing, invoice payment portal, expense reimbursement workflow.",
+      "alternatives": [
+        "Using Stripe Customer Portal only (limited customization)",
+        "Manual payment processing (doesn't scale)",
+        "Third-party e-commerce platform (integration overhead)"
+      ],
+      "expected_impact": "Medium-high priority, affects all paying members and finance team, estimated time: 5-6 weeks, reduces payment processing time by ~70%",
+      "priority": "Medium",
+      "technical_considerations": "Payment gateway (Stripe, Square, Authorize.net), PCI compliance, fraud detection, recurring billing engine, refund and chargeback handling.",
+      "labels": ["enhancement", "ecommerce", "payment"],
+      "assignees": [],
+      "sub_issues": [
+        {
+          "number": 335,
+          "section": "eCommerce",
+          "title": "Implement Shopping Cart",
+          "description": "Build shopping cart allowing members to add multiple items (membership, events, courses) and checkout once. Show subtotal, taxes, discounts in cart.",
+          "labels": ["enhancement", "cart", "frontend"],
+          "agents": ["cart-agent", "frontend-agent"]
+        },
+        {
+          "number": 336,
+          "section": "eCommerce",
+          "title": "Add Saved Payment Methods Vault",
+          "description": "Securely store payment methods (credit cards, bank accounts) for future use. PCI compliant tokenization. Allow adding/removing payment methods.",
+          "labels": ["enhancement", "payment", "security"],
+          "agents": ["payment-agent", "security-agent"]
+        },
+        {
+          "number": 337,
+          "section": "eCommerce",
+          "title": "Create Auto-Renewal Setup",
+          "description": "Allow members to enable auto-renewal for memberships. Send notification before renewal, charge saved payment method, email receipt, handle failures gracefully.",
+          "labels": ["enhancement", "recurring", "payment"],
+          "agents": ["recurring-agent", "payment-agent"]
+        },
+        {
+          "number": 338,
+          "section": "eCommerce",
+          "title": "Build Payment Plan Configuration",
+          "description": "Offer payment plans for expensive items. Configure number of payments, frequency, down payment. Auto-charge on schedule and track payment status.",
+          "labels": ["enhancement", "payment-plans", "automation"],
+          "agents": ["payment-plan-agent", "automation-agent"]
+        },
+        {
+          "number": 339,
+          "section": "eCommerce",
+          "title": "Enhance Promo Code System",
+          "description": "Advanced promo code system with rules: percentage off, dollar off, free shipping, expiration dates, usage limits, member restrictions, minimum purchase.",
+          "labels": ["enhancement", "promo-codes", "discounts"],
+          "agents": ["promo-agent", "discount-agent"]
+        },
+        {
+          "number": 340,
+          "section": "eCommerce",
+          "title": "Add Gift Membership Purchasing",
+          "description": "Allow purchasing membership as gift for someone else. Collect recipient info, send gift notification email, set start date, and allow recipient to activate.",
+          "labels": ["enhancement", "gift", "membership"],
+          "agents": ["gift-agent", "membership-agent"]
+        },
+        {
+          "number": 341,
+          "section": "eCommerce",
+          "title": "Create Invoice Payment Portal",
+          "description": "Portal for members with invoices to view outstanding invoices, pay online, download receipts, set up payment plans, and view payment history.",
+          "labels": ["enhancement", "invoicing", "portal"],
+          "agents": ["invoice-agent", "portal-agent"]
+        },
+        {
+          "number": 342,
+          "section": "eCommerce",
+          "title": "Implement Expense Reimbursement System",
+          "description": "System for members to submit expense reports for approval and reimbursement. Upload receipts, categorize expenses, route for approval, track reimbursement status.",
+          "labels": ["enhancement", "expenses", "workflow"],
+          "agents": ["expense-agent", "workflow-agent"]
+        }
+      ]
+    }
+  ]
+}
